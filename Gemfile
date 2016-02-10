@@ -31,6 +31,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+# Use Bulma as html/css foundation
+gem "bulma-rails"
+
 # Use devise for authentication
 gem 'devise'
 
@@ -50,5 +53,8 @@ group :development do
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
+
+  gem "better_errors"
+  gem "binding_of_caller"
 end
 

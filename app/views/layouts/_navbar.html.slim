@@ -1,0 +1,17 @@
+header.header
+  .container
+    /! Left side
+    .header-left
+      span.header-item
+        strong FAIRPAY
+    .header-right.header-menu
+      - if user_signed_in?
+        span.header-item
+          | Signed in as&nbsp;#{link_to(current_user.email, edit_user_registration_path)}
+        span.header-item
+          = link_to('Sign Out', destroy_user_session_path, :method => :delete)
+      - else
+        span.header-item
+          = link_to('Sign In', new_user_session_path)
+        span.header-item
+          = link_to('Sign Up', new_user_registration_path)
