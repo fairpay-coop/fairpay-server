@@ -24,3 +24,6 @@ module FairpayServer
     config.active_record.raise_in_transactional_callbacks = true
   end
 end
+
+puts "Rails.env: #{Rails.env}"
+puts "database: #{FairpayServer::Application.config.database_configuration[::Rails.env]['database']}"
