@@ -1,0 +1,40 @@
+
+h1.title Payment Test Flow - Step 2
+
+|transaction id: #{@transaction.id}
+br
+|payor: #{@transaction.payor.name}
+br
+|payee: #{@transaction.payee.name}
+br
+
+script src="http://code.jquery.com/jquery-1.11.3.min.js"
+
+form id="step2Form" method="post" action="/pay/#{@embed.uuid}/step2"
+  = hidden_field_tag :authenticity_token, form_authenticity_token
+  = hidden_field_tag :transaction_uuid, @transaction.uuid
+
+  b Amount: #{@transaction.base_amount}
+  br
+
+  |Card Number:
+  input type="text" name="cardNumber" value="4242424242424242"
+  br
+  |Card Exp Month:
+  input type="text" name="cardExpMonth" value="12"
+  br
+  |Card Exp Year:
+  input type="text" name="cardExpYear" value="2016"
+  br
+  |Card CVV:
+  input type="text" name="cardCvv" value="123"
+  br
+  |Billing Zip:
+  input type="text" name="billingZip" value="94102"
+  br
+  |Charge Description:
+  input type="text" name="description" value="test"
+  br
+
+  input id="step2Submit" type="submit" value="Submit"
+

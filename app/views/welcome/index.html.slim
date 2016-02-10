@@ -1,1 +1,10 @@
-h1.title Welcome to Fairpay
+h1.title Welcome to FairPay
+
+b Embeds
+br
+
+table
+  - for item in @embeds
+    tr
+      td
+        =link_to item.uuid, "/pay/#{item.uuid}"

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160210043614) do
+ActiveRecord::Schema.define(version: 20160210163632) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,6 +71,16 @@ ActiveRecord::Schema.define(version: 20160210043614) do
 
   add_index "merchant_configs", ["profile_id"], name: "index_merchant_configs_on_profile_id", using: :btree
 
+  create_table "payment_sources", force: :cascade do |t|
+    t.integer  "profile_id"
+    t.string   "kind"
+    t.json     "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "payment_sources", ["profile_id"], name: "index_payment_sources_on_profile_id", using: :btree
+
   create_table "profiles", force: :cascade do |t|
     t.string   "name"
     t.string   "email"
@@ -78,6 +88,33 @@ ActiveRecord::Schema.define(version: 20160210043614) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "transactions", force: :cascade do |t|
+    t.string   "uuid"
+    t.string   "kind"
+    t.string   "status"
+    t.integer  "payor_id"
+    t.integer  "payee_id"
+    t.integer  "embed_id"
+    t.integer  "payment_source_id"
+    t.integer  "merchant_config_id"
+    t.integer  "parent_id"
+    t.decimal  "base_amount"
+    t.decimal  "estimated_fee"
+    t.decimal  "surcharged_fee"
+    t.decimal  "platform_fee"
+    t.decimal  "paid_amount"
+    t.string   "description"
+    t.json     "data"
+    t.string   "recurrence"
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+  end
+
+  add_index "transactions", ["parent_id"], name: "index_transactions_on_parent_id", using: :btree
+  add_index "transactions", ["payee_id"], name: "index_transactions_on_payee_id", using: :btree
+  add_index "transactions", ["payor_id"], name: "index_transactions_on_payor_id", using: :btree
+  add_index "transactions", ["uuid"], name: "index_transactions_on_uuid", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "", null: false
@@ -99,4 +136,11 @@ ActiveRecord::Schema.define(version: 20160210043614) do
 
   add_foreign_key "embeds", "profiles"
   add_foreign_key "merchant_configs", "profiles"
+  add_foreign_key "payment_sources", "profiles"
+  add_foreign_key "transactions", "embeds"
+  add_foreign_key "transactions", "merchant_configs"
+  add_foreign_key "transactions", "payment_sources"
+  add_foreign_key "transactions", "profiles", column: "payee_id"
+  add_foreign_key "transactions", "profiles", column: "payor_id"
+  add_foreign_key "transactions", "transactions", column: "parent_id"
 end

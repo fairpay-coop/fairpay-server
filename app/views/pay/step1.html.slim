@@ -1,0 +1,26 @@
+
+h1.title Payment Test Flow - Step 1
+
+|embed id: #{@embed.id}
+br
+br
+
+form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1"
+
+  = hidden_field_tag :authenticity_token, form_authenticity_token
+  /input type="hidden" name="embed_uuid" value="#{@embed.id}"
+  |Name:
+  input type="text" name="name" value="john doe"
+  br
+  |Email:
+  input type="text" name="email" value="john@doe.com"
+  br
+  |Amount:
+  input id="step1Amount" type="text" name="amount" value="12"
+  br
+  /|Monthly:
+  /input type="checkbox" name="monthly" value="true"
+  /br
+  input id="step1Submit" type="submit" value="Next"
+
+

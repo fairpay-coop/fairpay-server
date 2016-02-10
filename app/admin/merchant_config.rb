@@ -15,9 +15,7 @@ ActiveAdmin.register MerchantConfig do
 
   form do |f|
     f.inputs do
-      # f.input :profile_id
       f.input :profile, as: :select, collection: Profile.pluck(:name, :id)
-      # f.input :profile, as: :select, collection: Profile.all.map { |a| [a.name, a.id] }
 
       f.input :kind, as: :select, collection: MerchantConfig.kinds.map { |key,name| [name, key] }
 

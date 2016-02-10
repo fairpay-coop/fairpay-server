@@ -3,7 +3,8 @@ header.header
     /! Left side
     .header-left
       span.header-item
-        strong FAIRPAY
+        strong
+          = link_to 'FAIRPAY', root_path
     .header-right.header-menu
       - if user_signed_in?
         span.header-item

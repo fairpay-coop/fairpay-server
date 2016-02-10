@@ -12,7 +12,7 @@ class Embed < ActiveRecord::Base
 
   after_initialize :assign_uuid
 
-
+  # todo: factor to ActiveRecord::Base
   def assign_uuid
     self.uuid ||= SecureRandom.urlsafe_base64(8)
   end
