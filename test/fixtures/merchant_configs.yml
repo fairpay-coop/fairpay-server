@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  profile_id: 
+  kind: MyString
+  data: 
+
+two:
+  profile_id: 
+  kind: MyString
+  data: 

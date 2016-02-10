@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160210010145) do
+ActiveRecord::Schema.define(version: 20160210023904) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,6 +49,16 @@ ActiveRecord::Schema.define(version: 20160210010145) do
   add_index "admin_users", ["email"], name: "index_admin_users_on_email", unique: true, using: :btree
   add_index "admin_users", ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true, using: :btree
 
+  create_table "merchant_configs", force: :cascade do |t|
+    t.integer  "profile_id"
+    t.string   "kind"
+    t.json     "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "merchant_configs", ["profile_id"], name: "index_merchant_configs_on_profile_id", using: :btree
+
   create_table "profiles", force: :cascade do |t|
     t.string   "name"
     t.string   "email"
@@ -75,4 +85,5 @@ ActiveRecord::Schema.define(version: 20160210010145) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
+  add_foreign_key "merchant_configs", "profiles"
 end
