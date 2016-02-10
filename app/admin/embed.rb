@@ -1,4 +1,4 @@
-ActiveAdmin.register MerchantConfig do
+ActiveAdmin.register Embed do
 
   permit_params :profile_id, :kind, :data
 
@@ -6,8 +6,9 @@ ActiveAdmin.register MerchantConfig do
   index do
     selectable_column
     id_column
+    column :uuid
     column :profile
-    column :kind
+    # column :kind
     column :updated_at
     actions
   end
@@ -15,11 +16,9 @@ ActiveAdmin.register MerchantConfig do
 
   form do |f|
     f.inputs do
-      # f.input :profile_id
       f.input :profile, as: :select, collection: Profile.pluck(:name, :id)
-      # f.input :profile, as: :select, collection: Profile.all.map { |a| [a.name, a.id] }
 
-      f.input :kind, as: :select, collection: MerchantConfig.kinds.map { |key,name| [name, key] }
+      # f.input :kind, as: :select, collection: Embed.kinds.map { |key,name| [name, key] }
 
       f.input :data, as: :text
       # todo: integrate friendlier json editor

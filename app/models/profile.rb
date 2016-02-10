@@ -7,4 +7,7 @@ class Profile < ActiveRecord::Base
   #   t.timestamps null: false
 
 
+  has_many :merchant_configs
+  has_many :embeds
+
 end
