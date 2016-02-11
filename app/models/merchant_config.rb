@@ -15,4 +15,14 @@ class MerchantConfig < ActiveRecord::Base
     KINDS
   end
 
+
+  def payment_service
+    case kind
+      when 'authorizenet'
+        AuthorizeNetService.new(self)
+      else
+        raise "service type: #{kind} - not yet implemented"
+    end
+  end
+
 end

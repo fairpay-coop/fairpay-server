@@ -21,4 +21,9 @@ class Embed < ActiveRecord::Base
     self.find_by(uuid: uuid)
   end
 
+  # is there a clever active record declaration for this?
+  def merchant_configs
+    profile.merchant_configs
+  end
+
 end
