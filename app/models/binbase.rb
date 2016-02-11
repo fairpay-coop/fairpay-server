@@ -14,6 +14,61 @@ class Binbase < ActiveRecord::Base
   belongs_to :binbase_org
 
 
+  def is_regulated
+    binbase_org&.is_regulated
+  end
+
+  # def self.estimate_fee(data)
+  #   binbase =
+  # end
+
+  def self.estimate_fee(bin, amount)
+    binbase = Binbase.find_by(bin: bin)
+    base = 0.30
+    percent = 2.9
+    message = nil
+    if binbase
+      if binbase.card_brand == 'AMEX'
+        base = 0.30
+        percent = 3.5
+        message = "Tip: AMEX has the highest fees!"
+      end
+    end
+
+    if binbase.card_brand == 'VISA' || binbase.card_brand == 'MASTERCARD'
+      if binbase.card_type == 'DEBIT'
+        base = 0.22
+        if binbase.is_regulated
+          percent = 0.05;
+          message = "Good choice, Debit Cards have the lowest fees!"
+        else
+          percent = 0.80;
+          message = "Good choice, Debit Cards have lower fees."
+        end
+      else
+        base = 0.12;
+        message = "Tip: Debit Cards generally have lower fees than Credit Cards";
+        if binbase.card_category == 'PLATINUM' || binbase.card_category == 'BUSINESS'
+          percent = 2.9;
+          message += ", and Rewards Cards have the highest fees."
+        elsif binbase.card_category == 'GOLD'
+          percent = 2.2;
+          message += ", and Rewards Cards have higher fees."
+        else
+          percent = 1.8;
+        end
+      end
+    end
+    if amount < 20
+      message = ""
+    end
+
+    fee = base + amount * percent/100;
+    fee = (fee * 100).ceil / 100.0;
+    puts "calcfee - #{bin}, base: #{base}, %: #{percent} = #{fee}"
+    {estimated_fee: fee, fee_tip: message}
+  end
+
 
   DEFAULT_DATA_FILE = '../binbase/bins_iso_8_9.csv'
   DEFAULT_BIGBANKS_FILE = '../binbase/bigbanks.txt'
