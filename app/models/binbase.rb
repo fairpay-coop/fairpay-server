@@ -15,7 +15,11 @@ class Binbase < ActiveRecord::Base
 
 
   def is_regulated
-    binbase_org&.is_regulated
+    binbase_org.present? && binbase_org.is_regulated
+  end
+
+  def issuing_org
+    binbase_org&.name
   end
 
   # def self.estimate_fee(data)
@@ -27,12 +31,15 @@ class Binbase < ActiveRecord::Base
     base = 0.30
     percent = 2.9
     message = nil
-    if binbase
-      if binbase.card_brand == 'AMEX'
-        base = 0.30
-        percent = 3.5
-        message = "Tip: AMEX has the highest fees!"
-      end
+
+    amount = BigDecimal(amount)
+
+    return {error: 'BIN not found'} unless binbase
+
+    if binbase.card_brand == 'AMEX'
+      base = 0.30
+      percent = 3.5
+      message = "Tip: AMEX has the highest fees!"
     end
 
     if binbase.card_brand == 'VISA' || binbase.card_brand == 'MASTERCARD'
@@ -65,8 +72,9 @@ class Binbase < ActiveRecord::Base
 
     fee = base + amount * percent/100;
     fee = (fee * 100).ceil / 100.0;
-    puts "calcfee - #{bin}, base: #{base}, %: #{percent} = #{fee}"
-    {estimated_fee: fee, fee_tip: message}
+    puts "calcfee - #{bin}, base: #{base}, %: #{percent} = #{fee} - tip: #{message}"
+    {estimated_fee: fee, fee_tip: message, card_brand: binbase.card_brand, issuing_org: binbase.issuing_org,
+     card_type: binbase.card_type, card_category: binbase.card_category, is_regulated: binbase.is_regulated}
   end
 
 

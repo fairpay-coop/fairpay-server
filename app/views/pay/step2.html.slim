@@ -14,19 +14,17 @@ form id="step2_form" method="post" action="/pay/#{@embed.uuid}/step2"
   = hidden_field_tag :authenticity_token, form_authenticity_token
   = hidden_field_tag :transaction_uuid, @transaction.uuid
   = hidden_field_tag :merchant_config_id, @embed.merchant_configs.first.id
+  /= hidden_field_tag :amount, @transaction.amount
+  input type="hidden" id="amount" name="amount" value="#{@transaction.base_amount}"
 
   b Amount: #{@transaction.base_amount}
   br
 
+  div id="card_info"
+
   |Card Number:
-  input type="text" name="card_number" value="4242424242424242"
+  input type="text" class="recalc" id="card_number" name="card_number" value="4242424242424242"
   br
-  /|Card Exp Month:
-  /input type="text" name="card_exp_month" value="12"
-  /br
-  /|Card Exp Year:
-  /input type="text" name="card_exp_year" value="2016"
-  /br
   |Card Exp (mmyy):
   input type="text" name="card_mmyy" value="1216"
   br
@@ -42,3 +40,9 @@ form id="step2_form" method="post" action="/pay/#{@embed.uuid}/step2"
 
   input id="step2_submit" type="submit" value="Submit"
 
+
+javascript:
+  document.addEventListener( "DOMContentLoaded", function(e) {
+    //require('public/js/card').registerHooks()
+    Card.registerHooks()
+  }, false);

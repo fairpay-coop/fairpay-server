@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   root 'welcome#index'
 
   get  'embed/:uuid' => 'pay#embed'
+  get  '/api/estimate_fee' => 'pay#estimate_fee'
   get  'pay/:uuid' => 'pay#step1'
   post 'pay/:uuid/step1' => 'pay#step1_post'
   get  'pay/:uuid/step2/:transaction_uuid' => 'pay#step2'

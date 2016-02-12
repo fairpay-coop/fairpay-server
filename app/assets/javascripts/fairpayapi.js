@@ -127,7 +127,7 @@ var FairpayApiSinglton = (function() {
 
 })();
 
-var SeedApi = SeedApiSinglton.getInstance();
-window.SeedApi = SeedApi;
+//var SeedApi = SeedApiSinglton.getInstance();
+//window.SeedApi = SeedApi;
 
 

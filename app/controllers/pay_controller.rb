@@ -65,5 +65,11 @@ class PayController < ApplicationController
   end
 
 
+  def estimate_fee
+    bin = params[:bin]
+    amount = params[:amount]
+    result = Binbase.estimate_fee(bin, amount)
+    render json: result
+  end
 
 end
