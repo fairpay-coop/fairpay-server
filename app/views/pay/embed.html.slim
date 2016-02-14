@@ -1,4 +1,3 @@
-/ beware, copy of wild4life / seed api test harness.  not yet properly reintegrated
 
 h1.title Embed Test
 
@@ -14,13 +13,13 @@ b Step 1:
 br
 
 form id="step1Form"
-  input type="hidden" name="embed_uuid" value="#{@embed.id}"
-  |First Name:
-  input type="text" name="firstName" value="john2"
+  input type="hidden" name="embed_uuid" value="#{@embed.uuid}"
+  |Name:
+  input type="text" name="name" value="john doe"
   br
-  |Last Name:
-  input type="text" name="lastName" value="doe"
-  br
+  /|Last Name:
+  /input type="text" name="lastName" value="doe"
+  /br
   |Email:
   input type="text" name="email" value="john2@doe.com"
   br
@@ -36,26 +35,27 @@ br
 br
 |Step 2:
 form id="step2Form"
-  |Contribution Id:
-  input id="contributionId" type="text" name="contributionId"
+  input type="hidden" name="embed_uuid" value="#{@embed.uuid}"
+  |Transaction Uuid:
+  input id="transaction_uuid" type="text" name="transactionUuid"
   br
   |Amount:
   input id="step2Amount" type="text" name="amount"
   br
   |Card Number:
-  input type="text" name="cardNumber" value="4242424242424242"
+  input type="text" name="card_number" value="4242424242424242"
   br
-  |Card Exp Month:
-  input type="text" name="cardExpMonth" value="12"
+  |Card MMYY:
+  input type="text" name="card_mmyy" value="1216"
   br
-  |Card Exp Year:
-  input type="text" name="cardExpYear" value="2016"
-  br
+  /|Card Exp Year:
+  /input type="text" name="cardExpYear" value="2016"
+  /br
   |Card CVV:
-  input type="text" name="cardCvv" value="123"
+  input type="text" name="card_cvv" value="123"
   br
   |Billing Zip:
-  input type="text" name="billingZip" value="94102"
+  input type="text" name="billing_zip" value="94102"
   br
   |Charge Description:
   input type="text" name="description" value="test"
@@ -76,49 +76,52 @@ br
 div id="statusLink"
 br
 
-/<script>
-/  $("#step1Form").submit(handleStep1);
-/  $("#step2Form").submit(handleStep2);
-/
-/
-/  function handleStep1() {
-/    var form = document.getElementById("step1Form");
-/    var data = {};
-/    SeedApi.copyFormValues(data, form, ['firstName','lastName','email','amount','monthly']);
-/    SeedApi.submitPledge(data, handlePledgeResponse);
-/    return false;
-/  }
-/
-/  function handlePledgeResponse(data) {
-/    var contributionId = data.result.contributionId;
-///    alert('contributionId: ' + contributionId);
-/    $('#contributionId').val(contributionId);
-/    $('#step2Amount').val( $('#step1Amount').val() );
-/  }
-/
-/
-/  function handleStep2() {
-/    var form = document.getElementById("step2Form");
-/    var data = {};
-/    SeedApi.copyFormValues(data, form, ['contributionId','amount','cardNumber','cardExpMonth','cardExpYear','cardCvv','billingZip','description']);
-/    SeedApi.submitPaymentInfo(data, handlePaymentInfoResponse);
-/    return false;
-/  }
-/
-/  function handlePaymentInfoResponse(data) {
-///    alert('payment response: ' + JSON.stringify(data));
-/    if (data.result) {
-/      var status = data.result.status;
-/      $('#paymentStatus').html(status);
-/      var linkUrl = data.result.statusLink;
-/      var linkHtml = '<a href="' + linkUrl + '">' + linkUrl + '</a>';
-/      $('#statusLink').html(linkHtml);
-/    } else if (data.error) {
-/      $('#errorMessage').html(data.error.message);
-/      $('#errorStack').html('<pre>' + data.error.stack + '</pre>');
-/    }
-/  }
-/
-/
-/</script>
+javascript:
+
+  $("#step1Form").submit(handleStep1);
+  $("#step2Form").submit(handleStep2);
+
+
+  function handleStep1() {
+    var form = document.getElementById("step1Form");
+    var data = {};
+    FairPayApi.copyFormValues(data, form, ['embed_uuid','name','email','amount']);
+    //alert('data:' + JSON.stringify(data));
+    FairPayApi.submitStep1(data, handleStep1Response);
+    return false;
+  }
+
+  function handleStep1Response(data) {
+    //alert('step1 resp: ' + data);
+    var transaction_uuid = data.result.transaction_uuid;
+    //alert('transaction_uuid: ' + transaction_uuid);
+    $('#transaction_uuid').val(transaction_uuid);
+    $('#step2Amount').val( $('#step1Amount').val() );
+  }
+
+
+  function handleStep2() {
+    var form = document.getElementById("step2Form");
+    var data = {};
+    FairPayApi.copyFormValues(data, form, ['embed_uuid', 'transaction_uuid','amount','card_number','card_mmyy','card_cvv','billing_zip','description']);
+    FairPayApi.submitStep2(data, handleStep2Response);
+    return false;
+  }
+
+  function handleStep2Response(data) {
+    //alert('step2 response: ' + JSON.stringify(data));
+    if (data.result) {
+      var status = data.result.status;
+      $('#paymentStatus').html(status);
+      //var linkUrl = data.result.statusLink;
+      //var linkHtml = '<a href="' + linkUrl + '">' + linkUrl + '</a>';
+      //$('#statusLink').html(linkHtml);
+    } else if (data.error) {
+      $('#errorMessage').html(data.error.message);
+      $('#errorStack').html('<pre>' + data.error.stack + '</pre>');
+    }
+  }
+
+
+
 

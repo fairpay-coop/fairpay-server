@@ -2,53 +2,59 @@
 // beware: copy of the old seedapi.js, not yet migrated, and will probably want to completely rework to use an iframe
 
 
-var FairpayApiSinglton = (function() {
+var FairPayApiSinglton = (function() {
 
     var instance;
 
     function init() {
 
         //note: assumes a block like this is included subsequent to this library being loaded
-        //SeedApi.setEndpoint('http://localhost:8000');
-        //SeedApi.setApiKey('w4l');
-        //SeedApi.setCampaignId('VJ7iA5cQg');
+        //FairPayApi.setEndpoint('http://localhost:8000');
+        //FairPayApi.setApiKey('w4l');
+        //FairPayApi.setEmbedUuid('VJ7iA5cQg');
 
-        var endpoint;
-        var apiKey;
-        var campaignId;  // the default campaign to use
+        // for the moment, assume same api and embed share same host
+        var endpoint = '';
+        var apiKey = 'dummy';
+        var embedUuid;  // the default embed to use
 
-        function joinMailingList(data, successHandler) {
-            var campaignId = data.capaignId ? data.campaignId : getCampaignId();
-            var uri = '/api/v1/campaign/' + campaignId + '/mailingList.join';
+        function submitStep1(data, successHandler) {
+            var embedUuid = data.embed_uuid ? data.embed_uuid : getEmbedUuid();
+            var uri = '/api/v1/embed/' + embedUuid + '/step1';
             invoke(uri, data, successHandler);
         }
 
-        function submitPledge(data, successHandler) {
-            var campaignId = data.capaignId ? data.campaignId : getCampaignId();
-            var uri = '/api/v1/campaign/' + campaignId + '/pledge.submit';
+        function submitStep2(data, successHandler) {
+            var uri = '/api/v1/embed/' + data.embed_uuid + '/step2';
             invoke(uri, data, successHandler);
         }
 
-        function submitPaymentInfo(data, successHandler) {
-            var uri = '/api/v1/contribution/' + data.contributionId + '/paymentInfo.submit';
+        function estimateFee(data, successHandler) {
+            var uri = '/api/v1/embed/' + data.embed_uuid + '/estimate_fee';
             invoke(uri, data, successHandler);
         }
 
-        function fetchContributionStatus(data, successHandler) {
-            var uri = '/api/v1/contribution/' + data.contributionId + '/status';
-            invoke(uri, data, successHandler);
-        }
-
-        function endRecurringContribution(data, successHandler) {
-            var uri = '/api/v1/contribution/' + data.contributionId + '/endRecurring';
-            invoke(uri, data, successHandler);
-        }
-
-        function fetchCampaignStatus(data, successHandler) {
-            var campaignId = data.capaignId ? data.campaignId : getCampaignId();
-            var uri = '/api/v1/campaign/' + campaignId + '/status';
-            invoke(uri, data, successHandler);
-        }
+        //function joinMailingList(data, successHandler) {
+        //    var campaignId = data.capaignId ? data.campaignId : getCampaignId();
+        //    var uri = '/api/v1/campaign/' + campaignId + '/mailingList.join';
+        //    invoke(uri, data, successHandler);
+        //}
+        //
+        //function fetchContributionStatus(data, successHandler) {
+        //    var uri = '/api/v1/contribution/' + data.contributionId + '/status';
+        //    invoke(uri, data, successHandler);
+        //}
+        //
+        //function endRecurringContribution(data, successHandler) {
+        //    var uri = '/api/v1/contribution/' + data.contributionId + '/endRecurring';
+        //    invoke(uri, data, successHandler);
+        //}
+        //
+        //function fetchCampaignStatus(data, successHandler) {
+        //    var campaignId = data.capaignId ? data.campaignId : getCampaignId();
+        //    var uri = '/api/v1/campaign/' + campaignId + '/status';
+        //    invoke(uri, data, successHandler);
+        //}
 
 
         function invoke(uri, data, successHandler) {
@@ -89,29 +95,30 @@ var FairpayApiSinglton = (function() {
             apiKey = s;
         }
 
-        function setCampaignId(s) {
-            campaignId = s;
+        function setEmbedUuid(s) {
+            embedUuid = s;
         }
 
-        function getCampaignId() {
-            return campaignId;
+        function getEmbedUuid() {
+            return embedUuid;
         }
 
         return {
-            joinMailingList: joinMailingList,
-            submitPledge: submitPledge,
-            submitPaymentInfo: submitPaymentInfo,
-            fetchContributionStatus: fetchContributionStatus,
-            endRecurringContribution: endRecurringContribution,
-            fetchCampaignStatus: fetchCampaignStatus,
+            submitStep1: submitStep1,
+            submitStep2: submitStep2,
+            estimateFee: estimateFee,
+            //joinMailingList: joinMailingList,
+            //fetchContributionStatus: fetchContributionStatus,
+            //endRecurringContribution: endRecurringContribution,
+            //fetchCampaignStatus: fetchCampaignStatus,
             invoke: invoke,
             copyFormValues: copyFormValues,
             formValue: formValue,
             getParameterByName: getParameterByName,
             setEndpoint: setEndpoint,
             setApiKey: setApiKey,
-            setCampaignId: setCampaignId,
-            getCampaignId: getCampaignId
+            setEmbedUuid: setEmbedUuid,
+            getEmbedUuid: getEmbedUuid
         };
     }
 
@@ -127,7 +134,7 @@ var FairpayApiSinglton = (function() {
 
 })();
 
-//var SeedApi = SeedApiSinglton.getInstance();
-//window.SeedApi = SeedApi;
+var FairPayApi = FairPayApiSinglton.getInstance();
+window.FairPayApi = FairPayApi;
 
 

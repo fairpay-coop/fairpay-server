@@ -6,11 +6,14 @@ Rails.application.routes.draw do
   # Landing page
   root 'welcome#index'
 
-  get   '/api/v1/embed/:uuid' => 'pay#embed_data'
-  get   '/api/v1/embed/:uuid/estimate_fee' => 'pay#estimate_fee'
+  get   '/api/v1/embed/:uuid' => 'embed#widget_data'
+  get   '/api/v1/embed/:uuid/estimate_fee' => 'embed#estimate_fee'
   # need better names for these actions
-  post  '/api/v1/embed/:uuid/step1' => 'pay#step1'
-  post  '/api/v1/embed/:uuid/step2' => 'pay#step2'
+  post  '/api/v1/embed/:uuid/step1' => 'embed#step1'
+  post  '/api/v1/embed/:uuid/step2' => 'embed#step2'
+  # temp get method matchers until cross-site iframe post supported
+  get  '/api/v1/embed/:uuid/step1' => 'embed#step1'
+  get  '/api/v1/embed/:uuid/step2' => 'embed#step2'
 
   get  'embed/:uuid' => 'pay#embed'
   get  'pay/:uuid' => 'pay#step1'

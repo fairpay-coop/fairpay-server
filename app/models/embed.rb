@@ -30,7 +30,6 @@ class Embed < ActiveRecord::Base
   def step1(email, name, amount)
     payor = Profile.find_by(email: email)
     unless payor
-      name = params[:name]
       payor = Profile.create!(email: email, name: name)
     end
 
@@ -43,7 +42,9 @@ class Embed < ActiveRecord::Base
     merchant_config_id = params[:merchant_config_id]
 
     transaction = Transaction.by_uuid(transaction_uuid)
-    merchant_config = MerchantConfig.find(merchant_config_id)
+    # merchant_config = MerchantConfig.find(merchant_config_id)
+    #todo: resolve based on 'payment_type' param
+    merchant_config = transaction.embed.merchant_configs.first
 
     estimated_fee = transaction.base_amount * 0.03 + 0.30
     paid_amount = transaction.base_amount

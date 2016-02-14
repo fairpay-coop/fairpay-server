@@ -1,10 +1,19 @@
 h1.title Welcome to FairPay
 
-b Embeds
 br
-
+br
+b Simple Form Test
 table
   - for item in @embeds
     tr
       td
         =link_to item.uuid, "/pay/#{item.uuid}"
+
+br
+br
+b Embed Flow Test
+table
+- for item in @embeds
+  tr
+    td
+      =link_to item.uuid, "/embed/#{item.uuid}"
