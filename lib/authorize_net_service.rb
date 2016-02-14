@@ -47,6 +47,12 @@ class AuthorizeNetService
   end
 
 
+  def estimate_fee(bin, amount)
+    Binbase.estimate_fee(bin, amount)
+  end
+
+
+
   # def create_customer_profile
   #   transaction = authorizenet_transaction
   #

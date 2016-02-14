@@ -13,8 +13,10 @@ var Card = {
         var cardForm = document.getElementById("step2_form");
         var card = cardForm.elements["card_number"].value;
         var amount = cardForm.elements["amount"].value;
+        var embed_uuid = cardForm.elements["embed_uuid"].value;
+
         var bin = card.slice(0, 6);
-        var url = "/api/estimate_fee?bin=" + bin + '&amount=' + amount;
+        var url = "/api/v1/embed/" + embed_uuid + "/estimate_fee?payment_type=card&bin=" + bin + '&amount=' + amount;
         //alert("url: " + url);
 
         $.ajax({

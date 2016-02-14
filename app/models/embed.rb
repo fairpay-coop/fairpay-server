@@ -26,4 +26,39 @@ class Embed < ActiveRecord::Base
     profile.merchant_configs
   end
 
+
+  def step1(email, name, amount)
+    payor = Profile.find_by(email: email)
+    unless payor
+      name = params[:name]
+      payor = Profile.create!(email: email, name: name)
+    end
+
+    transaction = Transaction.create!(embed: self, payee: self.profile, payor: payor, base_amount: amount, status: :provisional)
+  end
+
+
+  def step2(params)
+    transaction_uuid = params[:transaction_uuid]
+    merchant_config_id = params[:merchant_config_id]
+
+    transaction = Transaction.by_uuid(transaction_uuid)
+    merchant_config = MerchantConfig.find(merchant_config_id)
+
+    estimated_fee = transaction.base_amount * 0.03 + 0.30
+    paid_amount = transaction.base_amount
+
+    data = params.slice(:card_number, :card_mmyy, :card_cvv)
+    data[:amount] = paid_amount
+    puts "data: #{data}"
+
+    payment_service = merchant_config.payment_service
+    payment_service.charge(data)
+
+    transaction.update!(status: 'completed', paid_amount: paid_amount, estimated_fee: estimated_fee)
+
+    transaction
+  end
+
+
 end

@@ -12,6 +12,7 @@ script src="http://code.jquery.com/jquery-1.11.3.min.js"
 
 form id="step2_form" method="post" action="/pay/#{@embed.uuid}/step2"
   = hidden_field_tag :authenticity_token, form_authenticity_token
+  = hidden_field_tag :embed_uuid, @embed.uuid
   = hidden_field_tag :transaction_uuid, @transaction.uuid
   = hidden_field_tag :merchant_config_id, @embed.merchant_configs.first.id
   /= hidden_field_tag :amount, @transaction.amount

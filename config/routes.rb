@@ -6,8 +6,13 @@ Rails.application.routes.draw do
   # Landing page
   root 'welcome#index'
 
+  get   '/api/v1/embed/:uuid' => 'pay#embed_data'
+  get   '/api/v1/embed/:uuid/estimate_fee' => 'pay#estimate_fee'
+  # need better names for these actions
+  post  '/api/v1/embed/:uuid/step1' => 'pay#step1'
+  post  '/api/v1/embed/:uuid/step2' => 'pay#step2'
+
   get  'embed/:uuid' => 'pay#embed'
-  get  '/api/estimate_fee' => 'pay#estimate_fee'
   get  'pay/:uuid' => 'pay#step1'
   post 'pay/:uuid/step1' => 'pay#step1_post'
   get  'pay/:uuid/step2/:transaction_uuid' => 'pay#step2'
