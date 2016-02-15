@@ -24,7 +24,7 @@ var FairPayApiSinglton = (function() {
             invoke(uri, data, successHandler);
         }
 
-        function submitStep2(data, successHandler) {
+        function submitCard(data, successHandler) {
             var uri = '/api/v1/embed/' + data.embed_uuid + '/step2';
             invoke(uri, data, successHandler);
         }
@@ -105,7 +105,7 @@ var FairPayApiSinglton = (function() {
 
         return {
             submitStep1: submitStep1,
-            submitStep2: submitStep2,
+            submitCard: submitCard,
             estimateFee: estimateFee,
             //joinMailingList: joinMailingList,
             //fetchContributionStatus: fetchContributionStatus,

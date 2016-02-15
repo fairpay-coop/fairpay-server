@@ -12,7 +12,7 @@ script src="http://code.jquery.com/jquery-1.11.3.min.js"
 b Step 1:
 br
 
-form id="step1Form"
+form id="step1_form"
   input type="hidden" name="embed_uuid" value="#{@embed.uuid}"
   |Name:
   input type="text" name="name" value="john doe"
@@ -21,56 +21,63 @@ form id="step1Form"
   /input type="text" name="lastName" value="doe"
   /br
   |Email:
-  input type="text" name="email" value="john2@doe.com"
+  input type="text" name="email" value="john@doe.com"
   br
   |Amount:
-  input id="step1Amount" type="text" name="amount" value="12"
+  input id="step1_amount" type="text" name="amount" value="100"
   br
   /|Monthly:
   /input type="checkbox" name="monthly" value="true"
   /br
-  input id="step1Submit" type="submit" value="Next"
+  input id="step1_submit" type="submit" value="Next"
 
 br
 br
-|Step 2:
-form id="step2Form"
+|Payment - Card:
+form id="card_form"
   input type="hidden" name="embed_uuid" value="#{@embed.uuid}"
+  input type="hidden" id="card_amount" name="amount"
+  input type="hidden" name="description" value="test"
   |Transaction Uuid:
   input id="transaction_uuid" type="text" name="transactionUuid"
   br
-  |Amount:
-  input id="step2Amount" type="text" name="amount"
-  br
+  /|Amount:
+  /input id="step2Amount" type="text" name="amount"
+  /br
+
+  div id="errorMessage"
+  div id="fee_info"
+
   |Card Number:
-  input type="text" name="card_number" value="4242424242424242"
+  input id="card_number" type="text" name="card_number"
+  / value="4242424242424242"
   br
   |Card MMYY:
   input type="text" name="card_mmyy" value="1216"
   br
-  /|Card Exp Year:
-  /input type="text" name="cardExpYear" value="2016"
-  /br
   |Card CVV:
   input type="text" name="card_cvv" value="123"
   br
   |Billing Zip:
   input type="text" name="billing_zip" value="94102"
   br
-  |Charge Description:
-  input type="text" name="description" value="test"
-  br
+  /|Charge Description:
+  /input type="text" name="description" value="test"
+  /br
 
-  input id="step2Submit" type="submit" value="Submit"
+  input id="card_submit" type="submit" value="Submit"
+
+/br
+/br
+/|Payment - Paypal:
 
 br
 br
 |Status:
 div id="paymentStatus"
 br
-|Error:
-div id="errorMessage"
-div id="errorStack"
+/|Error:
+/div id="errorStack"
 br
 br
 div id="statusLink"
@@ -78,12 +85,16 @@ br
 
 javascript:
 
-  $("#step1Form").submit(handleStep1);
-  $("#step2Form").submit(handleStep2);
+  $("#step1_form").submit(handleStep1);
+  $("#card_form").submit(handleCard);
 
+  var lastBin = '';
+  var amount = 0;
 
   function handleStep1() {
-    var form = document.getElementById("step1Form");
+    var form = document.getElementById("step1_form");
+    //amount = $('#step1_amount').val();
+    amount = form.elements['amount'].value;
     var data = {};
     FairPayApi.copyFormValues(data, form, ['embed_uuid','name','email','amount']);
     //alert('data:' + JSON.stringify(data));
@@ -96,32 +107,68 @@ javascript:
     var transaction_uuid = data.result.transaction_uuid;
     //alert('transaction_uuid: ' + transaction_uuid);
     $('#transaction_uuid').val(transaction_uuid);
-    $('#step2Amount').val( $('#step1Amount').val() );
+    $('#card_amount').val( $('#step1_amount').val() );
   }
 
 
-  function handleStep2() {
-    var form = document.getElementById("step2Form");
+  function handleCard() {
+    var form = document.getElementById("card_form");
     var data = {};
     FairPayApi.copyFormValues(data, form, ['embed_uuid', 'transaction_uuid','amount','card_number','card_mmyy','card_cvv','billing_zip','description']);
-    FairPayApi.submitStep2(data, handleStep2Response);
+    FairPayApi.submitCard(data, handleCardResponse);
     return false;
   }
 
-  function handleStep2Response(data) {
+  function handleCardResponse(data) {
     //alert('step2 response: ' + JSON.stringify(data));
     if (data.result) {
       var status = data.result.status;
       $('#paymentStatus').html(status);
-      //var linkUrl = data.result.statusLink;
+      $('#errorMessage').html('');      //var linkUrl = data.result.statusLink;
       //var linkHtml = '<a href="' + linkUrl + '">' + linkUrl + '</a>';
       //$('#statusLink').html(linkHtml);
     } else if (data.error) {
+      //alert('error resp: ' + JSON.stringify(data.error));
+      $('#paymentStatus').html('error');
       $('#errorMessage').html(data.error.message);
-      $('#errorStack').html('<pre>' + data.error.stack + '</pre>');
+      //$('#errorStack').html('<pre>' + data.error.stack + '</pre>');
     }
   }
 
+  function cardNumberKeypressed(event) {
+    //alert('cardNumberKeypressed: ' + event);
+    var card_number = $('#card_number').val();
+    //alert('card number: ' + card_number);
+    if (card_number.length >= 6) {
+      var newBin = card_number.slice(0, 6);
+      if (lastBin != newBin) {
+        //alert('new bin: ' + newBin + ', last bin: ' + lastBin + ', amount: ' + amount);
+        lastBin = newBin;
+        data = {bin: newBin, amount: amount};
+        FairPayApi.estimateFee(data, handleEstimateFeeResponse);
+      }
+    }
+  }
+
+  function handleEstimateFeeResponse(data) {
+    //alert('estimate fee response: ' + JSON.stringify(data));
+    if (data.result) {
+      info = data.result;
+      var bindata = "<b>Information about your card</b>: <br>&nbsp; &nbsp;" + info.card_brand + ", " + info.card_type + ", " + info.card_category +
+              ", " + info.issuing_org + ", " + (info.is_regulated ? "regulated bank" : "unregulated bank") + "";
+      bindata += "<br>Transaction fee for this card: <b>$" + info.estimated_fee + "</b>";
+      bindata += "<br>&nbsp; &nbsp;" + info.fee_tip;
+      //var infoDiv = document.getElementById("card_info");
+      $("#fee_info").html(bindata);
+
+    } else {
+      console.log("info not found for bin: " + card);
+      $("#fee_info").html("<br><br>");
+    }
+  }
+  document.addEventListener("DOMContentLoaded", function (e) {
+    $("#card_number").bind("keyup", cardNumberKeypressed);
+  }, false);
 
 
 
