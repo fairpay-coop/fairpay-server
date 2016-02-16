@@ -13,7 +13,17 @@ br
 br
 b Embed Flow Test
 table
-- for item in @embeds
-  tr
-    td
-      =link_to item.uuid, "/embed/#{item.uuid}"
+  - for item in @embeds
+    tr
+      td
+        =link_to item.uuid, "/embed/#{item.uuid}"
+
+
+br
+br
+b Iframe Test
+table
+  - for item in @embeds
+    tr
+      td
+        script src="/widgetjs?uuid=#{item.uuid}&amount=10.99" type="text/javascript" async=""

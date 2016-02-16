@@ -1,0 +1,151 @@
+(function (global) {
+
+  // add array index of for old browsers (IE<9)
+  if (!Array.prototype.indexOf) {
+    Array.prototype.indexOf = function (obj, start) {
+      var i, j;
+      i = start || 0;
+      j = this.length;
+      while (i < j) {
+        if (this[i] === obj) {
+          return i;
+        }
+        i++;
+      }
+      return -1;
+    };
+  }
+
+
+  function loadScript(src, onLoad) {
+    var script_tag = document.createElement('script');
+    script_tag.setAttribute("type", "text/javascript");
+    script_tag.setAttribute("src", src);
+
+    if (script_tag.readyState) {
+      script_tag.onreadystatechange = function () {
+        if (this.readyState == 'complete' || this.readyState == 'loaded') {
+          onLoad();
+        }
+      };
+    } else {
+      script_tag.onload = onLoad;
+    }
+    (document.getElementsByTagName("head")[0] || document.documentElement).appendChild(script_tag);
+  }
+
+  function loadCss(href) {
+    var link_tag = document.createElement('link');
+    link_tag.setAttribute("type", "text/css");
+    link_tag.setAttribute("rel", "stylesheet");
+    link_tag.setAttribute("href", href);
+    (document.getElementsByTagName("head")[0] || document.documentElement).appendChild(link_tag);
+  }
+
+
+
+  function createIframes() {
+
+    // make a global object to store stuff in
+    if (!global.Fairpay) {
+      global.Fairpay = {};
+    }
+
+    var Fairpay = global.Fairpay;
+
+    // To keep track of which widgets we have already processed
+    if (!Fairpay.processedScripts) {
+      Fairpay.processedScripts = [];
+    }
+
+    var processedScripts = Fairpay.processedScripts;
+
+    if (!Fairpay.styleTags) {
+      Fairpay.styleTags = [];
+    }
+
+    var scriptTags = document.getElementsByTagName('script');
+    var thisRequestUrl = '<%= raw(request.url) %>';
+
+    for (var i = 0; i < scriptTags.length; i++) {
+      var scriptTag = scriptTags[i];
+
+      // src matches the url of this request, and not processed it yet.
+      if (scriptTag.src == thisRequestUrl && processedScripts.indexOf(scriptTag) < 0) {
+
+        processedScripts.push(scriptTag);
+
+        // Create an iframe
+        iframe = document.createElement('iframe');
+        iframe.setAttribute('src', '<%= @iframe_src %>');
+        iframe.setAttribute('width', '460');
+        iframe.setAttribute('height', '380');
+        iframe.setAttribute('frameborder', '0');
+        iframe.setAttribute('scrolling', 'no');
+
+        div = document.createElement('div');
+        scriptTag.parentNode.replaceChild(div, scriptTag);
+        div.appendChild(iframe);
+        iframe.onload = function() {
+          Fairpay.widgetChannel = createChannel(iframe.contentWindow, "widget");
+          Fairpay.widgetChannel.bind("popup", function(trans, params) {
+            console.log("popup");
+            modal = picoModal({
+              content: '<iframe id="popup_iframe" src="' + params + '" height="500" width="592" scrolling="auto"/>',
+              bodyOverflow: false
+            });
+            modal.show();
+
+            popupIframe = document.getElementById('popup_iframe');
+            Fairpay.popupChannel = createChannel(popupIframe.contentWindow, "popup");
+            Fairpay.popupChannel.bind("auth_complete", function(trans, params) {
+              console.log("auth_complete");
+              modal.close(); // close the popup
+              iframe.contentWindow.location.reload(true); // reload the widget
+              return "BAR";
+            });
+            return "FOO";
+          });
+        };
+      }
+    }
+  }
+
+  function createChannel(window, scope) {
+    chan = Channel.build({
+      window: window,
+      debugOutput: 1,
+      origin: "*",
+      scope: scope,
+      onReady: function () {
+        console.log("Channel ready");
+      }
+    });
+
+    return chan;
+  }
+
+
+  function addClass(el, className) {
+    if (el.classList) {
+      el.classList.add(className);
+    } else {
+      el.className += ' ' + className;
+    }
+  }
+
+
+  console.log("Widget loader loaded");
+  loadScript("http://localhost:3000/jschannel.js", function() {
+    console.log("jschannel Loaded");
+    loadScript("http://localhost:3000/picoModal.js", function() {
+      console.log("picoModal Loaded");
+      createIframes();
+    });
+  });
+
+  //createIframes();
+
+
+
+})(this);
