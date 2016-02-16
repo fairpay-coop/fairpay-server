@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160211205721) do
+ActiveRecord::Schema.define(version: 20160216140001) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -73,6 +73,17 @@ ActiveRecord::Schema.define(version: 20160211205721) do
   end
 
   add_index "binbases", ["bin"], name: "index_binbases_on_bin", using: :btree
+
+  create_table "dwolla_tokens", force: :cascade do |t|
+    t.string   "access_token"
+    t.string   "refresh_token"
+    t.integer  "expires_in"
+    t.string   "scope"
+    t.string   "app_id"
+    t.string   "account_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
 
   create_table "embeds", force: :cascade do |t|
     t.string   "uuid"

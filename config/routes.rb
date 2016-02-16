@@ -15,6 +15,10 @@ Rails.application.routes.draw do
   get  '/api/v1/embed/:uuid/step1' => 'embed#step1'
   get  '/api/v1/embed/:uuid/step2' => 'embed#step2'
 
+  get  '/dwolla/auth' => 'dwolla#auth'
+  get  '/dwolla/oauth_complete' => 'dwolla#oauth_complete'
+
+
   get  'embed/:uuid' => 'pay#embed'
   get  'pay/:uuid' => 'pay#step1'
   post 'pay/:uuid/step1' => 'pay#step1_post'

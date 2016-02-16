@@ -50,7 +50,8 @@ gem 'grape-swagger-rails'
 
 # payment processors
 gem 'authorizenet'
-
+# gem 'dwolla_swagger', '~> 1.0', '>= 1.0.2'
+gem 'dwolla_v2', '~> 0.2'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
