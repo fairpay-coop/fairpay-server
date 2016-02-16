@@ -14,7 +14,7 @@ class AuthorizeNetService
     api_login_id = merchant_config.data['api_login_id']  #todo: use an indescriminant hash
     api_transaction_key = merchant_config.data['api_transaction_key']
     puts "api_login_id: #{api_login_id}"
-    @transaction = Transaction.new(api_login_id, api_transaction_key, :gateway => :sandbox)
+    @transaction = AuthorizeNet::API::Transaction.new(api_login_id, api_transaction_key, :gateway => :sandbox)
   end
 
 
@@ -34,7 +34,7 @@ class AuthorizeNetService
 
     else
       result_data = {result_code: response.messages.resultCode, result_text: response.messages.messages[0].text}
-      if response.transactionResponse
+      if response.transactionResponse && response.transactionResponse.errors
         result_data[:error_code] = response.transactionResponse.errors.errors[0].errorCode
         result_data[:error_text] = response.transactionResponse.errors.errors[0].errorText
       end

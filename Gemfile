@@ -56,6 +56,7 @@ gem 'dwolla_v2', '~> 0.2'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
+  gem 'seed-fu', '~> 2.3'
 end
 
 group :development do
