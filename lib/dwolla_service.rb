@@ -7,6 +7,9 @@
 class DwollaService
 
 
+  def self.instance
+    @@instance ||= DwollaService.new
+  end
 
   def initialize
     @endpoint = 'https://uat.dwolla.com'
@@ -30,9 +33,16 @@ class DwollaService
     @dwolla = DwollaV2::Client.new(id: @client_id, secret: @client_secret) do |optional_config|
       optional_config.environment = :sandbox
       optional_config.on_grant do |token|
-        p "dwollav2.on_grant - token: #{token}"
+        puts "dwollav2.on_grant - access token: #{token.access_token}, account id: #{token.account_id}"
         # YourTokenData.create! token
-        DwollaToken.create! token
+        existing = DwollaToken.find_by_account_id(token.account_id)
+        if existing
+          puts "existing token record id: #{existing.id}"
+          existing.update(access_token: token.access_token, refresh_token: token.refresh_token)
+          # DwollaToken.create! token
+        else
+          DwollaToken.create! token
+        end
       end
     end
 
@@ -94,9 +104,26 @@ class DwollaService
     #
   end
 
+  def refresh(expired_token)
+    token = @dwolla.auths.refresh expired_token
+    p token
+    token
+  end
+
+  def token_for_data(data)
+    @dwolla.tokens.new data
+  end
+
   def token_for_account_id(account_id)
     data = DwollaToken.find_by(account_id: account_id)
-    token = @dwolla.tokens.new data
+    # token = @dwolla.tokens.new data
+    token_for_data(data)
+  end
+
+  def token_for_profile_id(profile_id)
+    data = DwollaToken.find_by(profile_id: profile_id)
+    # token = @dwolla.tokens.new data
+    token_for_data(data)
   end
 
   # handy for console testing
@@ -116,7 +143,7 @@ class DwollaService
   end
 
 
-  def send(token, funding_source, destination, amount)
+  def make_payment(token, funding_source, destination, amount)
     payload = {
         _links: {
             destination: {href: destination},

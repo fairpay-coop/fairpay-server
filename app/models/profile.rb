@@ -9,5 +9,15 @@ class Profile < ActiveRecord::Base
 
   has_many :merchant_configs
   has_many :embeds
+  has_one :dwolla_token
+
+
+  def has_dwolla_auth
+    dwolla_token.present?
+  end
+
+  # def dwolla_token
+  #   # DwollaService.instance.token_for_profile_id(id)
+  # end
 
 end

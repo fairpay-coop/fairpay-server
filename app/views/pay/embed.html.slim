@@ -33,7 +33,7 @@ form id="step1_form"
 
 br
 br
-|Payment - Card:
+b Payment - Card:
 form id="card_form"
   input type="hidden" name="embed_uuid" value="#{@embed.uuid}"
   input type="hidden" id="card_amount" name="amount"
@@ -66,6 +66,12 @@ form id="card_form"
   /br
 
   input id="card_submit" type="submit" value="Submit"
+
+/br
+/br
+/b Payment - Dwolla
+/= link_to 'authorize', "/dwolla/auth?t=xxx"
+
 
 /br
 /br

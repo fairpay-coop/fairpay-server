@@ -18,9 +18,14 @@ class PayController < ApplicationController
     email = params[:email]
     name = params[:name]
 
+    payment_type = params[:payment_type]
+
     transaction = embed.step1(email, name, amount)
 
-    redirect_to "/pay/#{embed.uuid}/step2/#{transaction.uuid}"
+    step2_uri = "/pay/#{embed.uuid}/step2/#{transaction.uuid}?payment_type=#{payment_type}"
+    session[:step2_uri] = step2_uri
+
+    redirect_to step2_uri #"/pay/#{embed.uuid}/step2/#{transaction.uuid}?payment_type=#{payment_type}" #, {payment_type: payment_type}
   end
 
 
@@ -34,6 +39,21 @@ class PayController < ApplicationController
     transaction = embed.step2(params)
     redirect_to "/pay/#{embed.uuid}/thanks/#{transaction.uuid}"
   end
+
+  def pay_via_dwolla
+    # transaction_uuid = params[:transaction_uuid]
+    # p "t uuid: #{transaction_uuid}"
+    # transaction = Transaction.find_by(uuid: transaction_uuid)
+    # raise "transaction not found for uuid: #{transaction_uuid}"  unless transaction
+    # # transaction.payor.dwolla_token.make_payment(transaction.payee.dwolla_token, transaction.amount)
+    # transaction.pay_via_dwolla
+
+    embed = Embed.by_uuid(params[:uuid])
+    transaction = embed.pay_via_dwolla(params)
+
+    redirect_to "/pay/#{embed.uuid}/thanks/#{transaction.uuid}"
+  end
+
 
   def thanks
     @embed = Embed.by_uuid(params[:uuid])

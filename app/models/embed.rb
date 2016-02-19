@@ -42,6 +42,7 @@ class Embed < ActiveRecord::Base
     merchant_config_id = params[:merchant_config_id]
 
     transaction = Transaction.by_uuid(transaction_uuid)
+
     # merchant_config = MerchantConfig.find(merchant_config_id)
     #todo: resolve based on 'payment_type' param
     merchant_config = transaction.embed.merchant_configs.first
@@ -61,5 +62,16 @@ class Embed < ActiveRecord::Base
     transaction
   end
 
+  def pay_via_dwolla(params)
+    transaction_uuid = params[:transaction_uuid]
+    # merchant_config_id = params[:merchant_config_id]
+
+    transaction = Transaction.by_uuid(transaction_uuid)
+    transaction.payor.dwolla_token.make_payment(transaction.payee.dwolla_token, transaction.base_amount)
+    paid_amount = transaction.base_amount
+    estimated_fee = 0.25
+    transaction.update!(status: 'completed', paid_amount: paid_amount, estimated_fee: estimated_fee)
+    transaction
+  end
 
 end

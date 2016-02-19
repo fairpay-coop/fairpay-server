@@ -8,42 +8,52 @@ br
 |payee: #{@transaction.payee.name}
 br
 
-script src="http://code.jquery.com/jquery-1.11.3.min.js"
-
-form id="step2_form" method="post" action="/pay/#{@embed.uuid}/step2"
-  = hidden_field_tag :authenticity_token, form_authenticity_token
-  = hidden_field_tag :embed_uuid, @embed.uuid
-  = hidden_field_tag :transaction_uuid, @transaction.uuid
-  = hidden_field_tag :merchant_config_id, @embed.merchant_configs.first.id
-  /= hidden_field_tag :amount, @transaction.amount
-  input type="hidden" id="amount" name="amount" value="#{@transaction.base_amount}"
-
-  b Amount: #{@transaction.base_amount}
+- if params[:payment_type] == 'dwolla'
+  b Dwolla
   br
+  - if @transaction.payor.has_dwolla_auth
+    = link_to "confirm payment (authorization present)", "/pay/#{@embed.uuid}/pay_via_dwolla/#{@transaction.uuid}"
+  - else
+    = link_to "authorize", "/dwolla/auth?t=#{@transaction.uuid}"
 
-  div id="card_info"
+- if params[:payment_type] == 'authorizenet'
 
-  |Card Number:
-  input type="text" class="recalc" id="card_number" name="card_number" value="4242424242424242"
-  br
-  |Card Exp (mmyy):
-  input type="text" name="card_mmyy" value="1216"
-  br
-  |Card CVV:
-  input type="text" name="card_cvv" value="123"
-  br
-  |Billing Zip:
-  input type="text" name="billing_zip" value="94102"
-  br
-  |Charge Description:
-  input type="text" name="description" value="test"
-  br
+  script src="http://code.jquery.com/jquery-1.11.3.min.js"
 
-  input id="step2_submit" type="submit" value="Submit"
+  form id="step2_form" method="post" action="/pay/#{@embed.uuid}/step2"
+    = hidden_field_tag :authenticity_token, form_authenticity_token
+    = hidden_field_tag :embed_uuid, @embed.uuid
+    = hidden_field_tag :transaction_uuid, @transaction.uuid
+    = hidden_field_tag :merchant_config_id, @embed.merchant_configs.first.id
+    /= hidden_field_tag :amount, @transaction.amount
+    input type="hidden" id="amount" name="amount" value="#{@transaction.base_amount}"
+
+    b Amount: #{@transaction.base_amount}
+    br
+
+    div id="card_info"
+
+    |Card Number:
+    input type="text" class="recalc" id="card_number" name="card_number" value="4242424242424242"
+    br
+    |Card Exp (mmyy):
+    input type="text" name="card_mmyy" value="1216"
+    br
+    |Card CVV:
+    input type="text" name="card_cvv" value="123"
+    br
+    |Billing Zip:
+    input type="text" name="billing_zip" value="94102"
+    br
+    |Charge Description:
+    input type="text" name="description" value="test"
+    br
+
+    input id="step2_submit" type="submit" value="Submit"
 
 
-javascript:
-  document.addEventListener( "DOMContentLoaded", function(e) {
-    //require('public/js/card').registerHooks()
-    Card.registerHooks()
-  }, false);
+  javascript:
+    document.addEventListener( "DOMContentLoaded", function(e) {
+      //require('public/js/card').registerHooks()
+      Card.registerHooks()
+    }, false);

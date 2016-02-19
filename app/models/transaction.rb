@@ -37,4 +37,11 @@ class Transaction < ActiveRecord::Base
   end
 
 
+  #todo: think more about best encapsulation layering - for now lives in Embed
+  # def pay_via_dwolla
+  #   payor.dwolla_token.make_payment(payee.dwolla_token, base_amount)
+  #   transaction.update!(status: 'completed', paid_amount: paid_amount, estimated_fee: estimated_fee)
+  #
+  # end
+
 end

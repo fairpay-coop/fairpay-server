@@ -17,6 +17,7 @@ Rails.application.routes.draw do
 
   get  '/dwolla/auth' => 'dwolla#auth'
   get  '/dwolla/oauth_complete' => 'dwolla#oauth_complete'
+  get  '/dwolla/make_payment' => 'dwolla#make_payment'
 
 
   get  'embed/:uuid' => 'pay#embed'
@@ -24,6 +25,8 @@ Rails.application.routes.draw do
   post 'pay/:uuid/step1' => 'pay#step1_post'
   get  'pay/:uuid/step2/:transaction_uuid' => 'pay#step2'
   post 'pay/:uuid/step2' => 'pay#step2_post'
+  get  'pay/:uuid/pay_via_dwolla/:transaction_uuid' => 'pay#pay_via_dwolla'
+
   get  'pay/:uuid/thanks/:transaction_uuid' => 'pay#thanks'
 
   # API

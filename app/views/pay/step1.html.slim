@@ -21,6 +21,13 @@ form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1"
   /|Monthly:
   /input type="checkbox" name="monthly" value="true"
   /br
+  |Authorize.net:
+  = radio_button_tag(:payment_type, "authorizenet")
+  br
+  |Dwolla:
+  = radio_button_tag(:payment_type, "dwolla")
+  br
+
   input id="step1Submit" type="submit" value="Next"
 
 
