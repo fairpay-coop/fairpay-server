@@ -41,6 +41,7 @@ br
 br
 
 
+script src="http://code.jquery.com/jquery-1.11.3.min.js"
 
 b Debit/Credit Card
 br
@@ -49,11 +50,10 @@ br
 div id="fee_info"
   | $#{card_fee_range[0]} - #{card_fee_range[1]} (depends on card type)
 
-script src="http://code.jquery.com/jquery-1.11.3.min.js"
+div id="errorMessage"
 
-
-
-form id="card_form" method="post" action="/pay/#{@embed.uuid}/step2"
+form id="card_form"
+  /method="post" action="/pay/#{@embed.uuid}/step2"
   = hidden_field_tag :authenticity_token, form_authenticity_token
   = hidden_field_tag :embed_uuid, @embed.uuid
   = hidden_field_tag :transaction_uuid, @transaction.uuid
@@ -82,6 +82,12 @@ form id="card_form" method="post" action="/pay/#{@embed.uuid}/step2"
 
   input id="step2_submit" type="submit" value="Pay with Card"
 
+
+br
+br
+|Status:
+div id="paymentStatus"
+br
 
 //javascript:
 //  document.addEventListener( "DOMContentLoaded", function(e) {
@@ -139,3 +145,34 @@ javascript:
   document.addEventListener("DOMContentLoaded", function (e) {
     $("#card_number").bind("keyup", cardNumberKeypressed);
   }, false);
+
+
+  $("#card_form").submit(handleCard);
+
+  function handleCard() {
+    //alert('handleCard');
+    var form = document.getElementById("card_form");
+    var data = {};
+    FairPayApi.copyFormValues(data, form, ['embed_uuid', 'transaction_uuid', 'payment_type', 'amount', 'card_number', 'card_mmyy', 'card_cvv', 'billing_zip']);
+    FairPayApi.submitCard(data, handleCardResponse);
+    return false;
+  }
+
+  function handleCardResponse(data) {
+    //alert('step2 response: ' + JSON.stringify(data));
+    if (data.result) {
+      var status = data.result.status;
+      $('#paymentStatus').html(status);
+      $('#errorMessage').html('');      //var linkUrl = data.result.statusLink;
+      //var linkHtml = '<a href="' + linkUrl + '">' + linkUrl + '</a>';
+      //$('#statusLink').html(linkHtml);
+      if (data.result.redirect_url) {
+        window.location = data.result.redirect_url;
+      }
+    } else if (data.error) {
+      //alert('error resp: ' + JSON.stringify(data.error));
+      $('#paymentStatus').html('error');
+      $('#errorMessage').html(data.error.message);
+      //$('#errorStack').html('<pre>' + data.error.stack + '</pre>');
+    }
+  }

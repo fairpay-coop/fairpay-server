@@ -35,7 +35,11 @@ class EmbedController < ApplicationController
       embed = Embed.by_uuid(params[:uuid])
 
       transaction = embed.step2(params)
-      result = {status: transaction.status, paid_amount: transaction.paid_amount, estimated_fee: transaction.estimated_fee}
+      result = {status: transaction.status,
+                paid_amount: transaction.paid_amount,
+                estimated_fee: transaction.estimated_fee,
+                redirect_url: "/pay/#{params[:uuid]}/thanks/#{params[:transaction_uuid]}"
+      }
       puts "step2 - result: #{result}"
       result
     end
