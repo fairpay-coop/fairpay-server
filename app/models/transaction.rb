@@ -3,13 +3,18 @@ class Transaction < ActiveRecord::Base
   # create_table :transactions do |t|
   #   t.string :uuid, index: true
   #   t.string :kind
+  #   t.string :status
   #   t.references :payor, index: true
   #   t.references :payee, index: true
   #   t.references :embed, foreign_key: true
   #   t.references :payment_source, foreign_key: true
   #   t.references :merchant_config, foreign_key: true
-  #   t.references :parent, index: true, foreign_key: true  - used to relate a recurrent payment or refund to original transaction
-  #   t.decimal :amount
+  #   t.references :parent, index: true
+  #   t.decimal :base_amount
+  #   t.decimal :estimated_fee
+  #   t.decimal :surcharged_fee
+  #   t.decimal :platform_fee
+  #   t.decimal :paid_amount
   #   t.string :description
   #   t.json :data
   #   t.string :recurrence
@@ -36,6 +41,10 @@ class Transaction < ActiveRecord::Base
     self.find_by(uuid: uuid)
   end
 
+
+  def card_fee_range
+    embed.card_payment_service.calculate_fee(base_amount)
+  end
 
   #todo: think more about best encapsulation layering - for now lives in Embed
   # def pay_via_dwolla

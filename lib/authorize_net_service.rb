@@ -9,12 +9,11 @@ class AuthorizeNetService
 
 
   def initialize(merchant_config)
-    # api_login_id = '9vkW3C6G'
-    # api_transaction_key = '853xupQE6m5G8R5E'
     api_login_id = merchant_config.data['api_login_id']  #todo: use an indescriminant hash
     api_transaction_key = merchant_config.data['api_transaction_key']
+    gateway = merchant_config.data['gateway']&.to_sym
     puts "api_login_id: #{api_login_id}"
-    @transaction = AuthorizeNet::API::Transaction.new(api_login_id, api_transaction_key, :gateway => :sandbox)
+    @transaction = AuthorizeNet::API::Transaction.new(api_login_id, api_transaction_key, :gateway => gateway)
   end
 
 
@@ -44,6 +43,18 @@ class AuthorizeNetService
       raise message
     end
 
+  end
+
+
+  def calculate_fee(amount, params = nil)
+    unless params.present?
+      Binbase.fee_range(amount)  # note, returns an array with low/high range when params are missing
+    else
+      card = params[:card_number]
+      bin = card ? card[0..5] : nil
+      data = estimate_fee(bin, amount)
+      fee = data[:estimated_fee]
+    end
   end
 
 

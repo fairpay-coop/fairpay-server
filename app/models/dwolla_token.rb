@@ -13,16 +13,25 @@ class DwollaToken < ActiveRecord::Base
 
   belongs_to :profile
 
+  def stale_token?
+    Time.now.ago(1.hour) > self.updated_at
+  end
 
   def token
+    refresh  if stale_token?
+    raw_token
+  end
+
+  def raw_token
     DwollaService.instance.token_for_data(self)
   end
 
   def refresh
-    refreshed = DwollaService.instance.refresh(token)
+    refreshed = DwollaService.instance.refresh(raw_token)
     self.update!(access_token: refreshed.access_token)
     # need to make sure both local and persisted instances are updated
     self.access_token = refreshed.access_token
+    self.updated_at = Time.now
     # self.save!
   end
 
@@ -41,9 +50,9 @@ class DwollaToken < ActiveRecord::Base
 
   def make_payment(payee_dwolla_token, amount)
     # access tokens expire after 1 hour.  for now assume always needs refreshing before any transaction
-    self.refresh
+    # self.refresh
     puts "access token before refresh: #{payee_dwolla_token.access_token}"
-    payee_dwolla_token.refresh
+    # payee_dwolla_token.refresh
     puts "access token after refresh: #{payee_dwolla_token.access_token}"
     DwollaService.instance.make_payment(self.token, self.default_funding_source_uri, payee_dwolla_token.account_uri, amount)
   end

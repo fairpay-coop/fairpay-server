@@ -110,8 +110,8 @@ class DwollaService
 
   def make_payment(payor_token, payee_token, funding_source_id, amount)
     #todo: only refresh tokens if needed
-    payor_token.refresh
-    payee_token.refresh
+    # payor_token.refresh
+    # payee_token.refresh
 
     destination = payee_token.account_uri
     funding_source = funding_source_uri_for_id(funding_source_id)
@@ -126,6 +126,10 @@ class DwollaService
     payor_token.token.post '/transfers', payload
   end
 
+
+  def calculate_fee(amount, params)
+    0.0
+  end
 
 
   ##

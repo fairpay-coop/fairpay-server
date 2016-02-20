@@ -27,6 +27,11 @@ class Embed < ActiveRecord::Base
   end
 
 
+  def card_payment_service
+    merchant_config = merchant_configs.find_by(kind: 'authorizenet')
+    payment_service = merchant_config.payment_service
+  end
+
   def step1(email, name, amount)
     payor = Profile.find_by(email: email)
     unless payor
