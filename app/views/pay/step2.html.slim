@@ -61,6 +61,8 @@ form id="card_form" method="post" action="/pay/#{@embed.uuid}/step2"
   = hidden_field_tag :merchant_config_id, @embed.merchant_configs.first.id
   /= hidden_field_tag :amount, @transaction.amount
   input type="hidden" id="amount" name="amount" value="#{@transaction.base_amount}"
+  /todo: better way to pass server rendered values into js logic?
+  input type="hidden" id="default_fee_info" value="$#{card_fee_range[0]} - #{card_fee_range[1]} (depends on card type)"
 
   |Card Number:
   input type="text" id="card_number" name="card_number" value=""
@@ -90,7 +92,6 @@ form id="card_form" method="post" action="/pay/#{@embed.uuid}/step2"
 javascript:
 
   var lastBin = '';
-  //var amount = 0;
 
   function cardNumberKeypressed(event) {
     //alert('cardNumberKeypressed: ' + event);
@@ -104,6 +105,12 @@ javascript:
         lastBin = newBin;
         data = {bin: newBin, amount: amount};
         FairPayApi.estimateFee(data, handleEstimateFeeResponse);
+      }
+    } else {
+      if (lastBin != '') {
+        var default_fee_info = $('#default_fee_info').val();
+        $("#fee_info").html(default_fee_info);
+        lastBin = ''
       }
     }
   }
