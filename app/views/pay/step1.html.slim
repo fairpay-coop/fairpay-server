@@ -10,13 +10,13 @@ form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1"
   = hidden_field_tag :authenticity_token, form_authenticity_token
   /input type="hidden" name="embed_uuid" value="#{@embed.id}"
   |Name:
-  input type="text" name="name" value="john doe"
+  input type="text" name="name" value=""
   br
   |Email:
-  input type="text" name="email" value="john@doe.com"
+  input type="text" name="email" value=""
   br
   |Amount:
-  input id="step1Amount" type="text" name="amount" value="12"
+  input id="step1Amount" type="text" name="amount" value=""
   br
   /|Monthly:
   /input type="checkbox" name="monthly" value="true"

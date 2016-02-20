@@ -40,36 +40,53 @@ class Embed < ActiveRecord::Base
   def step2(params)
     transaction_uuid = params[:transaction_uuid]
     merchant_config_id = params[:merchant_config_id]
+    payment_type = params[:payment_type]
 
-    transaction = Transaction.by_uuid(transaction_uuid)
 
-    # merchant_config = MerchantConfig.find(merchant_config_id)
-    #todo: resolve based on 'payment_type' param
-    merchant_config = transaction.embed.merchant_configs.first
 
-    estimated_fee = transaction.base_amount * 0.03 + 0.30
-    paid_amount = transaction.base_amount
+    case payment_type
+      when 'dwolla'
+        pay_via_dwolla(params)
 
-    data = params.slice(:card_number, :card_mmyy, :card_cvv)
-    data[:amount] = paid_amount
-    puts "data: #{data}"
+      when 'card'
+        transaction = Transaction.by_uuid(transaction_uuid)
+        # merchant_config = MerchantConfig.find(merchant_config_id)
+        #todo: resolve based on 'payment_type' param
+        merchant_config = transaction.embed.merchant_configs.first
 
-    payment_service = merchant_config.payment_service
-    payment_service.charge(data)
+        estimated_fee = transaction.base_amount * 0.03 + 0.30
+        paid_amount = transaction.base_amount
 
-    transaction.update!(status: 'completed', paid_amount: paid_amount, estimated_fee: estimated_fee)
+        data = params.slice(:card_number, :card_mmyy, :card_cvv)
+        data[:amount] = paid_amount
+        puts "data: #{data}"
 
-    transaction
+        payment_service = merchant_config.payment_service
+        payment_service.charge(data)
+        transaction.update!(status: 'completed', paid_amount: paid_amount, estimated_fee: estimated_fee)
+        transaction
+
+      else
+        raise "unexpected payment type: #{payment_type}"
+    end
+
   end
 
   def pay_via_dwolla(params)
     transaction_uuid = params[:transaction_uuid]
     # merchant_config_id = params[:merchant_config_id]
+    funding_source_id = params[:funding_source_id]
 
     transaction = Transaction.by_uuid(transaction_uuid)
-    transaction.payor.dwolla_token.make_payment(transaction.payee.dwolla_token, transaction.base_amount)
-    paid_amount = transaction.base_amount
-    estimated_fee = 0.25
+    estimated_fee = 0.00
+    paid_amount = transaction.base_amount + estimated_fee
+
+    dwolla_service = DwollaService.instance
+    # transaction.payor.dwolla_token.refresh
+    # transaction.payee.dwolla_token.refresh
+    dwolla_service.make_payment(transaction.payor.dwolla_token, transaction.payee.dwolla_token, funding_source_id, paid_amount)
+
+    # transaction.payor.dwolla_token.make_payment(transaction.payee.dwolla_token, transaction.base_amount)
     transaction.update!(status: 'completed', paid_amount: paid_amount, estimated_fee: estimated_fee)
     transaction
   end

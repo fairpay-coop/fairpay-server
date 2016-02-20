@@ -136,14 +136,35 @@ class DwollaService
     puts "raw: #{raw.to_json}"
     result = {}
     raw[:_embedded][:'funding-sources'].each do |data|
-      p "data: #{data}"
-      result[data[:name]] = data[:_links][:self][:href]
+      puts "data: #{data}"
+      name = data[:name]
+      id = data[:id]
+      href = data[:_links][:self][:href]
+      if name == 'Balance'
+        details = token.get "funding-sources/#{id}"
+        puts "balance details: #{details.to_json}"
+        balance_obj = details[:balance]
+        name = "Dwolla Balance: #{balance_obj[:value]} #{balance_obj[:currency]}"  if balance_obj
+      end
+
+      result[id] = name
     end
     result
   end
 
+  def funding_source_uri_for_id(id)
+    "https://api-uat.dwolla.com/funding-sources/#{id}"
+  end
 
-  def make_payment(token, funding_source, destination, amount)
+
+  def make_payment(payor_token, payee_token, funding_source_id, amount)
+    #todo: only refresh tokens if needed
+    payor_token.refresh
+    payee_token.refresh
+
+    destination = payee_token.account_uri
+    funding_source = funding_source_uri_for_id(funding_source_id)
+
     payload = {
         _links: {
             destination: {href: destination},
@@ -151,8 +172,20 @@ class DwollaService
         },
         amount: {currency: 'USD', value: amount}
     }
-    token.post '/transfers', payload
+    payor_token.token.post '/transfers', payload
   end
+
+
+  # def make_payment(token, funding_source, destination, amount)
+  #   payload = {
+  #       _links: {
+  #           destination: {href: destination},
+  #           source: {href: funding_source}
+  #       },
+  #       amount: {currency: 'USD', value: amount}
+  #   }
+  #   token.post '/transfers', payload
+  # end
 
 
 end

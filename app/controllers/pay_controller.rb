@@ -40,6 +40,13 @@ class PayController < ApplicationController
     redirect_to "/pay/#{embed.uuid}/thanks/#{transaction.uuid}"
   end
 
+  def step2_dwolla_post
+    embed = Embed.by_uuid(params[:uuid])
+    transaction = embed.step2(params)
+    redirect_to "/pay/#{embed.uuid}/thanks/#{transaction.uuid}"
+  end
+
+
   def pay_via_dwolla
     # transaction_uuid = params[:transaction_uuid]
     # p "t uuid: #{transaction_uuid}"
