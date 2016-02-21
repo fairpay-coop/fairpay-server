@@ -76,4 +76,9 @@ class PayController < ApplicationController
     render json: result
   end
 
+
+  def paypal
+
+  end
+
 end

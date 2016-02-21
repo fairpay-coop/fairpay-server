@@ -56,8 +56,17 @@ gem 'grape-swagger-rails'
 
 # payment processors
 gem 'authorizenet'
+# note the 'dwolla_swagger' version api looks like it's still half-baked
 # gem 'dwolla_swagger', '~> 1.0', '>= 1.0.2'
 gem 'dwolla_v2', '~> 0.2'
+
+gem 'paypal-sdk-merchant'
+# other paypal examples dependencies
+gem 'haml'
+gem 'simple_form'
+# not compatible w/ rails 4
+# gem 'merchant_samples', :git => "https://github.com/paypal/merchant-sdk-ruby.git", :group => :development
+
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

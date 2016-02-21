@@ -1,3 +1,11 @@
+MerchantSamples::Engine.routes.draw do
+  post  "merchant/ipn_notify" => "merchant#ipn_notify", :as => :ipn_notify
+  match "merchant(/:action)",  :controller => "merchant", :as => :merchant, via: :all
+
+  root :to => "merchant#index"
+end
+
+
 Rails.application.routes.draw do
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
@@ -20,6 +28,9 @@ Rails.application.routes.draw do
   get  '/dwolla/make_payment' => 'dwolla#make_payment'
 
 
+  get  'pay/paypal' => 'pay#paypal'
+
+
   get  'embed/:uuid' => 'pay#embed'
   get  'pay/:uuid' => 'pay#step1'
   post 'pay/:uuid/step1' => 'pay#step1_post'
@@ -32,5 +43,17 @@ Rails.application.routes.draw do
   # API
   mount API => '/api'
   mount GrapeSwaggerRails::Engine => '/apidoc'
+
+  # paypal examples
+  # mount MerchantSamples::Engine => "/paypalsamples" if Rails.env.development?
+
+  # get "paypal_samples(/:action)",  :controller => "paypal_samples", :as => :paypal_samples
+  # get "merchant(/:action)",  :controller => "merchant_samples/paypal_samples", :as => :merchant
+  # post  "merchant/ipn_notify" => "merchant_samples/merchant#ipn_notify", :as => :ipn_notify
+  # get "merchant(/:action)",  :controller => "merchant_samples/merchant", :as => :merchant
+
+  # get ':controller(/:action(/:id))'
+
+  mount MerchantSamples::Engine => "/samples"  #if Rails.env.development?
 
 end
