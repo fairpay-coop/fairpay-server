@@ -19,6 +19,7 @@ class Transaction < ActiveRecord::Base
   #   t.json :data
   #   t.string :recurrence
   #   t.timestamps null: false
+  #   t.strting :payment_type
 
 
   belongs_to :payor, class_name: 'Profile'

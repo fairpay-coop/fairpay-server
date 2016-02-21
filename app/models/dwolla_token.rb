@@ -9,6 +9,7 @@ class DwollaToken < ActiveRecord::Base
   #   t.string :app_id
   #   t.string :account_id
   #   t.timestamps null: false
+  #   t.reference :profile, index: true, foreign_key: true
 
 
   belongs_to :profile
