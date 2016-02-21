@@ -22,7 +22,7 @@ gem 'jbuilder', '~> 2.0'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 
-gem 'dotenv-rails', :groups => [:development, :test]
+gem 'dotenv-rails' #, :groups => [:development, :test]
 # could be enabled if needed
 # gem 'dotenv-rails', :require => 'dotenv/rails-now'
 # gem 'gem-that-requires-env-variables'
