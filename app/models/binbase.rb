@@ -47,7 +47,7 @@ class Binbase < ActiveRecord::Base
     unless binbase
       # placeholder default fee calculation
       fee = apply_fee_rate(amount, 0.22, 2.5)
-      {estimated_fee: fee}
+      return {estimated_fee: fee}
     end
 
     if binbase.card_brand == 'AMEX'
