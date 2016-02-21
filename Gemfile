@@ -85,3 +85,5 @@ group :development do
   gem "binding_of_caller"
 end
 
+
+gem 'rails_12factor', group: :production
