@@ -29,7 +29,9 @@ Rails.application.routes.draw do
 
 
   get  'pay/paypal' => 'pay#paypal'
-
+  # get  'paypal/:action', :controller => 'paypal'
+  get  'paypal/checkout/:amount' => 'paypal#checkout', as: :paypal_checkout
+  get  'paypal/complete_payment' => 'paypal#complete_payment', as: :paypal_complete_payment
 
   get  'embed/:uuid' => 'pay#embed'
   get  'pay/:uuid' => 'pay#step1'

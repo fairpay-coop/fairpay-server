@@ -8,6 +8,45 @@ module MerchantSamples
       redirect_to :action => :set_express_checkout
     end
 
+
+    def set_express_checkout
+      @set_express_checkout = api.build_set_express_checkout(params[:SetExpressCheckoutRequestType] || default_api_value)
+
+      # Find Item Total and Order Total
+      details = @set_express_checkout.SetExpressCheckoutRequestDetails
+      pay = details.PaymentDetails[0]
+      pay.ItemTotal  = pay.PaymentDetailsItem[0].Amount
+      pay.OrderTotal.currencyID = pay.ItemTotal.currencyID
+      pay.OrderTotal.value = pay.ItemTotal.value.to_f + pay.ShippingTotal.value.to_f
+
+      # Notify url
+      pay.NotifyURL ||= ipn_notify_url
+
+      # Return and cancel url
+      details.ReturnURL ||= merchant_url(:do_express_checkout_payment)
+      details.CancelURL ||= merchant_url(:set_express_checkout)
+
+      @set_express_checkout_response = api.set_express_checkout(@set_express_checkout) if request.post?
+    end
+
+
+    def get_express_checkout_details
+      @get_express_checkout_details = api.build_get_express_checkout_details(params[:GetExpressCheckoutDetailsRequestType] || default_api_value)
+      @get_express_checkout_details_response = api.get_express_checkout_details(@get_express_checkout_details) if request.post?
+    end
+
+
+    def do_express_checkout_payment
+      @do_express_checkout_payment = api.build_do_express_checkout_payment(params[:DoExpressCheckoutPaymentRequestType] || default_api_value)
+      details = @do_express_checkout_payment.DoExpressCheckoutPaymentRequestDetails
+      details.Token   = params[:token]    if params[:token]
+      details.PayerID = params[:PayerID]  if params[:PayerID]
+      details.PaymentDetails[0].NotifyURL ||= ipn_notify_url
+      @do_express_checkout_payment_response = api.do_express_checkout_payment(@do_express_checkout_payment) if request.post?
+    end
+
+
+
     def ipn_notify
       if api.ipn_valid?(request.raw_post)
         logger.info("IPN message: VERIFIED")
@@ -143,15 +182,6 @@ module MerchantSamples
       @get_pal_details_response = api.get_pal_details(@get_pal_details) if request.post?
     end
 
-    def do_express_checkout_payment
-      @do_express_checkout_payment = api.build_do_express_checkout_payment(params[:DoExpressCheckoutPaymentRequestType] || default_api_value)
-      details = @do_express_checkout_payment.DoExpressCheckoutPaymentRequestDetails
-      details.Token   = params[:token]    if params[:token]
-      details.PayerID = params[:PayerID]  if params[:PayerID]
-      details.PaymentDetails[0].NotifyURL ||= ipn_notify_url
-      @do_express_checkout_payment_response = api.do_express_checkout_payment(@do_express_checkout_payment) if request.post?
-    end
-
     def do_uatp_express_checkout_payment
       @do_uatp_express_checkout_payment = api.build_do_uatp_express_checkout_payment(params[:DoUATPExpressCheckoutPaymentRequestType] || default_api_value)
       @do_uatp_express_checkout_payment_response = api.do_uatp_express_checkout_payment(@do_uatp_express_checkout_payment) if request.post?
@@ -187,34 +217,9 @@ module MerchantSamples
       @get_incentive_evaluation_response = api.get_incentive_evaluation(@get_incentive_evaluation) if request.post?
     end
 
-    def set_express_checkout
-      @set_express_checkout = api.build_set_express_checkout(params[:SetExpressCheckoutRequestType] || default_api_value)
-
-      # Find Item Total and Order Total
-      details = @set_express_checkout.SetExpressCheckoutRequestDetails
-      pay = details.PaymentDetails[0]
-      pay.ItemTotal  = pay.PaymentDetailsItem[0].Amount
-      pay.OrderTotal.currencyID = pay.ItemTotal.currencyID
-      pay.OrderTotal.value = pay.ItemTotal.value.to_f + pay.ShippingTotal.value.to_f
-
-      # Notify url
-      pay.NotifyURL ||= ipn_notify_url
-
-      # Return and cancel url
-      details.ReturnURL ||= merchant_url(:do_express_checkout_payment)
-      details.CancelURL ||= merchant_url(:set_express_checkout)
-
-      @set_express_checkout_response = api.set_express_checkout(@set_express_checkout) if request.post?
-    end
-
     def execute_checkout_operations
       @execute_checkout_operations = api.build_execute_checkout_operations(params[:ExecuteCheckoutOperationsRequestType] || default_api_value)
       @execute_checkout_operations_response = api.execute_checkout_operations(@execute_checkout_operations) if request.post?
-    end
-
-    def get_express_checkout_details
-      @get_express_checkout_details = api.build_get_express_checkout_details(params[:GetExpressCheckoutDetailsRequestType] || default_api_value)
-      @get_express_checkout_details_response = api.get_express_checkout_details(@get_express_checkout_details) if request.post?
     end
 
     def do_direct_payment

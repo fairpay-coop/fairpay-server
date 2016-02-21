@@ -89,6 +89,11 @@ br
 div id="paymentStatus"
 br
 
+br
+b PayPal
+br
+= link_to "Pay via PayPal", "/paypal/checkout/#{@transaction.base_amount}"
+
 //javascript:
 //  document.addEventListener( "DOMContentLoaded", function(e) {
 //    //require('public/js/card').registerHooks()
