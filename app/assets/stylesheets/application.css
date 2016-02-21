@@ -11,8 +11,4 @@
  * file per style scope.
  *
  *= require_tree .
- *= require_self
  */
-
-/* FIXME figure out why this is busting for production env */
-/*@import "bulma";*/

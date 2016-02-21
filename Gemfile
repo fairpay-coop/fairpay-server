@@ -10,6 +10,11 @@ gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 
+# JS 6
+gem 'sprockets-rails'
+gem 'sprockets', '>= 3.0.0'
+gem 'sprockets-es6'
+
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
@@ -38,7 +43,7 @@ gem 'dotenv-rails' #, :groups => [:development, :test]
 # gem 'capistrano-rails', group: :development
 
 # Use Bulma as html/css foundation
-gem "bulma-rails"
+gem "bulma-rails", '0.0.11'
 
 # Use devise for authentication
 gem 'devise'
