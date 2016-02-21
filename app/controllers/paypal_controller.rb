@@ -4,50 +4,26 @@ class PaypalController < ApplicationController
 
 
   def checkout
-    amount = params[:amount]
 
-    session[:amount] = amount
+    transaction_uuid = params[:t]
+    puts "t uuid: #{transaction_uuid}"
+    transaction = Transaction.by_uuid(transaction_uuid)
 
-    # # Notify url
-    # pay.NotifyURL ||= ipn_notify_url
-    #
-    # # Return and cancel url
-    # details.ReturnURL ||= merchant_url(:do_express_checkout_payment)
-    # details.CancelURL ||= merchant_url(:set_express_checkout)
+    amount = transaction.base_amount
 
-    set_express_checkout = api.build_set_express_checkout(
-        {
-            :SetExpressCheckoutRequestDetails => {
-                :ReturnURL => paypal_complete_payment_url,
-                :CancelURL => root_url,
-                :PaymentDetails =>
-                    [{
-                         :OrderTotal => {:value => amount},
-                         :ItemTotal => {:value => amount},
-                         :ButtonSource => "PayPal_SDK",
-                         # :NotifyURL => "http://local.fairpay.coop:3000/samples/merchant/ipn_notify",
-                         :PaymentDetailsItem => [{:Amount => {:value => amount}}]
-                     }]
-            }
-        }
-    )
+    # better way to add query params to an url?
+    return_url = "#{paypal_complete_payment_url}?t=#{transaction_uuid}"
+    cancel_url = "#{root_url}/pay/#{transaction.embed.uuid}/step2/#{transaction_uuid}"
+    puts "return url: #{return_url}, cancel_url: #{cancel_url}"
 
+    paypal_service = transaction.embed.paypal_service
+    raise "paypal config not found for embed: #{transaction.embed.uuid}"  unless paypal_service
+    data = paypal_service.express_checkout(amount, return_url, cancel_url)
 
-# Make API call & get response
-    set_express_checkout_response = api.set_express_checkout(set_express_checkout)
-
-# Access Response
-    if set_express_checkout_response.success?
-      token = set_express_checkout_response.Token
-      puts "success token: #{token}"
-      express_checkout_url = api.express_checkout_url(set_express_checkout_response)
-      puts "checkout url: #{express_checkout_url}"
-      redirect_to express_checkout_url
-
+    if data[:status] == :success
+      redirect_to data[:checkout_url]
     else
-      errors = set_express_checkout_response.Errors
-      puts "errors: #{errors}"
-      render json: errors
+      render json: data
     end
 
   end
@@ -56,44 +32,67 @@ class PaypalController < ApplicationController
     token = params[:token]
     payer_id = params[:PayerID]
 
-    amount = session[:amount]
+    transaction_uuid = params[:t]
+    puts "t uuid: #{transaction_uuid}, token: #{token}, payer_id: #{payer_id}"
+    transaction = Transaction.by_uuid(transaction_uuid)
+    raise "transaction not found for uuid: #{transaction_uuid}"  unless transaction
+    embed = transaction.embed
 
+    data = {
+        transaction_uuid: transaction_uuid,
+        payment_type: :paypal,
+        token: token,
+        payer_id: payer_id
+    }
+    embed.step2(data)
 
-    do_express_checkout_payment = api.build_do_express_checkout_payment(
-        {
-            :DoExpressCheckoutPaymentRequestDetails => {
-                :PaymentAction => "Sale",
-                :Token => token,
-                :PayerID => payer_id,
-                :PaymentDetails =>
-                    [{
-                         :OrderTotal => {:value => amount},
-                         :ButtonSource => "PayPal_SDK",
-                         # :NotifyURL => "http://local.fairpay.coop:3000/samples/merchant/ipn_notify"
-                     }],
-                :ButtonSource => "PayPal_SDK" }
-        }
-    )
+    redirect_to "/pay/#{embed.uuid}/thanks/#{transaction.uuid}"
 
-# Make API call & get response
-    do_express_checkout_payment_response = api.do_express_checkout_payment(do_express_checkout_payment)
-
-# Access Response
-    if do_express_checkout_payment_response.success?
-      response_details = do_express_checkout_payment_response.DoExpressCheckoutPaymentResponseDetails
-      puts "response details: #{response_details}"
-      puts "fmf details: #{do_express_checkout_payment_response.FMFDetails}"
-      # not sure what the object inteface is, so convert into hash data
-      data = JSON.parse(response_details.to_json)
-      puts "hashed response data: #{data}"
-      gross_amount = data['ebl:PaymentInfo'][0]['ebl:GrossAmount']['value']
-      fee_amount = data['ebl:PaymentInfo'][0]['ebl:FeeAmount']['value']
-      render json: {status: 'success', gross_amount: gross_amount, fee_amount: fee_amount}
-    else
-      errors = do_express_checkout_payment_response.Errors
-      puts "errors: #{errors}"
-      render json: {errors: errors}
-    end
+#
+#     amount = transaction.base_amount
+#
+#     paypal_service = transaction.embed.paypal_service
+#     raise "paypal config not found for embed: #{transaction.embed.uuid}"
+#     data = paypal_service.complete_payment(token, payer_id, amount)
+#
+#     amount = session[:amount]
+#
+#
+#     do_express_checkout_payment = api.build_do_express_checkout_payment(
+#         {
+#             :DoExpressCheckoutPaymentRequestDetails => {
+#                 :PaymentAction => "Sale",
+#                 :Token => token,
+#                 :PayerID => payer_id,
+#                 :PaymentDetails =>
+#                     [{
+#                          :OrderTotal => {:value => amount},
+#                          :ButtonSource => "PayPal_SDK",
+#                          # :NotifyURL => "http://local.fairpay.coop:3000/samples/merchant/ipn_notify"
+#                      }],
+#                 :ButtonSource => "PayPal_SDK" }
+#         }
+#     )
+#
+# # Make API call & get response
+#     do_express_checkout_payment_response = api.do_express_checkout_payment(do_express_checkout_payment)
+#
+# # Access Response
+#     if do_express_checkout_payment_response.success?
+#       response_details = do_express_checkout_payment_response.DoExpressCheckoutPaymentResponseDetails
+#       puts "response details: #{response_details}"
+#       puts "fmf details: #{do_express_checkout_payment_response.FMFDetails}"
+#       # not sure what the object inteface is, so convert into hash data
+#       data = JSON.parse(response_details.to_json)
+#       puts "hashed response data: #{data}"
+#       gross_amount = data['ebl:PaymentInfo'][0]['ebl:GrossAmount']['value']
+#       fee_amount = data['ebl:PaymentInfo'][0]['ebl:FeeAmount']['value']
+#       render json: {status: 'success', gross_amount: gross_amount, fee_amount: fee_amount}
+#     else
+#       errors = do_express_checkout_payment_response.Errors
+#       puts "errors: #{errors}"
+#       render json: {errors: errors}
+#     end
 
 
   end

@@ -9,7 +9,7 @@ class DwollaController < ApplicationController
 
   def auth
     transaction_uuid = params[:t]
-    p "t uuid: #{transaction_uuid}"
+    puts "t uuid: #{transaction_uuid}"
     session[:transaction_uuid] = params[:t]
     redirect_to @dwolla_service.auth_url
   end
@@ -46,7 +46,7 @@ class DwollaController < ApplicationController
 
   def make_payment
     transaction_uuid = params[:t]
-    p "t uuid: #{transaction_uuid}"
+    puts "t uuid: #{transaction_uuid}"
     transaction = Transaction.find_by(uuid: transaction_uuid)
     raise "transaction not found for uuid: #{transaction_uuid}"  unless transaction
     # transaction.payor.dwolla_token.make_payment(transaction.payee.dwolla_token, transaction.amount)

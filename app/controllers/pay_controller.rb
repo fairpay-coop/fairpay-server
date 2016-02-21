@@ -22,7 +22,7 @@ class PayController < ApplicationController
 
     transaction = embed.step1(email, name, amount)
 
-    step2_uri = "/pay/#{embed.uuid}/step2/#{transaction.uuid}?payment_type=#{payment_type}"
+    step2_uri = "/pay/#{embed.uuid}/step2/#{transaction.uuid}" #"?payment_type=#{payment_type}"
     session[:step2_uri] = step2_uri
 
     redirect_to step2_uri #"/pay/#{embed.uuid}/step2/#{transaction.uuid}?payment_type=#{payment_type}" #, {payment_type: payment_type}
@@ -40,11 +40,11 @@ class PayController < ApplicationController
     redirect_to "/pay/#{embed.uuid}/thanks/#{transaction.uuid}"
   end
 
-  def step2_dwolla_post
-    embed = Embed.by_uuid(params[:uuid])
-    transaction = embed.step2(params)
-    redirect_to "/pay/#{embed.uuid}/thanks/#{transaction.uuid}"
-  end
+  # def step2_dwolla_post
+  #   embed = Embed.by_uuid(params[:uuid])
+  #   transaction = embed.step2(params)
+  #   redirect_to "/pay/#{embed.uuid}/thanks/#{transaction.uuid}"
+  # end
 
 
   def pay_via_dwolla

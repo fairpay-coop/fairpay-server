@@ -92,7 +92,9 @@ br
 br
 b PayPal
 br
-= link_to "Pay via PayPal", "/paypal/checkout/#{@transaction.base_amount}"
+| Transaction Fee: $#{@transaction.paypal_fee}
+br
+= link_to "Pay via PayPal", "/paypal/checkout?t=#{@transaction.uuid}"
 
 //javascript:
 //  document.addEventListener( "DOMContentLoaded", function(e) {

@@ -9,7 +9,8 @@ ActiveAdmin.register Transaction do
     id_column
     column :payor
     column :payee
-    column :amount
+    column :base_amount
+    column :payment_type
     column :status
     column :updated_at
     actions

@@ -10,6 +10,8 @@ PayPal::SDK.configure(
     username: ENV['PAYPAL_API_USERNAME'],
     password: ENV['PAYPAL_API_PASSWORD'],
     signature: ENV['PAYPAL_API_SIGNATURE'],
+    # token: ENV['PAYPAY_TOKEN'],
+    # token_secret: ENV['PAYPAL_TOKEN_SECRET'],
     http_timeout: 30
 )
 

@@ -9,7 +9,7 @@ class MerchantConfig < ActiveRecord::Base
   belongs_to :profile
 
 
-  KINDS = {stripe: 'Stripe', authorizenet: 'Authorize.Net', dwolla: 'Dwolla'}
+  KINDS = {stripe: 'Stripe', authorizenet: 'Authorize.Net', dwolla: 'Dwolla', paypal: 'PayPal'}
 
   def self.kinds
     KINDS
@@ -18,8 +18,12 @@ class MerchantConfig < ActiveRecord::Base
 
   def payment_service
     case kind
+      when 'dwolla'
+        DwollaService.instance
       when 'authorizenet'
         AuthorizeNetService.new(self)
+      when 'paypal'
+        PaypalService.new(data)
       else
         raise "service type: #{kind} - not yet implemented"
     end
