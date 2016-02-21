@@ -4,7 +4,7 @@
 class DwollaController < ApplicationController
 
   def initialize
-    @dwolla_service = DwollaService.new
+    @dwolla_service = DwollaService.instance
   end
 
   def auth
