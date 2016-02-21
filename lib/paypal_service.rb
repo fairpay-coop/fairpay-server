@@ -1,22 +1,14 @@
 class PaypalService
 
-  TEST_CONFIG = {
-      mode: :sandbox,
-      username: 'payments-facilitator_api1.calaverasfoodhub.org',
-      password: '24CNAXDPM772V2L3',
-      signature: 'AFcWxV21C7fd0v3bYYYRCpSSRl31ArbcW4ZfRN5LuHq6.1Zk8h8E9Rwm'
-  }
-
-  LIVE_CONFIG = {
-      mode: :live,
-      username: 'payments_api1.calaverasfoodhub.org',
-      password: '7B2CTEHPV99WXWR9',
-      signature: 'AFcWxV21C7fd0v3bYYYRCpSSRl31A7tnKUlZkYPRCbwec2GUiodCKpXf'
+  DEFAULT_CONFIG = {
+      mode: ENV['PAYPAL_MODE'],
+      username: ENV['PAYPAL_API_USERNAME'],
+      password: ENV['PAYPAL_API_PASSWORD'],
+      signature: ENV['PAYPAL_API_SIGNATURE']
   }
 
 
-
-  def initialize(merchant_config = TEST_CONFIG)
+  def initialize(merchant_config = DEFAULT_CONFIG)
     @config = merchant_config
     @api = PayPal::SDK::Merchant.new(nil, merchant_config)
 
@@ -41,6 +33,10 @@ class PaypalService
     # @api = PayPal::SDK::Merchant.new()
     #
 
+  end
+
+  def api
+    @api
   end
 
   def base_url

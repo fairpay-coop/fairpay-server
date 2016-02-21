@@ -326,8 +326,26 @@ module MerchantSamples
 
     private
 
+    # PayPal::SDK.configure(
+    #     mode:   ENV['PAYPAL_MODE'],
+    #     # app_id doesn't seem to be required, and i can't find value in my paypal admin panel
+    #     # app_id: ENV['PAYPAL_APP_ID'],
+    #     username: ENV['PAYPAL_API_USERNAME'],
+    #     password: ENV['PAYPAL_API_PASSWORD'],
+    #     signature: ENV['PAYPAL_API_SIGNATURE'],
+    #     # token: ENV['PAYPAY_TOKEN'],
+    #     # token_secret: ENV['PAYPAL_TOKEN_SECRET'],
+    #     http_timeout: 30
+    # )
+
+
     def api
-      @api ||= API.new
+      @api ||= create_api
+    end
+
+    def create_api
+      service = PaypalService.new
+      service.api
     end
   end
 end

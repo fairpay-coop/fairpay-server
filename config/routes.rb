@@ -1,9 +1,9 @@
-MerchantSamples::Engine.routes.draw do
-  post  "merchant/ipn_notify" => "merchant#ipn_notify", :as => :ipn_notify
-  match "merchant(/:action)",  :controller => "merchant", :as => :merchant, via: :all
-
-  root :to => "merchant#index"
-end
+# MerchantSamples::Engine.routes.draw do
+#   # post  "merchant/ipn_notify" => "merchant#ipn_notify", :as => :ipn_notify
+#   # match "merchant(/:action)",  :controller => "merchant", :as => :merchant, via: :all
+#   #
+#   # root :to => "merchant#index"
+# end
 
 
 Rails.application.routes.draw do
@@ -56,6 +56,14 @@ Rails.application.routes.draw do
 
   # get ':controller(/:action(/:id))'
 
-  mount MerchantSamples::Engine => "/samples"  #if Rails.env.development?
+  # mount MerchantSamples::Engine => "/samples"  #if Rails.env.development?
+
+  # namespace :merchant_samples do
+    post  "merchant/ipn_notify" => "merchant_samples/merchant#ipn_notify", :as => :ipn_notify
+    match "merchant(/:action)",  :controller => "merchant_samples/merchant", :as => :merchant, via: :all
+
+    # root :to => "merchant#index"
+  # end
+
 
 end
