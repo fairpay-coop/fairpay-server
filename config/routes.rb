@@ -14,6 +14,9 @@ Rails.application.routes.draw do
   # Landing page
   root 'welcome#index'
 
+  get  'embed/:uuid' => 'pay#embed'
+  get  'iframe/:uuid' => 'pay#iframe'
+
   get   '/api/v1/embed/:uuid' => 'embed#widget_data'
   get   '/api/v1/embed/:uuid/estimate_fee' => 'embed#estimate_fee'
   # need better names for these actions
@@ -33,7 +36,6 @@ Rails.application.routes.draw do
   get  'paypal/checkout' => 'paypal#checkout', as: :paypal_checkout
   get  'paypal/complete_payment' => 'paypal#complete_payment', as: :paypal_complete_payment
 
-  get  'embed/:uuid' => 'pay#embed'
   get  'pay/:uuid' => 'pay#step1'
   post 'pay/:uuid/step1' => 'pay#step1_post'
   get  'pay/:uuid/step2/:transaction_uuid' => 'pay#step2'
@@ -41,6 +43,7 @@ Rails.application.routes.draw do
   get  'pay/:uuid/pay_via_dwolla/:transaction_uuid' => 'pay#pay_via_dwolla'
 
   get  'pay/:uuid/thanks/:transaction_uuid' => 'pay#thanks'
+
 
   # Embedable widget
   get  '/widgetjs'                                        => 'widget#widget_js'

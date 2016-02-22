@@ -5,6 +5,12 @@ class PayController < ApplicationController
     @embed = Embed.by_uuid(uuid)
   end
 
+  def iframe
+    uuid = params[:uuid]
+    @embed = Embed.by_uuid(uuid)
+  end
+
+
   def step1
     embed_uuid = params[:uuid]
     @embed = Embed.by_uuid(embed_uuid)

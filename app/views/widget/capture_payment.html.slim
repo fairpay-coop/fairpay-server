@@ -8,9 +8,9 @@
         li.card
           a data-type='card'
             | Card
-        li.dwalla
-          a data-type='dwalla'
-            | Dwalla
+        li.dwolla
+          a data-type='dwolla'
+            | Dwolla
         li.paypal
           a data-type='paypal'
             | Paypal
@@ -26,26 +26,23 @@
 
           p.control
             label.label Card Number:
-            input.input.is-small type="text" class="recalc" id="card_number" name="card_number" value="4242424242424242"
+            input.input.is-small type="text" class="recalc" id="card_number" name="card_number" value=""
           p.control
             label.label Card Exp (mmyy):
-            input.input.is-small type="text" name="card_mmyy" value="1216"
+            input.input.is-small type="text" name="card_mmyy" value=""
           p.control
             label.label Card CVV:
-            input.input.is-small type="text" name="card_cvv" value="123"
+            input.input.is-small type="text" name="card_cvv" value=""
           p.control
             label.label Billing Zip:
-            input.input.is-small type="text" name="billing_zip" value="94102"
+            input.input.is-small type="text" name="billing_zip" value=""
           p.control
             input.button.is-small.is-primary id="step2_submit" type="submit" value="Submit"
-      .dwalla
+      .dwolla
         - unless @transaction.payor.has_dwolla_auth
           p
-            | Curabitur non nulla sit amet nisl tempus
-            | convallis quis ac lectus.
-            | Quisque velit nisi, pretium ut lacinia in,
-            | elementum id enim. Donec rutrum congue leo
-            | eget malesuada.
+            | Explain about Dwolla and the authorization flow ...
+          br
           a.button.is-primary.is-small id="dwolla_auth_link" href="/dwolla/auth?t=#{@transaction.uuid}" Authorize
           br
         - else
@@ -73,6 +70,11 @@
 
 
 javascript:
+  var fees = {
+    'card': "#{@transaction.card_fee_str}",
+    'dwolla': '$0',
+    'paypal': "#{@transaction.paypal_fee_str}"
+  };
   document.addEventListener("DOMContentLoaded", function (e) {
-    Widget.onCapturePaymentLoaded()
+    Widget.onCapturePaymentLoaded(fees)
   }, false);

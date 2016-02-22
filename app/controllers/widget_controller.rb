@@ -4,6 +4,9 @@ class WidgetController < ApplicationController
 
   def widget_js
     @iframe_src =  url_for :controller => 'widget', :action => 'capture_id', uuid: params[:uuid], amount: params[:amount]
+    #beware: these dimensions don't seem to be honored
+    @width = 500
+    @height = 500
     respond_to do |format|
       format.js { render }
     end

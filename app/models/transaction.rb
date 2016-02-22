@@ -47,8 +47,21 @@ class Transaction < ActiveRecord::Base
     embed.card_payment_service.calculate_fee(base_amount)
   end
 
+  def card_fee_str
+    low,high = card_fee_range
+    "#{format_amount(low)}-#{format_amount(high)}"
+  end
+
+  def format_amount(amount)
+    '%.2f' % amount
+  end
+
   def paypal_fee
     embed.paypal_service.calculate_fee(base_amount)
+  end
+
+  def paypal_fee_str
+    format_amount(embed.paypal_service.calculate_fee(base_amount))
   end
 
   #todo: think more about best encapsulation layering - for now lives in Embed

@@ -10,7 +10,7 @@ var Widget = {
             success: res => console.log(res)});
     },
 
-    onCapturePaymentLoaded: function() {
+    onCapturePaymentLoaded: function(fees) {
         $(".recalc").change(() => this.updateCardInfo());
 
         $(".payments li").each((idx, el) => {
@@ -19,11 +19,7 @@ var Widget = {
         });
 
         this.toggleTab('card');
-        this.updateFees({
-            'card': '20-34c',
-            'dwalla': '$0',
-            'paypal': '27c'
-        });
+        this.updateFees(fees);
 
         $("#dwolla_auth_link").click((evt) => {
             evt.preventDefault();
@@ -61,7 +57,7 @@ var Widget = {
     },
 
     updateFees: function(fees) {
-        for (let type of ['card', 'dwalla', 'paypal']) {
+        for (let type of ['card', 'dwolla', 'paypal']) {
             $("li." + type + " a").text(this.capitalize(type) + " (Fees: " + fees[type] + ")");
         }
     },

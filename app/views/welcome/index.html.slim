@@ -2,28 +2,31 @@ h1.title Welcome to FairPay
 
 br
 br
-b Simple Form Test
+b IFrame Embed Example
+table
+  - for item in @embeds
+    tr
+      td
+        = link_to item.uuid, "/iframe/#{item.uuid}?amount=50"
+
+br
+br
+b Simple Form Test Flow
 table
   - for item in @embeds
     tr
       td
         =link_to item.uuid, "/pay/#{item.uuid}"
 
-br
-br
-b Embed Flow Test
-table
-  - for item in @embeds
-    tr
-      td
-        =link_to item.uuid, "/embed/#{item.uuid}"
+
+/ todo: example of customizable form integration using fairpayapi.js
+/br
+/br
+/b Embed Flow Test
+/table
+/  - for item in @embeds
+/    tr
+/      td
+/        =link_to item.uuid, "/embed/#{item.uuid}"
 
 
-br
-br
-b Iframe Test
-table
-  - for item in @embeds
-    tr
-      td
-        script src="/widgetjs?uuid=#{item.uuid}&amount=10.99" type="text/javascript" async=""

@@ -78,8 +78,9 @@
         // Create an iframe
         iframe = document.createElement('iframe');
         iframe.setAttribute('src', '<%= @iframe_src %>');
-        iframe.setAttribute('width', '460');
-        iframe.setAttribute('height', '380');
+        // beware: these dimensions don't seem to be honored
+        iframe.setAttribute('width', '<%= @width %>');
+        iframe.setAttribute('height', '<%= @height %>');
         iframe.setAttribute('frameborder', '0');
         iframe.setAttribute('scrolling', 'no');
 
@@ -136,9 +137,9 @@
 
 
   console.log("Widget loader loaded");
-  loadScript("http://localhost:3000/jschannel.js", function() {
+  loadScript("<%=base_url%>/jschannel.js", function() {
     console.log("jschannel Loaded");
-    loadScript("http://localhost:3000/picoModal.js", function() {
+    loadScript("<%=base_url%>/picoModal.js", function() {
       console.log("picoModal Loaded");
       createIframes();
     });
