@@ -1,0 +1,18 @@
+.widget
+  .step.content
+    h3 Step 3: Payment completed
+    hr
+  h1.title Payment Widget - Thanks
+  |transaction id: #{@transaction.id}
+  br
+  |payor: #{@transaction.payor.name}
+  br
+  |payee: #{@transaction.payee.name}
+  br
+  |paid amount: #{@transaction.paid_amount}
+  br
+  |estimated fee: #{@transaction.estimated_fee}
+  br
+  |status: #{@transaction.status}
+
+

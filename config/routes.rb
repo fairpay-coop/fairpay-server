@@ -42,6 +42,19 @@ Rails.application.routes.draw do
 
   get  'pay/:uuid/thanks/:transaction_uuid' => 'pay#thanks'
 
+  # Embedable widget
+  get  '/widgetjs'                                        => 'widget#widget_js'
+  get  '/widget/:uuid/captureId'                          => 'widget#capture_id'
+  post '/widget/:uuid/updateId'                           => 'widget#update_id'
+  get  '/widget/:uuid/capturePayment/:transaction_uuid'   => 'widget#capture_payment'
+  post '/widget/:uuid/updatePayment/:transaction_uuid'    => 'widget#update_payment'
+  get  '/widget/:uuid/paymentComplete/:transaction_uuid'  => 'widget#payment_complete'
+  get  '/widget/:uuid/authComplete/:transaction_uuid'     => 'widget#auth_complete'
+
+
+
+
+
   # API
   mount API => '/api'
   mount GrapeSwaggerRails::Engine => '/apidoc'

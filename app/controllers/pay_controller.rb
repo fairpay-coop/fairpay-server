@@ -1,4 +1,5 @@
 class PayController < ApplicationController
+
   def embed
     uuid = params[:uuid]
     @embed = Embed.by_uuid(uuid)
@@ -78,7 +79,6 @@ class PayController < ApplicationController
 
 
   def paypal
-
   end
 
 end

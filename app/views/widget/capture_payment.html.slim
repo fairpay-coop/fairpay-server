@@ -1,0 +1,78 @@
+.widget
+  .step.content
+    h3 Step 2: Select your payment type
+    hr
+  .payments
+    .tabs.is-boxed.is-fullwidth
+      ul
+        li.card
+          a data-type='card'
+            | Card
+        li.dwalla
+          a data-type='dwalla'
+            | Dwalla
+        li.paypal
+          a data-type='paypal'
+            | Paypal
+    .content
+      h3 Amount: #{@transaction.base_amount}
+    .panels
+      .card
+        form id="capture_payment" method="post" action="/widget/#{@embed.uuid}/updatePayment/#{@transaction.uuid}"
+          = hidden_field_tag :authenticity_token, form_authenticity_token
+          = hidden_field_tag :merchant_config_id, @embed.merchant_configs.first.id
+          = hidden_field_tag :amount, @transaction.base_amount
+          = hidden_field_tag :payment_type, 'card'
+
+          p.control
+            label.label Card Number:
+            input.input.is-small type="text" class="recalc" id="card_number" name="card_number" value="4242424242424242"
+          p.control
+            label.label Card Exp (mmyy):
+            input.input.is-small type="text" name="card_mmyy" value="1216"
+          p.control
+            label.label Card CVV:
+            input.input.is-small type="text" name="card_cvv" value="123"
+          p.control
+            label.label Billing Zip:
+            input.input.is-small type="text" name="billing_zip" value="94102"
+          p.control
+            input.button.is-small.is-primary id="step2_submit" type="submit" value="Submit"
+      .dwalla
+        - unless @transaction.payor.has_dwolla_auth
+          p
+            | Curabitur non nulla sit amet nisl tempus
+            | convallis quis ac lectus.
+            | Quisque velit nisi, pretium ut lacinia in,
+            | elementum id enim. Donec rutrum congue leo
+            | eget malesuada.
+          a.button.is-primary.is-small id="dwolla_auth_link" href="/dwolla/auth?t=#{@transaction.uuid}" Authorize
+          br
+        - else
+          br
+          form id="dwolla_form" method="post" action="/widget/#{@embed.uuid}/updatePayment/#{@transaction.uuid}"
+            = hidden_field_tag :authenticity_token, form_authenticity_token
+            = hidden_field_tag :embed_uuid, @embed.uuid
+            = hidden_field_tag :payment_type, 'dwolla'
+            = hidden_field_tag :amount, @transaction.base_amount
+            =
+            |Dwolla Funding Source:
+            br
+            - for funding_source in @transaction.payor.dwolla_token.funding_sources
+              p.control
+                label.radio
+                  = radio_button_tag :funding_source_id, funding_source[0], type:"radio"
+                  = funding_source[1]
+            p.control
+              input.button.is-primary.is-small type="submit" value="Pay with Dwolla"
+
+      .paypal
+        p.control
+          input.button.is-primary.is-small type="submit" value="Pay With Paypal"
+
+
+
+javascript:
+  document.addEventListener("DOMContentLoaded", function (e) {
+    Widget.onCapturePaymentLoaded()
+  }, false);
