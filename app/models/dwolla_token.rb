@@ -15,7 +15,7 @@ class DwollaToken < ActiveRecord::Base
   belongs_to :profile
 
   def stale_token?
-    Time.now.ago(1.hour) > self.updated_at
+    access_token.blank? || self.updated_at.blank? || Time.now.ago(1.hour) > self.updated_at
   end
 
   def token

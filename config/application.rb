@@ -34,4 +34,4 @@ module FairpayServer
 end
 
 puts "Rails.env: #{Rails.env}"
-#puts "database: #{FairpayServer::Application.config.database_configuration[::Rails.env]['database']}"
+puts "database: #{FairpayServer::Application.config.database_configuration[::Rails.env]['database']}"  rescue nil
