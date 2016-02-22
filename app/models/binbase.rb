@@ -37,6 +37,7 @@ class Binbase < ActiveRecord::Base
   ## todo: add in merchant processor (i.e. dharma merchant services) fee
   def self.estimate_fee(bin, amount)
     binbase = Binbase.find_by(bin: bin)
+    puts "binbase: #{binbase}"
     base = 0.30
     percent = 2.9
     message = nil

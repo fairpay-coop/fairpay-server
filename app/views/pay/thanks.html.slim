@@ -1,17 +1,20 @@
 
 h1.title Payment Test Flow - Thanks
+/todo: factor out shared code with widget
 
-|transaction id: #{@transaction.id}
+|Transaction id: #{@transaction.id}
 br
-|payor: #{@transaction.payor.name}
+|Payor: #{@transaction.payor.name}
 br
-|payee: #{@transaction.payee.name}
+|Payee: #{@transaction.payee.name}
 br
-|paid amount: #{@transaction.paid_amount}
+|Paid Amount: #{@transaction.paid_amount}
 br
-|estimated fee: #{@transaction.estimated_fee}
+|Payment Type: #{@transaction.payment_type}
 br
-|status: #{@transaction.status}
+|Transaction Fee: #{@transaction.estimated_fee}
+br
+|Status: #{@transaction.status}
 
 
 
