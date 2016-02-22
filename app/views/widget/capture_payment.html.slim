@@ -65,8 +65,8 @@
 
       .paypal
         p.control
-          input.button.is-primary.is-small type="submit" value="Pay With Paypal"
-
+          - onclick = "top.location.href='/paypal/checkout?t=" + @transaction.uuid + "';"
+          input.button.is-primary.is-small type="submit" value="Pay With Paypal" onclick="#{onclick}"
 
 
 javascript:
