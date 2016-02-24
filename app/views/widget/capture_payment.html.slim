@@ -5,15 +5,15 @@
   .payments
     .tabs.is-boxed.is-fullwidth
       ul
-        li.card
-          a data-type='card'
-            | Card
-        li.dwolla
-          a data-type='dwolla'
-            | Dwolla
-        li.paypal
-          a data-type='paypal'
-            | Paypal
+        li.card data-type="card"
+          span.is-clearfix Card
+          span.fee ???
+        li.dwolla data-type="dwolla"
+          span.is-clearfix Dwolla
+          span.fee ???
+        li.paypal data-type="paypal"
+          span.is-clearfix Paypal
+          span.fee ???
     .content
       h3 Amount: #{@transaction.base_amount}
     .panels
@@ -23,10 +23,11 @@
           = hidden_field_tag :merchant_config_id, @embed.merchant_configs.first.id
           = hidden_field_tag :amount, @transaction.base_amount
           = hidden_field_tag :payment_type, 'card'
+          = hidden_field_tag :embed_uuid, @embed.uuid
 
           p.control
             label.label Card Number:
-            input.input.is-small type="text" class="recalc" id="card_number" name="card_number" value=""
+            input.input.is-small type="text" id="card_number" name="card_number" value=""
           p.control
             label.label Card Exp (mmyy):
             input.input.is-small type="text" name="card_mmyy" value=""
@@ -68,7 +69,6 @@
           - onclick = "top.location.href='/paypal/checkout?t=" + @transaction.uuid + "';"
           input.button.is-primary.is-small type="submit" value="Pay With Paypal" onclick="#{onclick}"
 
-
 javascript:
   var fees = {
     'card': "#{@transaction.card_fee_str}",
@@ -76,5 +76,5 @@ javascript:
     'paypal': "#{@transaction.paypal_fee_str}"
   };
   document.addEventListener("DOMContentLoaded", function (e) {
-    Widget.onCapturePaymentLoaded(fees)
+    Widget.onCapturePaymentLoaded(fees, "#{@default_payment_type}")
   }, false);

@@ -35,6 +35,7 @@ class WidgetController < ApplicationController
   def capture_payment
     @embed = Embed.by_uuid(params[:uuid])
     @transaction = Transaction.by_uuid(params[:transaction_uuid])
+    @default_payment_type = params[:payment_type] || :card
   end
 
   def update_payment
