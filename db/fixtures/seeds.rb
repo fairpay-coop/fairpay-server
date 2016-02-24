@@ -26,6 +26,18 @@ MerchantConfig.seed(:id,
     data: '{"mode":"sandbox", "username":"payments-facilitator_api1.calaverasfoodhub.org", "password":"24CNAXDPM772V2L3", "signature":"AFcWxV21C7fd0v3bYYYRCpSSRl31ArbcW4ZfRN5LuHq6.1Zk8h8E9Rwm"}'}
 )
 
+WELLS_FARGO_NAME = 'WELLS FARGO BANK, N.A.'
+BinbaseOrg.seed(:name,
+  { name: WELLS_FARGO_NAME, country_iso: 'US', is_regulated: true }
+)
+
+Binbase.seed(:bin,
+  { bin: '434443', card_brand: 'VISA', card_type: 'CREDIT', card_category: 'CLASSIC' },
+  { bin: '429255', card_brand: 'VISA', card_type: 'DEBIT', card_category: 'CLASSIC' },
+  { bin: '416724', card_brand: 'VISA', card_type: 'DEBIT', card_category: 'PREPAID',
+    binbase_org: BinbaseOrg.find_by(name: WELLS_FARGO_NAME) }
+)
+
 # DwollaToken.seed(:id,
 #   { id: 1, refresh_token: "cmla7H0wA028LNQvQxCcFDNdgwGsnw9zEDmhfdUO2WOnkFZ1dN", access_token: "cmla7H0wA028LNQvQxCcFDNdgwGsnw9zEDmhfdUO2WOnkFZ1dN",
 #     account_id: 'd3c4fdc2-2b4d-47f7-84c3-35db069c6eb6', profile_id: 1 },
