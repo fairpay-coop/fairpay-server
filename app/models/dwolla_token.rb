@@ -12,7 +12,8 @@ class DwollaToken < ActiveRecord::Base
   #   t.reference :profile, index: true, foreign_key: true
 
 
-  belongs_to :profile
+  # has_many :profile
+  has_many :payment_sources
 
   def stale_token?
     access_token.blank? || self.updated_at.blank? || Time.now.ago(1.hour) > self.updated_at

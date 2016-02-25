@@ -26,10 +26,12 @@ class DwollaController < ApplicationController
       raise "DwollaToken not found for access_token: #{token.access_token}"  unless dwolla_token
       transaction_uuid = session[:transaction_uuid]
       raise "transaction_uuid not found in session"  unless transaction_uuid
-      p "t uuid: #{transaction_uuid}"
+      puts "t uuid: #{transaction_uuid}"
       transaction = Transaction.find_by(uuid: transaction_uuid)
       raise "transaction not found for uuid: #{transaction_uuid}"  unless transaction
-      dwolla_token.update({profile: transaction.payor})
+
+      # dwolla_token.update({profile: transaction.payor})
+      transaction.payor.associate_dwolla_account_id(dwolla_token.account_id)
 
       transaction_uuid = params[:t]
       step2_uri = session[:step2_uri]
