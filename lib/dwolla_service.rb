@@ -45,7 +45,7 @@ class DwollaService
   end
 
   def auth_url
-    auth.url
+    auth.url + "&dwolla_landing=login"  #todo: figure clean api method
   end
 
   def exchange_code_for_token(code)
