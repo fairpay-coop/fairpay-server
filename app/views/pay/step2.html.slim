@@ -56,8 +56,8 @@ form id="card_form"
   = hidden_field_tag :authenticity_token, form_authenticity_token
   = hidden_field_tag :embed_uuid, @embed.uuid
   = hidden_field_tag :transaction_uuid, @transaction.uuid
-  = hidden_field_tag :payment_type, 'card'
-  = hidden_field_tag :merchant_config_id, @embed.merchant_configs.first.id
+  /= hidden_field_tag :merchant_config_id, @embed.card_merchant_config.id
+  = hidden_field_tag :payment_type, @embed.card_merchant_config.kind
   /= hidden_field_tag :amount, @transaction.amount
   input type="hidden" id="amount" name="amount" value="#{@transaction.base_amount}"
   /todo: better way to pass server rendered values into js logic?

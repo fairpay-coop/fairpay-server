@@ -20,9 +20,9 @@
       .card
         form id="capture_payment" method="post" action="/widget/#{@embed.uuid}/updatePayment/#{@transaction.uuid}"
           = hidden_field_tag :authenticity_token, form_authenticity_token
-          = hidden_field_tag :merchant_config_id, @embed.merchant_configs.first.id
+          /= hidden_field_tag :merchant_config_id, @embed.card_merchant_config.id
           = hidden_field_tag :amount, @transaction.base_amount
-          = hidden_field_tag :payment_type, 'card'
+          = hidden_field_tag :payment_type, @embed.card_merchant_config.kind
           = hidden_field_tag :embed_uuid, @embed.uuid
 
           p.control

@@ -51,6 +51,18 @@ class PaypalService
   #   base_url
   # end
 
+
+  def handle_payment(transaction, params)
+    estimated_fee = calculate_fee(transaction.base_amount, params)
+    paid_amount = transaction.base_amount  #todo fee allocation based on merchant config
+
+    complete_payment(params[:token], params[:payor_id], paid_amount)
+
+    [paid_amount, estimated_fee]
+  end
+
+
+
   def express_checkout(amount, return_url, cancel_url)
 
     # # Notify url

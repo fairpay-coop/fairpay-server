@@ -108,11 +108,24 @@ class DwollaService
     end
   end
 
-  def make_payment(payor_token, payee_token, funding_source_id, amount)
-    #todo: only refresh tokens if needed
-    # payor_token.refresh
-    # payee_token.refresh
 
+  def handle_payment(transaction, params)
+    funding_source_id = params[:funding_source_id]
+
+    estimated_fee = 0.00
+    paid_amount = transaction.base_amount + estimated_fee
+
+    make_payment(transaction.payor.dwolla_token, transaction.payee.dwolla_token, funding_source_id, paid_amount)
+
+    [paid_amount, estimated_fee]
+  end
+
+
+  def make_payment(payor_token, payee_token, funding_source_id, amount)
+
+    raise "funding source required"  unless funding_source_id
+
+    #note payor  and payee tokens are automatically refreshed as needed
     destination = payee_token.account_uri
     funding_source = funding_source_uri_for_id(funding_source_id)
 

@@ -17,7 +17,25 @@ class AuthorizeNetService
   end
 
 
+  def handle_payment(transaction, params)
+    estimated_fee = calculate_fee(transaction.base_amount, params)
+    paid_amount = transaction.base_amount
+
+    data = params.slice(:card_number, :card_mmyy, :card_cvv, :billing_zip)
+    data[:amount] = paid_amount
+    puts "data: #{data}"
+
+    charge(data)
+
+    # #todo: factor out the transaction update
+    # transaction.update!(status: 'completed', paid_amount: paid_amount, estimated_fee: estimated_fee)
+    # transaction
+    [paid_amount, estimated_fee]
+  end
+
   def charge(data)
+    raise "billing zip required"  unless data[:billing_zip]
+
     request = CreateTransactionRequest.new
 
     request.transactionRequest = TransactionRequestType.new()
