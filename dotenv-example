@@ -1,0 +1,18 @@
+# details about creating various needed test accounts and credentials can be found at
+#  https://docs.google.com/document/d/1A1U-crqquWvg19VSv6ba38er7h7URHoDVS9XjFWG_wA/edit?usp=sharing
+
+DWOLLA_CLIENT_ID=...UjM
+DWOLLA_CLIENT_SECRET=...9Ln
+DWOLLA_ENVIRONMENT=sandbox
+
+
+# credentials used by paypal 'merchant_samples' test code
+# not required for service functionality
+PAYPAL_MODE=sandbox
+PAYPAL_API_USERNAME=payments-facilitator_api1....
+PAYPAL_API_PASSWORD=...2L3
+PAYPAL_API_SIGNATURE=...9Rwm
+
+
+# used to generate fully qualified urls from service tier
+BASE_URL=http://local.fairpay.coop:3000
