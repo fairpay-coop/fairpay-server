@@ -26,6 +26,13 @@ class Embed < ActiveRecord::Base
     profile.merchant_configs
   end
 
+  # returns list of names of merchant config type to display for the embed
+  # either honor a specific embed param, or default to all available merchant configs
+  def payment_types
+    data['payment_types'] || merchant_configs.map(&:kind)
+    # todo: add validation that merchant configs exist when specific list given
+  end
+
   def payment_service_for_type(payment_type)
     merchant_config = merchant_configs.find_by(kind: payment_type)
     raise "merchant config now found for payment type: #{payment_type}"  unless merchant_config
