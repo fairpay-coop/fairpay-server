@@ -1,0 +1,26 @@
+b Dwolla
+br
+| Transaction Fee: $0.00
+br
+- unless @transaction.payor.has_dwolla_auth
+  = link_to "authorize", "/dwolla/auth?t=#{@transaction.uuid}"
+- else
+    /= link_to "confirm payment w/ default funding source", "/pay/#{@embed.uuid}/pay_via_dwolla/#{@transaction.uuid}"
+    form id="dwolla_form" method="post" action="/pay/#{@embed.uuid}/step2"
+      = hidden_field_tag :authenticity_token, form_authenticity_token
+      = hidden_field_tag :embed_uuid, @embed.uuid
+      = hidden_field_tag :transaction_uuid, @transaction.uuid
+      = hidden_field_tag :payment_type, 'dwolla'
+      /= hidden_field_tag :merchant_config_id, @embed.merchant_configs.first.id
+      = hidden_field_tag :amount, @transaction.base_amount
+      |Dwolla Funding Source:
+      br
+      - for funding_source in @transaction.payor.dwolla_token.funding_sources
+        = radio_button_tag :funding_source_id, funding_source[0]
+        = " " + funding_source[1]
+        br
+      input type="submit" value="Pay with Dwolla"
+
+/- if params[:payment_type] == 'authorizenet'
+br
+br

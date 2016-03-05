@@ -1,0 +1,129 @@
+script src="http://code.jquery.com/jquery-1.11.3.min.js"
+
+b Debit/Credit Card
+br
+| Transaction Fee:
+div id="fee_info"
+  | $#{@transaction.card_fee_str} (depends on card type)
+
+div id="errorMessage"
+
+form id="card_form"
+  /method="post" action="/pay/#{@embed.uuid}/step2"
+  = hidden_field_tag :authenticity_token, form_authenticity_token
+  = hidden_field_tag :embed_uuid, @embed.uuid
+  = hidden_field_tag :transaction_uuid, @transaction.uuid
+  /= hidden_field_tag :merchant_config_id, @embed.card_merchant_config.id
+  = hidden_field_tag :payment_type, @embed.card_merchant_config.kind
+  /= hidden_field_tag :amount, @transaction.amount
+  input type="hidden" id="amount" name="amount" value="#{@transaction.base_amount}"
+  /todo: better way to pass server rendered values into js logic?
+  input type="hidden" id="default_fee_info" value="$#{@transaction.card_fee_str} (depends on card type)"
+
+  |Card Number:
+  input type="text" id="card_number" name="card_number" value=""
+  br
+  |Card Exp (mmyy):
+  input type="text" name="card_mmyy" value=""
+  br
+  |Card CVV:
+  input type="text" name="card_cvv" value=""
+  br
+  |Billing Zip:
+  input type="text" name="billing_zip" value=""
+  br
+  /|Charge Description:
+  /input type="text" name="description" value="test"
+  /br
+
+  input id="step2_submit" type="submit" value="Pay with Card"
+
+
+br
+br
+|Status:
+div id="paymentStatus"
+br
+
+
+javascript:
+
+  var lastBin = '';
+
+  function cardNumberKeypressed(event) {
+    //alert('cardNumberKeypressed: ' + event);
+    var card_number = $('#card_number').val();
+    var amount = $('#amount').val();
+    //alert('card number: ' + card_number);
+    if (card_number.length >= 6) {
+      var newBin = card_number.slice(0, 6);
+      if (lastBin != newBin) {
+        //alert('new bin: ' + newBin + ', last bin: ' + lastBin + ', amount: ' + amount);
+        lastBin = newBin;
+        data = {bin: newBin, amount: amount};
+        FairPayApi.estimateFee(data, handleEstimateFeeResponse);
+      }
+    } else {
+      if (lastBin != '') {
+        var default_fee_info = $('#default_fee_info').val();
+        $("#fee_info").html(default_fee_info);
+        lastBin = ''
+      }
+    }
+  }
+
+  function handleEstimateFeeResponse(data) {
+    //alert('estimate fee response: ' + JSON.stringify(data));
+    if (data.result) {
+      info = data.result;
+      //var bindata = "<b>Information about your card</b>: <br>&nbsp; &nbsp;" + info.card_brand + ", " + info.card_type + ", " + info.card_category +
+      //        ", " + info.issuing_org + ", " + (info.is_regulated ? "regulated bank" : "unregulated bank") + "";
+      //bindata += "<br>Transaction fee for this card: <b>$" + info.estimated_fee + "</b>";
+      //bindata += "<br>&nbsp; &nbsp;" + info.fee_tip;
+
+      var bindata = "<b>$" + info.estimated_fee + "</b>";
+      if (info.fee_tip) {
+        bindata += "&nbsp; (" + info.fee_tip + ")";
+      }
+
+      $("#fee_info").html(bindata);
+
+    } else {
+      console.log("info not found for bin: " + lastBin);
+      $("#fee_info").html("<br><br>");
+    }
+  }
+  document.addEventListener("DOMContentLoaded", function (e) {
+    $("#card_number").bind("keyup", cardNumberKeypressed);
+  }, false);
+
+
+  $("#card_form").submit(handleCard);
+
+  function handleCard() {
+    //alert('handleCard');
+    var form = document.getElementById("card_form");
+    var data = {};
+    FairPayApi.copyFormValues(data, form, ['embed_uuid', 'transaction_uuid', 'payment_type', 'amount', 'card_number', 'card_mmyy', 'card_cvv', 'billing_zip']);
+    FairPayApi.submitCard(data, handleCardResponse);
+    return false;
+  }
+
+  function handleCardResponse(data) {
+    //alert('step2 response: ' + JSON.stringify(data));
+    if (data.result) {
+      var status = data.result.status;
+      $('#paymentStatus').html(status);
+      $('#errorMessage').html('');      //var linkUrl = data.result.statusLink;
+      //var linkHtml = '<a href="' + linkUrl + '">' + linkUrl + '</a>';
+      //$('#statusLink').html(linkHtml);
+      if (data.result.redirect_url) {
+        window.location = data.result.redirect_url;
+      }
+    } else if (data.error) {
+      //alert('error resp: ' + JSON.stringify(data.error));
+      $('#paymentStatus').html('error');
+      $('#errorMessage').html(data.error.message);
+      //$('#errorStack').html('<pre>' + data.error.stack + '</pre>');
+    }
+  }

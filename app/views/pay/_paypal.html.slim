@@ -1,0 +1,7 @@
+br
+b PayPal
+br
+| Transaction Fee: $#{@transaction.paypal_fee}
+br
+= link_to "Pay via PayPal", "/paypal/checkout?t=#{@transaction.uuid}"
+
