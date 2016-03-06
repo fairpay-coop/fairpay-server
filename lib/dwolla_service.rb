@@ -145,6 +145,12 @@ class DwollaService
   end
 
 
+  # which form partial to render for this payment type
+  # def form_partial
+  #   'dwolla'
+  # end
+
+
   ##
   ## code snippets from other sdk layers
   ##

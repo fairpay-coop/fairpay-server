@@ -1,4 +1,5 @@
 class Embed < ActiveRecord::Base
+  include DataFieldable
 
   # create_table :embeds do |t|
   #   t.string :uuid, index: true
@@ -21,22 +22,36 @@ class Embed < ActiveRecord::Base
     self.find_by(uuid: uuid)
   end
 
-  # is there a clever active record declaration for this?
-  def merchant_configs
-    profile.merchant_configs
-  end
+  # def available_configs
+  #   profile.merchant_configs
+  # end
 
   # returns list of names of merchant config type to display for the embed
   # either honor a specific embed param, or default to all available merchant configs
   def payment_types
-    data['payment_types'] || merchant_configs.map(&:kind)
+    get_data_field(:payment_types) || profile.merchant_configs.map(&:kind)
     # todo: add validation that merchant configs exist when specific list given
   end
 
+  def merchant_configs
+    payment_types.map { |type| merchant_config_for_type(type) }
+  end
+
+
+  # def payment_form_names
+  #   payment_types.map do |payment_type|
+  #     payment_service_for_type(payment_type).form_name
+  #   end
+  # end
+
+  def merchant_config_for_type(payment_type)
+    result = profile.merchant_configs.find_by(kind: payment_type)
+    raise "merchant config now found for payment type: #{payment_type}"  unless result
+    result
+  end
+
   def payment_service_for_type(payment_type)
-    merchant_config = merchant_configs.find_by(kind: payment_type)
-    raise "merchant config now found for payment type: #{payment_type}"  unless merchant_config
-    merchant_config.payment_service
+    merchant_config_for_type(payment_type).payment_service
   end
 
 

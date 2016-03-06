@@ -157,5 +157,9 @@ class PaypalService
   end
 
 
+  # # which form partial to render for this payment type
+  # def form_name
+  #   'paypal'
+  # end
 
 end

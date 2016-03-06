@@ -16,6 +16,10 @@ class AuthorizeNetService
     @transaction = AuthorizeNet::API::Transaction.new(api_login_id, api_transaction_key, :gateway => gateway)
   end
 
+  # which form partial to render for this payment type
+  def form_partial
+    'card'
+  end
 
   def handle_payment(transaction, params)
     estimated_fee = calculate_fee(transaction.base_amount, params)
@@ -64,8 +68,10 @@ class AuthorizeNetService
   end
 
 
+  # returns either fee range pair if no card prefix provided or a single value if provided
   def calculate_fee(amount, params = nil)
     unless params.present?
+      # returns a range when card prefix not provided
       Binbase.fee_range(amount)  # note, returns an array with low/high range when params are missing
     else
       card = params[:card_number]

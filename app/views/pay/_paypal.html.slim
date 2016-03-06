@@ -1,7 +1,7 @@
 br
 b PayPal
 br
-| Transaction Fee: $#{@transaction.paypal_fee}
+| Transaction Fee: #{merchant_config.card_fee_str(@transaction)}
 br
 = link_to "Pay via PayPal", "/paypal/checkout?t=#{@transaction.uuid}"
 

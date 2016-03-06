@@ -13,6 +13,6 @@ br
 
 hr
 
-- for payment_type in @embed.payment_types
-  = render payment_type
+- for merchant_config in @embed.merchant_configs
+  = render merchant_config.form_name, merchant_config: merchant_config
   hr

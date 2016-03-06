@@ -1,10 +1,11 @@
 script src="http://code.jquery.com/jquery-1.11.3.min.js"
 
-b Debit/Credit Card
+b Debit/Credit Card (#{merchant_config.kind_name})
 br
+- card_fee_str = merchant_config.card_fee_str(@transaction)
 | Transaction Fee:
 div id="fee_info"
-  | $#{@transaction.card_fee_str} (depends on card type)
+  | #{card_fee_str}
 
 div id="errorMessage"
 
@@ -13,12 +14,12 @@ form id="card_form"
   = hidden_field_tag :authenticity_token, form_authenticity_token
   = hidden_field_tag :embed_uuid, @embed.uuid
   = hidden_field_tag :transaction_uuid, @transaction.uuid
-  /= hidden_field_tag :merchant_config_id, @embed.card_merchant_config.id
-  = hidden_field_tag :payment_type, @embed.card_merchant_config.kind
+  /= hidden_field_tag :merchant_config_id, merchant_config.id
+  = hidden_field_tag :payment_type, merchant_config.kind
   /= hidden_field_tag :amount, @transaction.amount
   input type="hidden" id="amount" name="amount" value="#{@transaction.base_amount}"
   /todo: better way to pass server rendered values into js logic?
-  input type="hidden" id="default_fee_info" value="$#{@transaction.card_fee_str} (depends on card type)"
+  input type="hidden" id="default_fee_info" value="#{card_fee_str}"
 
   |Card Number:
   input type="text" id="card_number" name="card_number" value=""

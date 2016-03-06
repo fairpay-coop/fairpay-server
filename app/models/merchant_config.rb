@@ -1,4 +1,6 @@
 class MerchantConfig < ActiveRecord::Base
+  include DataFieldable
+
 
   # create_table :merchant_configs do |t|
   #   t.references :profile, index: true, foreign_key: true
@@ -9,24 +11,70 @@ class MerchantConfig < ActiveRecord::Base
   belongs_to :profile
 
 
-  KINDS = {stripe: 'Stripe', authorizenet: 'Authorize.Net', dwolla: 'Dwolla', paypal: 'PayPal'}
+  KINDS = {stripe: 'Stripe', authorizenet: 'Authorize.Net', braintree: 'Braintree', dwolla: 'Dwolla', paypal: 'PayPal'}
 
   def self.kinds
     KINDS
   end
 
+  def kind_name
+    KINDS[kind_sym]
+  end
+
+  def kind_sym
+    kind.to_sym
+  end
+
+  #todo: memoize this result?
 
   def payment_service
-    case kind
-      when 'dwolla'
+    case kind_sym
+      when :dwolla
         DwollaService.instance
-      when 'authorizenet'
+      when :authorizenet
         AuthorizeNetService.new(self)
-      when 'paypal'
+      when :braintree
+        BraintreeService.new(self)
+      when :paypal
         PaypalService.new(data)
       else
         raise "service type: #{kind} - not yet implemented"
     end
   end
+
+  # def form_name
+  #   payment_service.form_name
+  # end
+
+  def form_name
+    if kind_sym == :authorizenet || kind_sym == :braintree
+      'card'
+    else
+      kind
+    end
+  end
+
+  def card_fee_str(transaction, params = nil)
+    low, high = payment_service.calculate_fee(transaction.base_amount, params)
+    result = "$#{format_amount(low)}"
+    if high  # we've been given a range
+      result += "-#{format_amount(high)} (depends on card type)"
+    end
+    result
+  end
+
+  # def card_fee_range
+  #   embed.card_payment_service.calculate_fee(base_amount)
+  # end
+  #
+  # def card_fee_str
+  #   low,high = card_fee_range
+  #   "#{format_amount(low)}-#{format_amount(high)}"
+  # end
+
+  def format_amount(amount)
+    '%.2f' % amount
+  end
+
 
 end
