@@ -18,8 +18,12 @@ form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1"
   => "Amount:"
   input id="step1Amount" type="text" name="amount" value=""
   br
-  => "Monthly Contribution:"
-  input type="checkbox" name="monthly" value="true"
+  = radio_button_tag :recurrence, 'none'
+  =<> "One Time -"
+  = radio_button_tag :recurrence, 'month'
+  =<> "Monthly -"
+  = radio_button_tag :recurrence, 'year'
+  =<> "Yearly"
   br
   => "Join Mailing List:"
   input type="checkbox" name="mailing_list" value="true"

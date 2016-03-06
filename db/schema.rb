@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160224195512) do
+ActiveRecord::Schema.define(version: 20160306043138) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -125,6 +125,21 @@ ActiveRecord::Schema.define(version: 20160224195512) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "recurring_payments", force: :cascade do |t|
+    t.string   "uuid"
+    t.string   "status"
+    t.integer  "master_transaction_id"
+    t.integer  "interval_count"
+    t.string   "interval_units"
+    t.date     "expires_date"
+    t.date     "next_date"
+    t.json     "data"
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+  end
+
+  add_index "recurring_payments", ["uuid"], name: "index_recurring_payments_on_uuid", using: :btree
+
   create_table "transactions", force: :cascade do |t|
     t.string   "uuid"
     t.string   "kind"
@@ -143,14 +158,16 @@ ActiveRecord::Schema.define(version: 20160224195512) do
     t.string   "description"
     t.json     "data"
     t.string   "recurrence"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
     t.string   "payment_type"
+    t.integer  "recurring_payment_id"
   end
 
   add_index "transactions", ["parent_id"], name: "index_transactions_on_parent_id", using: :btree
   add_index "transactions", ["payee_id"], name: "index_transactions_on_payee_id", using: :btree
   add_index "transactions", ["payor_id"], name: "index_transactions_on_payor_id", using: :btree
+  add_index "transactions", ["recurring_payment_id"], name: "index_transactions_on_recurring_payment_id", using: :btree
   add_index "transactions", ["uuid"], name: "index_transactions_on_uuid", using: :btree
 
   create_table "users", force: :cascade do |t|
@@ -174,10 +191,12 @@ ActiveRecord::Schema.define(version: 20160224195512) do
   add_foreign_key "embeds", "profiles"
   add_foreign_key "merchant_configs", "profiles"
   add_foreign_key "payment_sources", "profiles"
+  add_foreign_key "recurring_payments", "transactions", column: "master_transaction_id"
   add_foreign_key "transactions", "embeds"
   add_foreign_key "transactions", "merchant_configs"
   add_foreign_key "transactions", "payment_sources"
   add_foreign_key "transactions", "profiles", column: "payee_id"
   add_foreign_key "transactions", "profiles", column: "payor_id"
+  add_foreign_key "transactions", "recurring_payments"
   add_foreign_key "transactions", "transactions", column: "parent_id"
 end

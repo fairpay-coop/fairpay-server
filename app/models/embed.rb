@@ -1,5 +1,6 @@
 class Embed < ActiveRecord::Base
   include DataFieldable
+  include UuidAssignable
 
   # create_table :embeds do |t|
   #   t.string :uuid, index: true
@@ -13,18 +14,6 @@ class Embed < ActiveRecord::Base
 
   after_initialize :assign_uuid
 
-  # todo: factor to ActiveRecord::Base
-  def assign_uuid
-    self.uuid ||= SecureRandom.urlsafe_base64(8)
-  end
-
-  def self.by_uuid(uuid)
-    self.find_by(uuid: uuid)
-  end
-
-  # def available_configs
-  #   profile.merchant_configs
-  # end
 
   # returns list of names of merchant config type to display for the embed
   # either honor a specific embed param, or default to all available merchant configs
@@ -37,12 +26,6 @@ class Embed < ActiveRecord::Base
     payment_types.map { |type| merchant_config_for_type(type) }
   end
 
-
-  # def payment_form_names
-  #   payment_types.map do |payment_type|
-  #     payment_service_for_type(payment_type).form_name
-  #   end
-  # end
 
   def merchant_config_for_type(payment_type)
     result = profile.merchant_configs.find_by(kind: payment_type)
@@ -74,15 +57,25 @@ class Embed < ActiveRecord::Base
     DwollaService.instance
   end
 
-  def step1(email, name, amount)
+  def step1(params) #email, name, amount)
+    email = params[:email]
+    name = params[:name]
+    amount = params[:amount]
+    recurrence = params[:recurrence]
+    recurrence = nil  if recurrence == 'none'
     raise "email required" unless email.present?
     payor = Profile.find_by(email: email)
     unless payor
       name = email  unless name.present?  # don't require 'name' as the api level, default to email
       payor = Profile.create!(email: email, name: name)
     end
-
-    transaction = Transaction.create!(embed: self, payee: self.profile, payor: payor, base_amount: amount, status: :provisional)
+    transaction = Transaction.create!(
+        embed: self,
+        payee: self.profile,
+        payor: payor,
+        base_amount: amount,
+        status: :provisional,
+        recurrence: recurrence)
   end
 
 
@@ -96,22 +89,29 @@ class Embed < ActiveRecord::Base
     payment_service = payment_service_for_type(payment_type)
     paid_amount,fee = payment_service.handle_payment(transaction, params)
 
-    # # this is begging for some refactoring!
-    # case payment_type
-    #   when :dwolla
-    #     paid_amount,fee = pay_via_dwolla(params)
-    #
-    #   when :paypal
-    #     paid_amount,fee = pay_via_paypal(params)
-    #
-    #   when :card
-    #     paid_amount,fee = pay_via_card(params)
-    #
-    #   else
-    #     raise "unexpected payment type: #{payment_type}"
-    # end
+    transaction.update!(
+        status: 'completed',
+        payment_type: payment_type,
+        paid_amount: paid_amount,
+        estimated_fee: fee
+    )
 
-    transaction.update!(status: 'completed', payment_type: payment_type, paid_amount: paid_amount, estimated_fee: fee)
+    if transaction.recurrence
+      recurring = RecurringPayment.create!(
+          master_transaction: transaction,
+          interval_units: transaction.recurrence,
+          interval_count: 1,
+          expires_date: nil,
+          status: :active
+      )
+
+      transaction.update!(recurring_payment: recurring)
+
+      recurring.increment_next_date
+
+    end
+
+
     transaction
 
   end

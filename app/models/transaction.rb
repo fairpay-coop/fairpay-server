@@ -1,4 +1,5 @@
 class Transaction < ActiveRecord::Base
+  include UuidAssignable
 
   # create_table :transactions do |t|
   #   t.string :uuid, index: true
@@ -27,20 +28,23 @@ class Transaction < ActiveRecord::Base
   belongs_to :embed
   belongs_to :payment_source
   belongs_to :merchant_config
+  belongs_to :recurring_payment
+
+  # not yet used - but likely to be useful for cases like a refund
   belongs_to :parent, class_name: 'Transaction'
 
 
-  # todo: factor to ActiveRecord::Base
-
   after_initialize :assign_uuid
 
-  def assign_uuid
-    self.uuid ||= SecureRandom.urlsafe_base64(8)
-  end
+  # todo: factor to ActiveRecord::Base
 
-  def self.by_uuid(uuid)
-    self.find_by(uuid: uuid)
-  end
+  # def assign_uuid
+  #   self.uuid ||= SecureRandom.urlsafe_base64(8)
+  # end
+  #
+  # def self.by_uuid(uuid)
+  #   self.find_by(uuid: uuid)
+  # end
 
   # def saved_payment_source(payment_type, autocreate: true)
   #   payment_source = payor.payment_source_for_type(payment_type, autocreate: true)

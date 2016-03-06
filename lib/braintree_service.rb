@@ -71,6 +71,7 @@ class BraintreeService
       customer_vault_id = payment_source&.get_data_field(:customer_vault_id)
       purchase(charge_amount, customer_vault_id)
       raise StandardError, "missing customer_vault_id"  unless customer_vault_id
+      transaction.update!(payment_source: payment_source)
     end
 
     # #todo: factor out the transaction update
