@@ -111,8 +111,17 @@ class Transaction < ActiveRecord::Base
     merchant_config_for_type(payment_type).payment_service
   end
 
-
   def send_receipt
+    PaymentNotifier.receipt(self).deliver
+  end
+
+
+  #
+  # beware, the sendgrid templated version below not currently used.
+  # not sure yet if sendgrid templates or actionmailer will be more convenient
+  #
+
+  def send_receipt_sendgrid
     mail = SendGrid::Mail.new do |m|
       m.to = payor.email
       m.from = 'system@fairpay.coop'

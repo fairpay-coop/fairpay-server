@@ -1,0 +1,12 @@
+Payment Receipt - <%= @transaction.payee.name %>
+
+Payor: <%= @transaction.payor.name %>
+Payee: <%= @transaction.payee.name %>, <%= @transaction.payee.email %>
+Paid Amount: <%= @transaction.paid_amount %>
+
+Payment Method: <%= @transaction.payment_type %>
+Transaction Fee: <%= @transaction.estimated_fee %>
+Transaction Id: <%= @transaction.id %>
+Status: <%= @transaction.status %>
+
+(receipt.text.erb)

@@ -1,0 +1,31 @@
+b Payment Receipt - #{@transaction.payee.name}
+hr
+br
+
+|Payor:
+b
+  =< @transaction.payor.name
+br
+|Payee:
+b
+  =< @transaction.payee.name
+|,
+=< @transaction.payee.email
+br
+|Paid Amount: $
+b
+  = @transaction.format_amount(@transaction.paid_amount)
+br
+br
+
+|Payment Method: #{@transaction.payment_type}
+br
+|Transaction Fee: $#{@transaction.format_amount(@transaction.estimated_fee)}
+br
+|Transaction Id: #{@transaction.uuid}
+br
+|Status: #{@transaction.status}
+
+br
+br
+|(receipt.html.slim)
