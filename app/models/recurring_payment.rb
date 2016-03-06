@@ -19,7 +19,7 @@ class RecurringPayment < ActiveRecord::Base
 
   after_initialize :assign_uuid
 
-  STATUS_VALUES = [:active, :cancelled]
+  STATUS_VALUES = [:active, :complete, :cancelled]
   INTERVAL_VALUES = [:day, :week, :month, :year]
 
 
@@ -27,7 +27,9 @@ class RecurringPayment < ActiveRecord::Base
     last_date = fetch_last_date || Date.today
     new_next = apply_interval(last_date)
     puts "setting next_date to: #{next_date}"
-    update!(next_date: new_next)
+    update_data = {next_date: new_next}
+    update_data[:status] = :complete  unless new_next
+    update!(update_data)
   end
 
   def fetch_last_date
@@ -36,7 +38,37 @@ class RecurringPayment < ActiveRecord::Base
 
   def apply_interval(date)
     interval = interval_count.send(interval_units)
-    date + interval
+    new_date = date + interval
+    if expires_date && new_date > expires_date
+      puts "recurring payment expired"
+      new_date = nil
+      # update!(status: :complete, )
+    end
+    new_date
+  end
+
+  def perform_payment
+    ref_tran = master_transaction
+    new_transaction = Transaction.create!(
+        payee: ref_tran.payee,
+        payor: ref_tran.payor,
+        base_amount: ref_tran.base_amount,
+        # payment_source: ref_tran.payment_source,
+        payment_type: ref_tran.payment_type,
+        recurring_payment: self,
+        parent: ref_tran,
+        status: :provisional,
+    )
+    new_transaction.perform_payment(use_payment_source: true)
+    increment_next_date
+  end
+
+  def self.perform_all_pending
+    all_pending.each(&:perform_payment)
+  end
+
+  def self.all_pending
+    RecurringPayment.where("status = 'active' and next_date <= ?", Date.today)
   end
 
 end

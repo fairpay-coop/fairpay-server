@@ -19,6 +19,7 @@ class Transaction < ActiveRecord::Base
   #   t.string :description
   #   t.json :data
   #   t.string :recurrence
+  #   t.reference :recurring_payment, index: true, foreign_key: true
   #   t.timestamps null: false
   #   t.strting :payment_type
 
@@ -72,11 +73,42 @@ class Transaction < ActiveRecord::Base
     format_amount(embed.paypal_service.calculate_fee(base_amount))
   end
 
-  #todo: think more about best encapsulation layering - for now lives in Embed
-  # def pay_via_dwolla
-  #   payor.dwolla_token.make_payment(payee.dwolla_token, base_amount)
-  #   transaction.update!(status: 'completed', paid_amount: paid_amount, estimated_fee: estimated_fee)
-  #
-  # end
+
+  def perform_payment(params = {})
+    payment_type = (params[:payment_type] || self.payment_type)&.to_sym
+
+    payment_service = payment_service_for_type(payment_type)
+    paid_amount,fee = payment_service.handle_payment(self, params)
+
+    self.update!(
+        status: 'completed',
+        payment_type: payment_type,
+        paid_amount: paid_amount,
+        estimated_fee: fee
+    )
+
+    if self.recurrence
+      recurring = RecurringPayment.create!(
+          master_transaction: self,
+          interval_units: self.recurrence,
+          interval_count: 1,
+          expires_date: nil,
+          status: :active
+      )
+      self.update!(recurring_payment: recurring)
+      recurring.increment_next_date
+    end
+  end
+
+  def merchant_config_for_type(payment_type)
+    result = payee.merchant_configs.find_by(kind: payment_type)
+    raise "merchant config not found for payee: #{payee}, payment type: #{payment_type}"  unless result
+    result
+  end
+
+  def payment_service_for_type(payment_type)
+    merchant_config_for_type(payment_type).payment_service
+  end
+
 
 end

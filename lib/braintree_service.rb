@@ -35,9 +35,9 @@ class BraintreeService
     # data = params.slice(:card_number, :card_month, :card_year, :card_cvv, :billing_zip)
     #card_data = params.slice(:number, :month, :year, :verification_value, :billing_zip)
 
-    use_payment_source = params[:use_payment_source] == 'true'  #todo: better pattern here?
+    use_payment_source = params[:use_payment_source].to_s == 'true'  #todo: better pattern here?
     unless use_payment_source
-      number = params[:card_number];
+      number = params[:card_number]
       mmyy = params[:card_mmyy]
       month = mmyy[0..1]
       year = "20#{mmyy[2..3]}"

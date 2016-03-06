@@ -81,39 +81,39 @@ class Embed < ActiveRecord::Base
 
   def step2(params)
     # merchant_config_id = params[:merchant_config_id]
-    payment_type = params[:payment_type]&.to_sym
+    # payment_type = params[:payment_type]&.to_sym
 
     transaction_uuid = params[:transaction_uuid]
     transaction = Transaction.by_uuid(transaction_uuid)
 
-    payment_service = payment_service_for_type(payment_type)
-    paid_amount,fee = payment_service.handle_payment(transaction, params)
+    transaction.perform_payment(params)
 
-    transaction.update!(
-        status: 'completed',
-        payment_type: payment_type,
-        paid_amount: paid_amount,
-        estimated_fee: fee
-    )
-
-    if transaction.recurrence
-      recurring = RecurringPayment.create!(
-          master_transaction: transaction,
-          interval_units: transaction.recurrence,
-          interval_count: 1,
-          expires_date: nil,
-          status: :active
-      )
-
-      transaction.update!(recurring_payment: recurring)
-
-      recurring.increment_next_date
-
-    end
-
+    # payment_service = payment_service_for_type(payment_type)
+    # paid_amount,fee = payment_service.handle_payment(transaction, params)
+    #
+    # transaction.update!(
+    #     status: 'completed',
+    #     payment_type: payment_type,
+    #     paid_amount: paid_amount,
+    #     estimated_fee: fee
+    # )
+    #
+    # if transaction.recurrence
+    #   recurring = RecurringPayment.create!(
+    #       master_transaction: transaction,
+    #       interval_units: transaction.recurrence,
+    #       interval_count: 1,
+    #       expires_date: nil,
+    #       status: :active
+    #   )
+    #
+    #   transaction.update!(recurring_payment: recurring)
+    #
+    #   recurring.increment_next_date
+    #
+    # end
 
     transaction
-
   end
 
   # def pay_via_card(params)
