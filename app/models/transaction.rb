@@ -98,6 +98,7 @@ class Transaction < ActiveRecord::Base
       self.update!(recurring_payment: recurring)
       recurring.increment_next_date
     end
+    send_receipt
   end
 
   def merchant_config_for_type(payment_type)
@@ -110,5 +111,71 @@ class Transaction < ActiveRecord::Base
     merchant_config_for_type(payment_type).payment_service
   end
 
+
+  def send_receipt
+    mail = SendGrid::Mail.new do |m|
+      m.to = payor.email
+      m.from = 'system@fairpay.coop'
+      m.subject = "Payment Receipt - #{payee.name}"
+      m.html = ' '
+      m.text = ' ' #receipt_body
+    end
+
+    # ADD THE SMTP API
+    # The SendGrid Ruby Library has convenience
+    # methods built in to take care of the SMTP-
+    # API header for you.
+    #===========================================#
+    header = Smtpapi::Header.new
+
+    # ADD THE SUBSTITUTION VALUES
+    header.set_substitutions(
+        {
+            "%payor_name%" => [payor.name],
+            "%payee_name%" => [payee.name],
+            "%payee_email%" => [payee.email],
+            "%paid_amount%" => [paid_amount.to_s],
+            "%payment_type%" => [payment_type],
+            "%transaction_fee%" => [estimated_fee.to_s],
+            "%transaction_id%" => [id.to_s],
+            "%status%" => [status],
+        })
+
+    template_id = ENV['SENDGRID_TEMPLATE_RECEIPT']
+
+    # ADD THE APP FILTERS
+    header.set_filters(
+        {
+            templates: {
+                settings: {
+                    enable: "1",
+                    template_id: template_id
+                }
+            }
+        })
+
+    mail.smtpapi = header
+
+    res = sendgrid_client.send(mail)
+    puts res.code
+    puts res.body
+  end
+
+#   def receipt_body
+#     <<END
+# Transaction id: #{id}
+# Payor: #{payor.name}
+# Payee: #{payee.name}, #{payee.email}
+# Paid Amount: #{paid_amount}
+# Payment Type: #{payment_type}
+# Transaction Fee: #{estimated_fee}
+# Status: #{status}
+# END
+#   end
+
+  def sendgrid_client
+    sendgrid_api_key = ENV['SENDGRID_API_KEY']
+    client = SendGrid::Client.new(api_key: sendgrid_api_key)
+  end
 
 end

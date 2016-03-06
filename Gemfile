@@ -63,6 +63,10 @@ gem 'grape-entity'
 gem 'grape-swagger'
 gem 'grape-swagger-rails'
 
+# out bound email
+gem 'sendgrid-ruby'
+
+
 # payment processors
 gem 'activemerchant'
 gem 'braintree'

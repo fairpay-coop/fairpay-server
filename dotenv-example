@@ -14,5 +14,18 @@ PAYPAL_API_PASSWORD=...2L3
 PAYPAL_API_SIGNATURE=...9Rwm
 
 
+SENDGRID_API_KEY=...cS8
+
+
+SENDGRID_TEMPLATE_RECEIPT=fc01355c-8fd9-417b-8005-6eab03398ff5
+
+SMTP_USER_NAME=it@fairpay.coop
+SMTP_PASSWORD=...
+SMTP_DOMAIN=fairpay.coop
+SMTP_ADDRESS=smtp.sendgrid.net
+SMTP_PORT=587
+
+
+
 # used to generate fully qualified urls from service tier
 BASE_URL=http://local.fairpay.coop:3000
