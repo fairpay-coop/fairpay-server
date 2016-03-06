@@ -10,6 +10,11 @@ module DataFieldable
     self.data #.with_indifferent_access - this was breaking persistence
   end
 
+  def indifferent_data
+    ensured_data.with_indifferent_access
+  end
+
+
   def get_data_field(name)
     ensured_data.with_indifferent_access[name]
   end

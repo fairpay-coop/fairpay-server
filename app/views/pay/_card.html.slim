@@ -20,6 +20,7 @@ form id="card_form"
   input type="hidden" id="amount" name="amount" value="#{@transaction.base_amount}"
   /todo: better way to pass server rendered values into js logic?
   input type="hidden" id="default_fee_info" value="#{card_fee_str}"
+  input type="hidden" id="fee_update_enabled" value="#{merchant_config.fee_update_enabled}"
 
   |Card Number:
   input type="text" id="card_number" name="card_number" value=""
@@ -95,7 +96,11 @@ javascript:
     }
   }
   document.addEventListener("DOMContentLoaded", function (e) {
-    $("#card_number").bind("keyup", cardNumberKeypressed);
+    var fee_update_enabled = $('#fee_update_enabled').val();
+    //alert(fee_update_enabled);
+    if (fee_update_enabled == 'true') {
+      $("#card_number").bind("keyup", cardNumberKeypressed);
+    }
   }, false);
 
 

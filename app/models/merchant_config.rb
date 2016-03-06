@@ -46,11 +46,21 @@ class MerchantConfig < ActiveRecord::Base
   #   payment_service.form_name
   # end
 
+  # consider factoring out to payment service
   def form_name
     if kind_sym == :authorizenet || kind_sym == :braintree
       'card'
     else
       kind
+    end
+  end
+
+  # consider factoring out to payment service
+  def fee_update_enabled
+    if kind_sym == :authorizenet
+      true
+    else
+      false
     end
   end
 

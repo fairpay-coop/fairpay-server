@@ -64,6 +64,9 @@ gem 'grape-swagger'
 gem 'grape-swagger-rails'
 
 # payment processors
+gem 'activemerchant'
+gem 'braintree'
+
 gem 'authorizenet'
 # note the 'dwolla_swagger' version api looks like it's still half-baked
 # gem 'dwolla_swagger', '~> 1.0', '>= 1.0.2'

@@ -38,4 +38,15 @@ class Profile < ActiveRecord::Base
     payment_source.update_data_field(:account_id, account_id)
   end
 
+  #todo: revisit
+  def first_name
+    words = name&.split(" ") || []
+    words.first
+  end
+
+  def last_name
+    words = name&.split(" ") || []
+    words.last
+  end
+
 end
