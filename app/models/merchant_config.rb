@@ -21,6 +21,10 @@ class MerchantConfig < ActiveRecord::Base
     KINDS[kind_sym]
   end
 
+  def payment_type
+    kind_sym
+  end
+
   def kind_sym
     kind.to_sym
   end
@@ -41,6 +45,13 @@ class MerchantConfig < ActiveRecord::Base
         raise "service type: #{kind} - not yet implemented"
     end
   end
+
+
+  def saved_payment_source(transaction, autocreate: true)
+    payment_source = transaction.payor.payment_source_for_type(payment_type, autocreate: autocreate)
+  end
+
+
 
   # def form_name
   #   payment_service.form_name

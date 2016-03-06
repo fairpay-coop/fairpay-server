@@ -22,6 +22,17 @@ form id="card_form"
   input type="hidden" id="default_fee_info" value="#{card_fee_str}"
   input type="hidden" id="fee_update_enabled" value="#{merchant_config.fee_update_enabled}"
 
+  - payment_source = merchant_config.saved_payment_source(@transaction)
+  - if payment_source&.get_data_field(:description)
+    | Use saved payment info? #{payment_source.get_data_field(:description)}
+    /input type="checkbox" name="payment_source" value="#{payment_source.id}" checked="true"
+    input type="checkbox" name="use_payment_source" value="true" checked="true"
+    br
+  - else
+    input type="hidden" name="use_payment_source" value="false"
+
+  / todo: dynamic hide display of below form
+
   |Card Number:
   input type="text" id="card_number" name="card_number" value=""
   br
@@ -37,6 +48,9 @@ form id="card_form"
   /|Charge Description:
   /input type="text" name="description" value="test"
   /br
+  |Save Payment Info:
+  input type="checkbox" name="save_payment_info" value="true"
+  br
 
   input id="step2_submit" type="submit" value="Pay with Card"
 
@@ -110,7 +124,7 @@ javascript:
     //alert('handleCard');
     var form = document.getElementById("card_form");
     var data = {};
-    FairPayApi.copyFormValues(data, form, ['embed_uuid', 'transaction_uuid', 'payment_type', 'amount', 'card_number', 'card_mmyy', 'card_cvv', 'billing_zip']);
+    FairPayApi.copyFormValues(data, form, ['embed_uuid', 'transaction_uuid', 'payment_type', 'amount', 'card_number', 'card_mmyy', 'card_cvv', 'billing_zip', 'save_payment_info', 'use_payment_source']);
     FairPayApi.submitCard(data, handleCardResponse);
     return false;
   }

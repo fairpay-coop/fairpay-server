@@ -13,16 +13,22 @@ class Profile < ActiveRecord::Base
   # belongs_to :dwolla_token
 
 
+  def payment_source_for_type(type, autocreate: true)
+    if autocreate
+      payment_sources.find_or_create_by(kind: type)
+    else
+      payment_sources.find_by(kind: type)
+    end
+  end
+
+
+
   def has_dwolla_auth
     dwolla_payment_source&.get_data_field(:account_id).present?
   end
 
   def dwolla_payment_source(autocreate: true)
-    if autocreate
-      payment_sources.find_or_create_by(kind: :dwolla)
-    else
-      payment_sources.find_by(kind: :dwolla)
-    end
+    payment_source_for_type(:dwolla, autocreate: autocreate)
   end
 
   def dwolla_token

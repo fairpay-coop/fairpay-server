@@ -42,6 +42,10 @@ class Transaction < ActiveRecord::Base
     self.find_by(uuid: uuid)
   end
 
+  # def saved_payment_source(payment_type, autocreate: true)
+  #   payment_source = payor.payment_source_for_type(payment_type, autocreate: true)
+  # end
+
 
   def card_fee_range
     embed.card_payment_service.calculate_fee(base_amount)
