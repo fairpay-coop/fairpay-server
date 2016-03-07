@@ -22,6 +22,7 @@ class Transaction < ActiveRecord::Base
   #   t.reference :recurring_payment, index: true, foreign_key: true
   #   t.timestamps null: false
   #   t.strting :payment_type
+  #   t.string :mailing_list
 
 
   belongs_to :payor, class_name: 'Profile'
@@ -98,7 +99,31 @@ class Transaction < ActiveRecord::Base
       self.update!(recurring_payment: recurring)
       recurring.increment_next_date
     end
+    TransactionAsyncCompletionJob.perform_async(self.id)
+  end
+
+  def async_completion
+    puts "async completion - #{id}"
     send_receipt
+    if mailing_list
+      puts "mailing lib subscribe - #{payor.email}"
+      mailing_list_subscribe
+    end
+
+  end
+
+  def mailing_list_subscribe(double_optin: true)
+    mailchimp_list_id = ENV['MAILCHIMP_LIST_ID']
+    puts "list id: #{mailchimp_list_id}"
+    profile = payor
+
+    gibbon = Gibbon::Request.new(api_key: ENV['MAILCHIMP_API_KEY'])
+
+    #todo: double check if already subscribed first
+
+    status = double_optin ? "pending" : "subscribed"
+    body = { email_address: profile.email, status: status, merge_fields: {FNAME: profile.first_name, LNAME: profile.last_name} }
+    gibbon.lists(mailchimp_list_id).members.create(body: body)
   end
 
   def merchant_config_for_type(payment_type)

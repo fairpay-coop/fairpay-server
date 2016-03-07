@@ -26,7 +26,7 @@ form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1"
   =<> "Yearly"
   br
   => "Join Mailing List:"
-  input type="checkbox" name="mailing_list" value="true"
+  input type="checkbox" name="mailing_list" value="join"
   br
   /|Authorize.net:
   /= radio_button_tag(:payment_type, "authorizenet")

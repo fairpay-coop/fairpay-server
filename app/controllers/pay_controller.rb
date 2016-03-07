@@ -25,7 +25,7 @@ class PayController < ApplicationController
     # email = params[:email]
     # name = params[:name]
     # recurrence = params[:recurrence]
-    data = params.slice(:name, :email, :amount, :recurrence)
+    data = params.slice(:name, :email, :amount, :recurrence, :mailing_list)
 
     transaction = embed.step1(data) #email, name, amount, recurrence)
 

@@ -63,6 +63,8 @@ class Embed < ActiveRecord::Base
     amount = params[:amount]
     recurrence = params[:recurrence]
     recurrence = nil  if recurrence == 'none'
+    mailing_list = params[:mailing_list]
+
     raise "email required" unless email.present?
     payor = Profile.find_by(email: email)
     unless payor
@@ -75,7 +77,9 @@ class Embed < ActiveRecord::Base
         payor: payor,
         base_amount: amount,
         status: :provisional,
-        recurrence: recurrence)
+        recurrence: recurrence,
+        mailing_list: mailing_list
+    )
   end
 
 

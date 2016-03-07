@@ -63,8 +63,10 @@ gem 'grape-entity'
 gem 'grape-swagger'
 gem 'grape-swagger-rails'
 
-# out bound email
+# email stuff
 gem 'sendgrid-ruby'
+gem 'gibbon'
+gem 'sucker_punch', '~> 2.0'
 
 
 # payment processors
