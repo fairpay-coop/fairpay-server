@@ -104,7 +104,7 @@ class Transaction < ActiveRecord::Base
 
   def async_completion
     puts "async completion - #{id}"
-    send_receipt
+    send_receipts
     if mailing_list
       puts "mailing lib subscribe - #{payor.email}"
       mailing_list_subscribe
@@ -112,9 +112,10 @@ class Transaction < ActiveRecord::Base
 
   end
 
-  def send_receipt
+  def send_receipts
     puts "send receipt - tran id: #{id}"
     PaymentNotifier.receipt(self).deliver_now
+    PaymentNotifier.receipt_merchant(self).deliver_now
   end
 
   def mailing_list_subscribe

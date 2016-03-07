@@ -5,8 +5,13 @@ class PaymentNotifier < ApplicationMailer
   def receipt(transaction)
     @transaction = transaction
     subject = "Payment Receipt - #{@transaction.payee.name}"
-    mail( to: @transaction.payor.email,
-          subject: subject )
+    mail( to: @transaction.payor.email, subject: subject )
+  end
+
+  def receipt_merchant(transaction)
+    @transaction = transaction
+    subject = "Payment Received - #{@transaction.payor.name}"
+    mail( to: @transaction.payee.email, subject: subject )
   end
 
 
