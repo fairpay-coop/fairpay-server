@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160307001505) do
+ActiveRecord::Schema.define(version: 20160307203523) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -90,8 +90,11 @@ ActiveRecord::Schema.define(version: 20160307001505) do
     t.integer  "profile_id"
     t.string   "kind"
     t.json     "data"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.string   "name"
+    t.string   "internal_name"
+    t.boolean  "disabled",      default: false, null: false
   end
 
   add_index "embeds", ["profile_id"], name: "index_embeds_on_profile_id", using: :btree
@@ -101,8 +104,11 @@ ActiveRecord::Schema.define(version: 20160307001505) do
     t.integer  "profile_id"
     t.string   "kind"
     t.json     "data"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.string   "name"
+    t.string   "internal_name"
+    t.boolean  "disabled",      default: false, null: false
   end
 
   add_index "merchant_configs", ["profile_id"], name: "index_merchant_configs_on_profile_id", using: :btree
@@ -113,6 +119,7 @@ ActiveRecord::Schema.define(version: 20160307001505) do
     t.json     "data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "name"
   end
 
   add_index "payment_sources", ["profile_id"], name: "index_payment_sources_on_profile_id", using: :btree
@@ -123,6 +130,8 @@ ActiveRecord::Schema.define(version: 20160307001505) do
     t.string   "phone"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "first_name"
+    t.string   "last_name"
   end
 
   create_table "recurring_payments", force: :cascade do |t|

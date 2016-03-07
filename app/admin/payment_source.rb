@@ -1,6 +1,6 @@
 ActiveAdmin.register PaymentSource do
 
-  permit_params :profile_id, :kind, :data
+  permit_params :profile_id, :kind, :name, :data
 
 
   index do
@@ -18,6 +18,7 @@ ActiveAdmin.register PaymentSource do
       f.input :profile, as: :select, collection: Profile.pluck(:name, :id)
 
       # f.input :kind, as: :select, collection: MerchantConfig.kinds.map { |key,name| [name, key] }
+      f.input :name
 
       f.input :data, as: :text
     end

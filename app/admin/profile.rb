@@ -3,7 +3,7 @@ ActiveAdmin.register Profile do
 # See permitted parameters documentation:
 # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
 
-permit_params :name, :email, :phone
+permit_params :name, :first_name, :last_name, :email, :phone
 
 #
 # or

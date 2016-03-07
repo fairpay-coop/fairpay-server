@@ -5,6 +5,8 @@ class Profile < ActiveRecord::Base
   #   t.string :email
   #   t.string :phone
   #   t.timestamps null: false
+  # add_column :profiles, :first_name, :string
+  # add_column :profiles, :last_name, :string
 
 
   has_many :merchant_configs
@@ -12,6 +14,10 @@ class Profile < ActiveRecord::Base
   has_many :payment_sources
   # belongs_to :dwolla_token
 
+
+  def display_name
+    name || ("#{first_name} #{last_name}")
+  end
 
   def payment_source_for_type(type, autocreate: true)
     if autocreate

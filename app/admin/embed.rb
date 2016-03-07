@@ -1,6 +1,6 @@
 ActiveAdmin.register Embed do
 
-  permit_params :profile_id, :kind, :data
+  permit_params :profile_id, :name, :internal_name, :kind, :data, :disabled
 
 
   index do
@@ -8,7 +8,10 @@ ActiveAdmin.register Embed do
     id_column
     column :uuid
     column :profile
+    column :name
+    # column :internal_name
     # column :kind
+    column :disabled
     column :updated_at
     actions
   end
@@ -19,11 +22,15 @@ ActiveAdmin.register Embed do
       f.input :profile, as: :select, collection: Profile.pluck(:name, :id)
 
       # f.input :kind, as: :select, collection: Embed.kinds.map { |key,name| [name, key] }
+      f.input :name
+      # f.input :internal_name
 
       f.input :data, as: :text
       # todo: integrate friendlier json editor
       # https://lorefnon.me/2015/03/02/dealing-with-json-fields-in-active-admin.html
       # f.input :data, as: :text, input_html: { class: 'jsoneditor-target' }
+
+      f.input :disabled
 
     end
     f.actions

@@ -8,12 +8,19 @@ class Embed < ActiveRecord::Base
   #   t.string :kind
   #   t.json :data
   #   t.timestamps null: false
+  # add_column :embeds, :name, :string
+  # not sure yet if we need an internal name here
+  # add_column :embeds, :internal_name, :string
 
 
   belongs_to :profile
 
   after_initialize :assign_uuid
 
+
+  def display_name
+    name || ("#{profile&.display_name} (#{uuid})")
+  end
 
   # returns list of names of merchant config type to display for the embed
   # either honor a specific embed param, or default to all available merchant configs

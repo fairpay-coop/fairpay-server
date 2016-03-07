@@ -7,6 +7,8 @@ class MerchantConfig < ActiveRecord::Base
   #   t.string :kind
   #   t.json :data
   #   t.timestamps null: false
+  # add_column :merchant_configs, :name, :string
+  # add_column :merchant_configs, :internal_name, :string
 
   belongs_to :profile
 
