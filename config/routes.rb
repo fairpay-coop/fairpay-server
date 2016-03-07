@@ -44,6 +44,10 @@ Rails.application.routes.draw do
 
   get  'pay/:uuid/thanks/:transaction_uuid' => 'pay#thanks'
 
+  get  'recurring/:uuid/cancel' => 'recurring#cancel'
+  get  'recurring/:uuid' => 'recurring#status'
+  get  'system/perform_pending' => 'recurring#perform_all_pending'
+
 
   # Embedable widget
   get  '/widgetjs'                                        => 'widget#widget_js'

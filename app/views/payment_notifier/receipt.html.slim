@@ -25,7 +25,21 @@ br
 |Transaction Id: #{@transaction.uuid}
 br
 |Status: #{@transaction.status}
+br
 
-br
-br
-|(receipt.html.slim)
+- recurring = @transaction.recurring_payment
+- if recurring
+  br
+  |Recurring:
+  b
+    =< recurring.interval_display
+  br
+  - if recurring.next_date
+    |Next Payment: #{recurring.next_date}
+    br
+
+  br
+  |To see recurring payment status or to cancel go:
+  b
+  =< link_to 'here', recurring.status_url
+

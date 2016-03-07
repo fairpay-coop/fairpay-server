@@ -22,6 +22,44 @@ class RecurringPayment < ActiveRecord::Base
   STATUS_VALUES = [:active, :complete, :cancelled]
   INTERVAL_VALUES = [:day, :week, :month, :year]
 
+  def active?
+    status.to_sym == :active
+  end
+
+  #todo: what is the best place for a global helper method like this?
+  def base_url
+    ENV['BASE_URL']
+  end
+
+
+  def status_url
+    "#{base_url}/recurring/#{uuid}"
+  end
+
+  def cancel_url
+    "#{status_url}/cancel"
+  end
+
+  def cancel
+    update!(status: :cancelled, next_date: nil)
+    self
+  end
+
+  # todo: make this more robust
+  def interval_display
+    case interval_units.to_sym
+      when :day
+        "Daily"
+      when :week
+        "Weekly"
+      when :month
+        "Monthly"
+      when :year
+        "Yearly"
+      else
+        interval_units.humanize
+    end
+  end
 
   def increment_next_date
     last_date = fetch_last_date || Date.today
@@ -42,12 +80,12 @@ class RecurringPayment < ActiveRecord::Base
     if expires_date && new_date > expires_date
       puts "recurring payment expired"
       new_date = nil
-      # update!(status: :complete, )
     end
     new_date
   end
 
   def perform_payment
+    #todo double check here that payment is still currently due
     ref_tran = master_transaction
     new_transaction = Transaction.create!(
         payee: ref_tran.payee,
@@ -64,7 +102,29 @@ class RecurringPayment < ActiveRecord::Base
   end
 
   def self.perform_all_pending
-    all_pending.each(&:perform_payment)
+
+    #todo: make sure this is safe from potential concurrency issues if run in parallel
+
+    success_count = 0
+    failure_count = 0
+    successes = []
+    errors = []
+    all_pending.each do |item|
+      begin
+        item.perform_payment
+        successes << item.id
+        success_count += 1
+      rescue StandardError => e
+        message = "RecurringPayment id: #{item.id}, e: #{e.inspect}"
+        puts "perform pending payment error: #{message}"
+        errors << message
+        failure_count += 1
+      end
+    end
+    { success_count: success_count,
+      failure_count: failure_count,
+      successes: successes,
+      errors: errors }
   end
 
   def self.all_pending

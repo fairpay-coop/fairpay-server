@@ -1,0 +1,37 @@
+/ factor this with thanks/confirmation page?
+
+/- recurring = @transaction.recurring_payment
+- transaction = @recurring.master_transaction
+
+h1.title Recurring Payment Status
+
+|Payor: #{transaction.payor.name}
+br
+|Payee: #{transaction.payee.name}
+br
+/ todo: better patterm for formatting numbers with slim?
+|Payment Amount: #{transaction.format_amount(transaction.paid_amount)}
+br
+|Payment Type: #{transaction.payment_type}
+br
+|Transaction Fee: $#{transaction.format_amount(transaction.estimated_fee)}
+br
+|Recurrence: #{@recurring.interval_display}
+br
+|Status: #{@recurring.status}
+br
+|Last Payment: #{@recurring.fetch_last_date}
+br
+- if @recurring.next_date
+  |Next Payment: #{@recurring.next_date}
+  br
+
+- if @recurring.status == 'active'
+  br
+  b = link_to 'Cancel', @recurring.cancel_url
+  br
+
+
+
+
+

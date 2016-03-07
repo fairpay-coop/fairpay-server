@@ -9,4 +9,17 @@ Transaction Fee: <%= @transaction.estimated_fee %>
 Transaction Id: <%= @transaction.id %>
 Status: <%= @transaction.status %>
 
-(receipt.text.erb)
+<%
+  recurring = @transaction.recurring_payment
+  if recurring
+%>
+
+Recurring: <%= recurring.interval_display %>
+<% if recurring.next_date %>
+Next Payment: <%= recurring.next_date %>
+<% end %>
+
+To see recurring payment status or to cancel go to:
+   <%= recurring.status_url %>
+
+<% end %>

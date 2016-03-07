@@ -113,7 +113,8 @@ class Transaction < ActiveRecord::Base
   end
 
   def send_receipt
-    PaymentNotifier.receipt(self).deliver
+    puts "send receipt - tran id: #{id}"
+    PaymentNotifier.receipt(self).deliver_now
   end
 
   def mailing_list_subscribe
