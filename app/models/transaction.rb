@@ -112,18 +112,29 @@ class Transaction < ActiveRecord::Base
 
   end
 
-  def mailing_list_subscribe(double_optin: true)
-    mailchimp_list_id = ENV['MAILCHIMP_LIST_ID']
-    puts "list id: #{mailchimp_list_id}"
-    profile = payor
+  def send_receipt
+    PaymentNotifier.receipt(self).deliver
+  end
 
-    gibbon = Gibbon::Request.new(api_key: ENV['MAILCHIMP_API_KEY'])
-
-    #todo: double check if already subscribed first
-
-    status = double_optin ? "pending" : "subscribed"
-    body = { email_address: profile.email, status: status, merge_fields: {FNAME: profile.first_name, LNAME: profile.last_name} }
-    gibbon.lists(mailchimp_list_id).members.create(body: body)
+  def mailing_list_subscribe
+    service = embed.mailing_list_service
+    if service
+      service.subscribe(payor)
+    else
+      puts "warning mailing list service undefined"
+    end
+    #
+    # mailchimp_list_id = ENV['MAILCHIMP_LIST_ID']
+    # puts "list id: #{mailchimp_list_id}"
+    # profile = payor
+    #
+    # gibbon = Gibbon::Request.new(api_key: ENV['MAILCHIMP_API_KEY'])
+    #
+    # #todo: double check if already subscribed first
+    #
+    # status = double_optin ? "pending" : "subscribed"
+    # body = { email_address: profile.email, status: status, merge_fields: {FNAME: profile.first_name, LNAME: profile.last_name} }
+    # gibbon.lists(mailchimp_list_id).members.create(body: body)
   end
 
   def merchant_config_for_type(payment_type)
@@ -134,10 +145,6 @@ class Transaction < ActiveRecord::Base
 
   def payment_service_for_type(payment_type)
     merchant_config_for_type(payment_type).payment_service
-  end
-
-  def send_receipt
-    PaymentNotifier.receipt(self).deliver
   end
 
 

@@ -13,14 +13,9 @@ PAYPAL_API_USERNAME=payments-facilitator_api1....
 PAYPAL_API_PASSWORD=...2L3
 PAYPAL_API_SIGNATURE=...9Rwm
 
-
+# note, not currently using sendgrid api, but instead smtp in order to leverage ActionMailer infrastructure
 SENDGRID_API_KEY=...cS8
-
 SENDGRID_TEMPLATE_RECEIPT=fc01355c-8fd9-417b-8005-6eab03398ff5
-
-
-MAILCHIMP_API_KEY=...8ea-us12
-
 
 SMTP_USER_NAME=it@fairpay.coop
 SMTP_PASSWORD=...

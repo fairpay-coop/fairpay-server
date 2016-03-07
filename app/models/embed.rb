@@ -18,8 +18,22 @@ class Embed < ActiveRecord::Base
   # returns list of names of merchant config type to display for the embed
   # either honor a specific embed param, or default to all available merchant configs
   def payment_types
-    get_data_field(:payment_types) || profile.merchant_configs.map(&:kind)
+    get_data_field(:payment_types) || all_payment_configs.map(&:kind)
     # todo: add validation that merchant configs exist when specific list given
+  end
+
+  def all_merchant_configs
+    profile.merchant_configs
+  end
+
+  def all_payment_configs
+    # todo: add a category of configs to more cleanly support this filter
+    merchant_configs.find_by(kind: ['authorizenet', 'braintree', 'dwolla', 'paypal'])
+  end
+
+
+  def payment_configs
+    payment_types.map { |type| merchant_config_for_type(type) }
   end
 
   def merchant_configs
@@ -28,7 +42,7 @@ class Embed < ActiveRecord::Base
 
 
   def merchant_config_for_type(payment_type)
-    result = profile.merchant_configs.find_by(kind: payment_type)
+    result = all_merchant_configs.find_by(kind: payment_type)
     raise "merchant config now found for payment type: #{payment_type}"  unless result
     result
   end
@@ -37,27 +51,65 @@ class Embed < ActiveRecord::Base
     merchant_config_for_type(payment_type).payment_service
   end
 
-
+  #todo: still used?
   def card_merchant_config
     # todo: add a category of configs to more cleanly support this filter
-    merchant_config = merchant_configs.find_by(kind: ['authorizenet', 'braintree'])
+    all_merchant_configs.find_by(kind: ['authorizenet', 'braintree'])
   end
+
+  def mailing_list_config
+    mailing_list_type = get_data_field(:mailing_list)
+    mailing_list_type = mailing_list_type['type']  if mailing_list_type.is_a?(Hash)
+    if mailing_list_type
+      all_merchant_configs.find_by(kind: mailing_list_type)
+    else
+      nil
+    end
+  end
+
+  def mailing_list_service
+    mailing_list_config&.service
+  end
+
+  def mailing_list_enabled
+    mailing_list_config.present?
+  end
+
+  def recurrence_enabled
+    get_data_field(:recurrence).present?
+  end
+
+  RECURRENCE_LABELS = {none: "One Time", month: "Monthly", year: "Yearly"}
+
+  def recurrence_options
+    [[:none, "One Time"], [:month, "Monthly"], [:year, "Yearly"]]
+    values = get_data_field(:recurrence)
+    values.map do |value|
+      checked = value == :none  #todo: make this configurable?
+      { value: value, label: RECURRENCE_LABELS[value.to_sym], checked: checked }
+    end
+  end
+
+  #todo: data driven recurrence choices
+
+  #todo: data driven contribution amount choices
 
   # this can all be nicely refactored
   def card_payment_service
     card_merchant_config&.payment_service
   end
 
+  # still used?
   def paypal_service
-    merchant_config = merchant_configs.find_by(kind: 'paypal')
-    payment_service = merchant_config.payment_service
+    merchant_config = all_merchant_configs.find_by(kind: 'paypal')
+    merchant_config&.payment_service
   end
 
   def dwolla_service
     DwollaService.instance
   end
 
-  def step1(params) #email, name, amount)
+  def step1(params)
     email = params[:email]
     name = params[:name]
     amount = params[:amount]

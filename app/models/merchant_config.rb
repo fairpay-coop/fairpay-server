@@ -11,7 +11,14 @@ class MerchantConfig < ActiveRecord::Base
   belongs_to :profile
 
 
-  KINDS = {stripe: 'Stripe', authorizenet: 'Authorize.Net', braintree: 'Braintree', dwolla: 'Dwolla', paypal: 'PayPal'}
+  KINDS = {
+      stripe: 'Stripe',
+      authorizenet: 'Authorize.Net',
+      braintree: 'Braintree',
+      dwolla: 'Dwolla',
+      paypal: 'PayPal',
+      mailchimp: 'MailChimp'
+  }
 
   def self.kinds
     KINDS
@@ -31,6 +38,7 @@ class MerchantConfig < ActiveRecord::Base
 
   #todo: memoize this result?
 
+
   def payment_service
     case kind_sym
       when :dwolla
@@ -41,10 +49,15 @@ class MerchantConfig < ActiveRecord::Base
         BraintreeService.new(self)
       when :paypal
         PaypalService.new(data)
+      when :mailchimp
+        MailchimpService.new(self)
       else
         raise "service type: #{kind} - not yet implemented"
     end
   end
+
+  alias_method :service, :payment_service
+
 
 
   def saved_payment_source(transaction, autocreate: true)
