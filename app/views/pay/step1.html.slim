@@ -20,7 +20,7 @@ form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1"
   br
   - if @embed.recurrence_enabled
     - for option in @embed.recurrence_options
-      = radio_button_tag :recurrence, option[:value].to_s, checked: option[:checked]
+      = radio_button_tag :recurrence, option[:value].to_s, option[:checked]
       =<> option[:label]
       |&nbsp;
       = " "

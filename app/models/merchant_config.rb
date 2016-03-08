@@ -74,22 +74,26 @@ class MerchantConfig < ActiveRecord::Base
 
   # consider factoring out to payment service
   def form_name
-    if kind_sym == :authorizenet || kind_sym == :braintree
-      'card'
-    else
-      kind
-    end
+    card? ? 'card' : kind
   end
 
-  # consider factoring out to payment service
+  def card?
+    kind_sym == :authorizenet || kind_sym == :braintree
+  end
+
+
+
+  # consider factoring out to payment service base class
   def fee_update_enabled
-    if kind_sym == :authorizenet
-      true
-    else
-      false
-    end
+    payment_service.fee_service.fee_update_enabled
+    # if kind_sym == :authorizenet
+    #   true
+    # else
+    #   false
+    # end
   end
 
+  #todo: need a better place to factor shared payment service logic too, probably a base class
   def card_fee_str(transaction, params = nil)
     low, high = payment_service.calculate_fee(transaction.base_amount, params)
     result = "$#{format_amount(low)}"

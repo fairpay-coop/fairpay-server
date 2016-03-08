@@ -30,7 +30,9 @@ var FairPayApiSinglton = (function() {
         }
 
         function estimateFee(data, successHandler) {
-            var uri = '/api/v1/embed/' + data.embed_uuid + '/estimate_fee';
+            var embedUuid = data.embed_uuid ? data.embed_uuid : getEmbedUuid();
+            delete data.embed_uuid;
+            var uri = '/api/v1/embed/' + embedUuid + '/estimate_fee';
             invoke(uri, data, successHandler);
         }
 

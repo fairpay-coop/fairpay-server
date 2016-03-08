@@ -8,6 +8,8 @@ class DwollaService
 
   SCOPE = "Send|Request|Funding|Balance"
 
+  FEE_CONFIG = {base: 0, percent: 0}
+
   def initialize
     dwolla_environment = ENV['DWOLLA_ENVIRONMENT']
     @environment = dwolla_environment.to_sym  if dwolla_environment
@@ -33,7 +35,14 @@ class DwollaService
       end
     end
 
+    @fee_service = FeeService.new(FEE_CONFIG)
+
   end
+
+  def fee_service
+    @fee_service
+  end
+
 
   def api_client
     @dwolla

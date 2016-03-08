@@ -79,7 +79,8 @@ class PayController < ApplicationController
   def estimate_fee
     bin = params[:bin]
     amount = params[:amount]
-    result = Binbase.estimate_fee(bin, amount)
+    embed = Embed.by_uuid(params[:uuid])
+    result = embed.card_payament_service.estimate_fee(bin, amount)
     render json: result
   end
 

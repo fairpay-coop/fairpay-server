@@ -61,7 +61,8 @@ class Embed < ActiveRecord::Base
   #todo: still used?
   def card_merchant_config
     # todo: add a category of configs to more cleanly support this filter
-    all_merchant_configs.find_by(kind: ['authorizenet', 'braintree'])
+    # all_merchant_configs.find_by(kind: ['authorizenet', 'braintree'])
+    payment_configs.detect(&:card?)   # could be better optimized
   end
 
   def mailing_list_config
@@ -92,7 +93,7 @@ class Embed < ActiveRecord::Base
     [[:none, "One Time"], [:month, "Monthly"], [:year, "Yearly"]]
     values = get_data_field(:recurrence)
     values.map do |value|
-      checked = value == :none  #todo: make this configurable?
+      checked = (value.to_sym == :none)  #todo: make this configurable?
       { value: value, label: RECURRENCE_LABELS[value.to_sym], checked: checked }
     end
   end

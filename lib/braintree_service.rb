@@ -5,6 +5,8 @@ class BraintreeService
   # example merchant config:
   #   {merchant_id: 'X', public_key: 'Y', private_key: 'Z', mode: 'test'}
 
+  FEE_CONFIG = {base: 0.30, percent: 2.9}
+
   def initialize(merchant_config)
 
     # valid modes: :test, :production
@@ -14,7 +16,25 @@ class BraintreeService
     gateway_params = merchant_config.indifferent_data.slice(:merchant_id, :public_key, :private_key)
     @gateway = ActiveMerchant::Billing::BraintreeGateway.new(gateway_params)
 
+    # fee config is global, but allow override for now for demo purposes
+    fee_config = merchant_config.get_data_field(:fee) || FEE_CONFIG
+    @fee_service = FeeService.new(fee_config)
+
   end
+
+  def fee_service
+    @fee_service
+  end
+
+  # factor this out to a concern
+  def calculate_fee(amount, params = nil)
+    fee_service.calculate_fee(amount, params)
+  end
+
+  def estimate_fee(bin, amount)
+    fee_service.estimate_fee(bin, amount)
+  end
+
 
 
   # which form partial to render for this payment type
@@ -133,9 +153,9 @@ class BraintreeService
   end
 
 
-  def calculate_fee(amount, params = nil)
-    Binbase.apply_fee_rate(amount, 0.30, 2.9)
-  end
+  # def calculate_fee(amount, params = nil)
+  #   Binbase.apply_fee_rate(amount, 0.30, 2.9)
+  # end
 
 
 

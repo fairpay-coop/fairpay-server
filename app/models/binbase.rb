@@ -26,75 +26,75 @@ class Binbase < ActiveRecord::Base
   #   binbase =
   # end
 
-  def self.fee_range(amount)
-    low = apply_fee_rate(amount, 0.22, 0.05)
-    high = apply_fee_rate(amount, 0.30, 3.5)
-    [low, high]
-  end
-
-
-  # right now, this is just the interchange fee calculation
-  ## todo: add in merchant processor (i.e. dharma merchant services) fee
-  def self.estimate_fee(bin, amount)
-    binbase = Binbase.find_by(bin: bin)
-    puts "binbase: #{binbase}"
-    base = 0.30
-    percent = 2.9
-    message = nil
-
-    amount = BigDecimal(amount)
-
-    # return {error: 'BIN not found'} unless binbase
-    unless binbase
-      # placeholder default fee calculation
-      fee = apply_fee_rate(amount, 0.22, 2.5)
-      return {estimated_fee: fee}
-    end
-
-    if binbase.card_brand == 'AMEX'
-      base = 0.30
-      percent = 3.5
-      message = "Tip: AMEX has the highest fees!"
-    end
-
-    if binbase.card_brand == 'VISA' || binbase.card_brand == 'MASTERCARD'
-      if binbase.card_type == 'DEBIT'
-        base = 0.22
-        if binbase.is_regulated
-          percent = 0.05
-          message = "Good choice, Debit Cards have the lowest fees!"
-        else
-          percent = 0.80
-          message = "Good choice, Debit Cards have lower fees."
-        end
-      else
-        base = 0.12
-        message = "Tip: Debit Cards generally have lower fees than Credit Cards"
-        if binbase.card_category == 'PLATINUM' || binbase.card_category == 'BUSINESS'
-          percent = 2.9
-          message += ", and Rewards Cards have the highest fees."
-        elsif binbase.card_category == 'GOLD'
-          percent = 2.2
-          message += ", and Rewards Cards have higher fees."
-        else
-          percent = 1.8
-        end
-      end
-    end
-    if amount < 20
-      message = ""
-    end
-
-    fee = apply_fee_rate(amount, base, percent)
-    puts "calcfee - #{bin}, base: #{base}, %: #{percent} = #{fee} - tip: #{message}"
-    {estimated_fee: fee, fee_tip: message, card_brand: binbase.card_brand, issuing_org: binbase.issuing_org,
-     card_type: binbase.card_type, card_category: binbase.card_category, is_regulated: binbase.is_regulated}
-  end
-
-  def self.apply_fee_rate(amount, base, percent)
-    fee = base + amount * percent/100
-    fee = (fee * 100).ceil / 100.0
-  end
+  # def self.fee_range(amount)
+  #   low = apply_fee_rate(amount, 0.22, 0.05)
+  #   high = apply_fee_rate(amount, 0.30, 3.5)
+  #   [low, high]
+  # end
+  #
+  #
+  # # right now, this is just the interchange fee calculation
+  # ## todo: add in merchant processor (i.e. dharma merchant services) fee
+  # def self.estimate_fee(bin, amount)
+  #   binbase = Binbase.find_by(bin: bin)
+  #   puts "binbase: #{binbase}"
+  #   base = 0.30
+  #   percent = 2.9
+  #   message = nil
+  #
+  #   amount = BigDecimal(amount)
+  #
+  #   # return {error: 'BIN not found'} unless binbase
+  #   unless binbase
+  #     # placeholder default fee calculation
+  #     fee = apply_fee_rate(amount, 0.22, 2.5)
+  #     return {estimated_fee: fee}
+  #   end
+  #
+  #   if binbase.card_brand == 'AMEX'
+  #     base = 0.30
+  #     percent = 3.5
+  #     message = "Tip: AMEX has the highest fees!"
+  #   end
+  #
+  #   if binbase.card_brand == 'VISA' || binbase.card_brand == 'MASTERCARD'
+  #     if binbase.card_type == 'DEBIT'
+  #       base = 0.22
+  #       if binbase.is_regulated
+  #         percent = 0.05
+  #         message = "Good choice, Debit Cards have the lowest fees!"
+  #       else
+  #         percent = 0.80
+  #         message = "Good choice, Debit Cards have lower fees."
+  #       end
+  #     else
+  #       base = 0.12
+  #       message = "Tip: Debit Cards generally have lower fees than Credit Cards"
+  #       if binbase.card_category == 'PLATINUM' || binbase.card_category == 'BUSINESS'
+  #         percent = 2.9
+  #         message += ", and Rewards Cards have the highest fees."
+  #       elsif binbase.card_category == 'GOLD'
+  #         percent = 2.2
+  #         message += ", and Rewards Cards have higher fees."
+  #       else
+  #         percent = 1.8
+  #       end
+  #     end
+  #   end
+  #   if amount < 20
+  #     message = ""
+  #   end
+  #
+  #   fee = apply_fee_rate(amount, base, percent)
+  #   puts "calcfee - #{bin}, base: #{base}, %: #{percent} = #{fee} - tip: #{message}"
+  #   {estimated_fee: fee, fee_tip: message, card_brand: binbase.card_brand, issuing_org: binbase.issuing_org,
+  #    card_type: binbase.card_type, card_category: binbase.card_category, is_regulated: binbase.is_regulated}
+  # end
+  #
+  # def self.apply_fee_rate(amount, base, percent)
+  #   fee = base + amount * percent/100
+  #   fee = (fee * 100).ceil / 100.0
+  # end
 
   DEFAULT_DATA_FILE = '../binbase/bins_iso_8_9.csv'
   DEFAULT_BIGBANKS_FILE = '../binbase/bigbanks.txt'

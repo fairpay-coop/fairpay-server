@@ -9,12 +9,30 @@ class AuthorizeNetService
 
 
   def initialize(merchant_config)
-    api_login_id = merchant_config.data['api_login_id']  #todo: use an indescriminant hash
-    api_transaction_key = merchant_config.data['api_transaction_key']
-    gateway = merchant_config.data['gateway']&.to_sym
+    api_login_id = merchant_config.get_data_field(:api_login_id)
+    api_transaction_key = merchant_config.get_data_field(:api_transaction_key)
+    gateway = merchant_config.get_data_field(:gateway)&.to_sym
     puts "api_login_id: #{api_login_id}"
     @transaction = AuthorizeNet::API::Transaction.new(api_login_id, api_transaction_key, :gateway => gateway)
+
+    fee_config = merchant_config.get_data_field(:fee)
+    @fee_service = FeeService.new(fee_config)
   end
+
+  def fee_service
+    @fee_service
+  end
+
+  # factor this out to a concern
+  def calculate_fee(amount, params = nil)
+    @fee_service.calculate_fee(amount, params)
+  end
+
+  def estimate_fee(bin, amount)
+    @fee_service.estimate_fee(bin, amount)
+  end
+
+
 
   # which form partial to render for this payment type
   def form_partial
@@ -65,25 +83,6 @@ class AuthorizeNetService
       raise message
     end
 
-  end
-
-
-  # returns either fee range pair if no card prefix provided or a single value if provided
-  def calculate_fee(amount, params = nil)
-    unless params.present?
-      # returns a range when card prefix not provided
-      Binbase.fee_range(amount)  # note, returns an array with low/high range when params are missing
-    else
-      card = params[:card_number]
-      bin = card ? card[0..5] : nil
-      data = estimate_fee(bin, amount)
-      fee = data[:estimated_fee]
-    end
-  end
-
-
-  def estimate_fee(bin, amount)
-    Binbase.estimate_fee(bin, amount)
   end
 
 

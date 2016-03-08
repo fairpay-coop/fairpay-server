@@ -25,6 +25,7 @@ form id="card_form"
   - payment_source = merchant_config.saved_payment_source(@transaction)
   - if payment_source&.get_data_field(:description)
     | Use saved payment info? #{payment_source.get_data_field(:description)}
+    = " "
     /input type="checkbox" name="payment_source" value="#{payment_source.id}" checked="true"
     input type="checkbox" name="use_payment_source" value="true" checked="true"
     br
@@ -70,13 +71,14 @@ javascript:
     //alert('cardNumberKeypressed: ' + event);
     var card_number = $('#card_number').val();
     var amount = $('#amount').val();
+    var embed_uuid = $('#embed_uuid').val();
     //alert('card number: ' + card_number);
     if (card_number.length >= 6) {
       var newBin = card_number.slice(0, 6);
       if (lastBin != newBin) {
         //alert('new bin: ' + newBin + ', last bin: ' + lastBin + ', amount: ' + amount);
         lastBin = newBin;
-        data = {bin: newBin, amount: amount};
+        data = {bin: newBin, amount: amount, embed_uuid: embed_uuid};
         FairPayApi.estimateFee(data, handleEstimateFeeResponse);
       }
     } else {

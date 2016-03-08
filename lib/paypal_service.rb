@@ -7,6 +7,8 @@ class PaypalService
       signature: ENV['PAYPAL_API_SIGNATURE']
   }
 
+  FEE_CONFIG = {base: 0.30, percent: 2.9}
+
 
   def initialize(merchant_config = DEFAULT_CONFIG)
     @config = merchant_config
@@ -33,7 +35,18 @@ class PaypalService
     # @api = PayPal::SDK::Merchant.new()
     #
 
+    @fee_service = FeeService.new(FEE_CONFIG)
   end
+
+  def fee_service
+    @fee_service
+  end
+
+  # factor this out to a concern
+  def calculate_fee(amount, params = nil)
+    @fee_service.calculate_fee(amount, params)
+  end
+
 
   def api
     @api
@@ -152,9 +165,9 @@ class PaypalService
 
   end
 
-  def calculate_fee(amount, params = nil)
-    Binbase.apply_fee_rate(amount, 0.30, 2.9)
-  end
+  # def calculate_fee(amount, params = nil)
+  #   Binbase.apply_fee_rate(amount, 0.30, 2.9)
+  # end
 
 
   # # which form partial to render for this payment type

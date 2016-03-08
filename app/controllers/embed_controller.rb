@@ -48,9 +48,10 @@ class EmbedController < ApplicationController
 
   def estimate_fee
     render_json do
+      embed = Embed.by_uuid(params[:uuid])
       bin = params[:bin]
       amount = params[:amount]
-      result = Binbase.estimate_fee(bin, amount)
+      embed.card_payment_service.estimate_fee(bin, amount)
     end
   end
 
