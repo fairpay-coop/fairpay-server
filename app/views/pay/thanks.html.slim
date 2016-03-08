@@ -5,30 +5,7 @@ h3.title Payment Complete
 
 = render 'pay/receipt', transaction: @transaction
 
-/
-/|Transaction id: #{@transaction.uuid}
-/br
-/|Payor: #{@transaction.payor.name}
-/br
-/|Payee: #{@transaction.payee.name}
-/br
-/|Paid Amount: #{@transaction.paid_amount}
-/br
-/|Payment Type: #{@transaction.payment_type}
-/br
-/|Transaction Fee: #{@transaction.estimated_fee}
-/br
-/|Status: #{@transaction.status}
-/br
-/|Mailing List: #{@transaction.mailing_list}
-/br
-/
-/- if @transaction.recurring_payment
+/- return_url = @embed.get_data_field(:return_url)
+/- if return_url
 /  br
-/  |Recurring:
-/  b
-/    =< @transaction.recurring_payment.interval_display
-/  br
-/  |To see recurring payment status or to cancel go:
-/  b
-/  =< link_to 'here', @transaction.recurring_payment.status_url
+/  link_to "Return to #{@embed.profile.name} website", return_url

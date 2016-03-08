@@ -21,18 +21,14 @@ class PayController < ApplicationController
     embed_uuid = params[:uuid]
     embed = Embed.by_uuid(embed_uuid)
 
-    # amount = params[:amount]   # todo: validate decimal conversion
-    # email = params[:email]
-    # name = params[:name]
-    # recurrence = params[:recurrence]
     data = params.slice(:name, :email, :amount, :recurrence, :mailing_list)
 
-    transaction = embed.step1(data) #email, name, amount, recurrence)
+    transaction = embed.step1(data)
 
     step2_uri = "/pay/#{embed.uuid}/step2/#{transaction.uuid}" #"?payment_type=#{payment_type}"
     session[:step2_uri] = step2_uri
 
-    redirect_to step2_uri #"/pay/#{embed.uuid}/step2/#{transaction.uuid}?payment_type=#{payment_type}" #, {payment_type: payment_type}
+    redirect_to step2_uri
   end
 
 

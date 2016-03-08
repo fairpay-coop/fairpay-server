@@ -40,4 +40,10 @@ br
   |To see recurring payment status or to cancel go:
   b
     =< link_to 'here', recurring.status_url
+  br
 
+- return_url = @transaction.embed.get_data_field(:return_url)
+- if return_url
+  br
+  = link_to "Return to #{@transaction.embed.profile.name} website", return_url
+  br
