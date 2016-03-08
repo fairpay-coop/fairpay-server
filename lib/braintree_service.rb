@@ -46,8 +46,17 @@ class BraintreeService
     :braintree
   end
 
+  def payment_type_display
+    'Card'
+  end
 
   def handle_payment(transaction, params)
+    if params[:use_payment_source]
+      payment_source = transaction.payor.payment_source_for_type(payment_type)
+      bin = payment_source&.get_data_field(:bin)
+      params[:card_number] = bin
+    end
+
     estimated_fee = calculate_fee(transaction.base_amount, params)
     charge_amount = transaction.base_amount
 

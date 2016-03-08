@@ -45,9 +45,8 @@ class RecurringPayment < ActiveRecord::Base
     self
   end
 
-  # todo: make this more robust
-  def interval_display
-    case interval_units.to_sym
+  def self.interval_display(units, count = 1)
+    case units.to_sym
       when :day
         "Daily"
       when :week
@@ -57,8 +56,13 @@ class RecurringPayment < ActiveRecord::Base
       when :year
         "Yearly"
       else
-        interval_units.humanize
+        units.humanize
     end
+  end
+
+  # todo: make this more robust
+  def interval_display
+    RecurringPayment.interval_display(interval_units, interval_count)
   end
 
   def increment_next_date

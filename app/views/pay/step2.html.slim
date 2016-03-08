@@ -6,11 +6,10 @@ h1.title = @embed.name
 br
 |Amount: #{@transaction.base_amount}
 br
-- if @transaction.recurring_payment
-  br
+- if @transaction.recurrence
   |Recurring:
   b
-    =< @transaction.recurring_payment.interval_display
+    =< @transaction.recurrence_display
 
 hr
 

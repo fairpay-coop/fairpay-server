@@ -64,6 +64,11 @@ class PaypalService
   #   base_url
   # end
 
+  def payment_type_display
+    'PayPal'
+  end
+
+
 
   def handle_payment(transaction, params)
     estimated_fee = calculate_fee(transaction.base_amount, params)

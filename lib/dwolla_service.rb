@@ -154,6 +154,12 @@ class DwollaService
   end
 
 
+  def payment_type_display
+    'Dwolla'
+  end
+
+
+
   # which form partial to render for this payment type
   # def form_partial
   #   'dwolla'

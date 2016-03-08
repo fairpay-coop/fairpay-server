@@ -150,7 +150,7 @@ class FeeService
     fee = apply_rate(amount, base, percent)
 
     fee_str = "$#{format_amount(fee)}"
-    fee_str += " (#{message})"  if message
+    fee_str += " (#{message})"  if message.present?
 
     puts "calcfee - #{bin}, base: #{base}, %: #{percent} = #{fee} - tip: #{message}"
     {

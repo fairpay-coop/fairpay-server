@@ -52,6 +52,15 @@ class Transaction < ActiveRecord::Base
   #   payment_source = payor.payment_source_for_type(payment_type, autocreate: true)
   # end
 
+  def recurrence_display
+    if recurring_payment
+      recurring_payment.interval_display
+    elsif recurrence
+      RecurringPayment.interval_display(recurrence)
+    else
+      nil
+    end
+  end
 
   def card_fee_range
     embed.card_payment_service.calculate_fee(base_amount)
@@ -74,6 +83,9 @@ class Transaction < ActiveRecord::Base
     format_amount(embed.paypal_service.calculate_fee(base_amount))
   end
 
+  def payment_type_display
+    payment_service_for_type(payment_type).payment_type_display
+  end
 
   def perform_payment(params = {})
     payment_type = (params[:payment_type] || self.payment_type)&.to_sym

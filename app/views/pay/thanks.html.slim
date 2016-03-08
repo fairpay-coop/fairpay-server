@@ -1,30 +1,34 @@
-
-h1.title Payment Test Flow - Thanks
+h1.title = @embed.name
+h3.title Payment Complete
 /todo: factor out shared code with widget
 
-|Transaction id: #{@transaction.id}
-br
-|Payor: #{@transaction.payor.name}
-br
-|Payee: #{@transaction.payee.name}
-br
-|Paid Amount: #{@transaction.paid_amount}
-br
-|Payment Type: #{@transaction.payment_type}
-br
-|Transaction Fee: #{@transaction.estimated_fee}
-br
-|Status: #{@transaction.status}
-br
-|Mailing List: #{@transaction.mailing_list}
-br
 
-- if @transaction.recurring_payment
-  br
-  |Recurring:
-  b
-    =< @transaction.recurring_payment.interval_display
-  br
-  |To see recurring payment status or to cancel go:
-  b
-  =< link_to 'here', @transaction.recurring_payment.status_url
+= render 'pay/receipt', transaction: @transaction
+
+/
+/|Transaction id: #{@transaction.uuid}
+/br
+/|Payor: #{@transaction.payor.name}
+/br
+/|Payee: #{@transaction.payee.name}
+/br
+/|Paid Amount: #{@transaction.paid_amount}
+/br
+/|Payment Type: #{@transaction.payment_type}
+/br
+/|Transaction Fee: #{@transaction.estimated_fee}
+/br
+/|Status: #{@transaction.status}
+/br
+/|Mailing List: #{@transaction.mailing_list}
+/br
+/
+/- if @transaction.recurring_payment
+/  br
+/  |Recurring:
+/  b
+/    =< @transaction.recurring_payment.interval_display
+/  br
+/  |To see recurring payment status or to cancel go:
+/  b
+/  =< link_to 'here', @transaction.recurring_payment.status_url

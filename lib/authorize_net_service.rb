@@ -39,6 +39,11 @@ class AuthorizeNetService
     'card'
   end
 
+  def payment_type_display
+    'Card'
+  end
+
+
   def handle_payment(transaction, params)
     estimated_fee = calculate_fee(transaction.base_amount, params)
     paid_amount = transaction.base_amount
