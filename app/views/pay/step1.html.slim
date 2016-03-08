@@ -5,7 +5,7 @@ h1.title = @embed.name
 /br
 br
 
-form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1"
+form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1" onsubmit="return validateStep1Form()"
 
   = hidden_field_tag :authenticity_token, form_authenticity_token
   /input type="hidden" name="embed_uuid" value="#{@embed.id}"
@@ -13,7 +13,7 @@ form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1"
   input type="text" name="name" value=""
   br
   => "Email:"
-  input type="text" name="email" value=""
+  input type="text" id="email" name="email" value=""
   br
   => "Amount:"
   input id="step1Amount" type="text" name="amount" value=""
@@ -34,3 +34,16 @@ form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1"
   input id="step1Submit" type="submit" value="Next"
 
 
+javascript:
+  function validateStep1Form() {
+    var amount = $('#step1Amount').val();
+    if (amount == null || amount == "") {
+      alert("Please enter an amount");
+      return false;
+    }
+    var email = $('#email').val();
+    if (email == null || email == "") {
+      alert("Please enter an email");
+      return false;
+    }
+  }
