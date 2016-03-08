@@ -24,7 +24,8 @@ class Binbase < ActiveRecord::Base
 
 
   # ask joseph for copy of latest import data file
-  DEFAULT_DATA_FILE = '../binbase/bins_iso_9_5.csv'
+  # DEFAULT_DATA_FILE = '../binbase/bins_iso_9_5.csv'
+  DEFAULT_DATA_FILE = 'db/bins.csv'
   DEFAULT_BIGBANKS_FILE = 'db/bigbanks.txt'
 
   def self.purge_imported
