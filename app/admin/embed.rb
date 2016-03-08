@@ -1,6 +1,6 @@
 ActiveAdmin.register Embed do
 
-  permit_params :profile_id, :name, :internal_name, :kind, :data, :disabled
+  permit_params :profile_id, :name, :internal_name, :kind, :data_json, :disabled
 
 
   index do
@@ -25,7 +25,8 @@ ActiveAdmin.register Embed do
       f.input :name
       # f.input :internal_name
 
-      f.input :data, as: :text
+      f.input :data_json, as: :text
+
       # todo: integrate friendlier json editor
       # https://lorefnon.me/2015/03/02/dealing-with-json-fields-in-active-admin.html
       # f.input :data, as: :text, input_html: { class: 'jsoneditor-target' }

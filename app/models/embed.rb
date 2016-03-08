@@ -12,7 +12,6 @@ class Embed < ActiveRecord::Base
   # not sure yet if we need an internal name here
   # add_column :embeds, :internal_name, :string
 
-
   belongs_to :profile
 
   after_initialize :assign_uuid

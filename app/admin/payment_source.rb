@@ -1,6 +1,6 @@
 ActiveAdmin.register PaymentSource do
 
-  permit_params :profile_id, :kind, :name, :data
+  permit_params :profile_id, :kind, :name, :data_json
 
 
   index do
@@ -20,7 +20,7 @@ ActiveAdmin.register PaymentSource do
       # f.input :kind, as: :select, collection: MerchantConfig.kinds.map { |key,name| [name, key] }
       f.input :name
 
-      f.input :data, as: :text
+      f.input :data_json, as: :text
     end
     f.actions
   end

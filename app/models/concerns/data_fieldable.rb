@@ -28,5 +28,16 @@ module DataFieldable
     self.save
   end
 
+  # need to alias for the active admin to be functional
+  def data_json
+    data&.to_json
+  end
+
+  def data_json=(text)
+    self.data = JSON.parse(text)
+    puts "assigned data: #{data}"
+  end
+
+
 
 end
