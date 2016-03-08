@@ -75,10 +75,14 @@ var FairPayApiSinglton = (function() {
 
         function formValue(form, field) {
             field = form.elements[field];
-            if (field.type == 'checkbox') {
-                return field.checked;
+            if (field) {
+                if (field.type == 'checkbox') {
+                    return field.checked;
+                } else {
+                    return field.value;
+                }
             } else {
-                return field.value;
+                return null
             }
         }
 

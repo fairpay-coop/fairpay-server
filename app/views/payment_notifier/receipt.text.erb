@@ -4,7 +4,7 @@ Payor: <%= @transaction.payor.name %>, <%= @transaction.payor.email %>
 Payee: <%= @transaction.payee.name %>, <%= @transaction.payee.email %>
 Paid Amount: <%= @transaction.paid_amount %>
 
-Payment Method: <%= @transaction.payment_type %>
+Payment Method: <%= @transaction.payment_type_display %>
 Transaction Fee: <%= @transaction.estimated_fee %>
 Transaction Id: <%= @transaction.id %>
 Status: <%= @transaction.status %>

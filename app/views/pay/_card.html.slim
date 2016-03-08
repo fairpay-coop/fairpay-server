@@ -2,7 +2,8 @@ script src="http://code.jquery.com/jquery-1.11.3.min.js"
 
 b Debit/Credit Card (#{merchant_config.kind_name})
 br
-- card_fee_str = merchant_config.card_fee_str(@transaction)
+- payment_service = merchant_config.payment_service
+- card_fee_str = payment_service.card_fee_str(@transaction)
 | Transaction Fee:
 div id="fee_info"
   | #{card_fee_str}
@@ -22,7 +23,7 @@ form id="card_form"
   input type="hidden" id="default_fee_info" value="#{card_fee_str}"
   input type="hidden" id="fee_update_enabled" value="#{merchant_config.fee_update_enabled}"
 
-  - payment_source = merchant_config.saved_payment_source(@transaction)
+  - payment_source = payment_service.saved_payment_source(@transaction)
   - if payment_source&.get_data_field(:description)
     | Use saved payment info? #{payment_source.get_data_field(:description)}
     = " "
@@ -46,9 +47,10 @@ form id="card_form"
     |Billing Zip:
     input type="text" name="billing_zip" value=""
     br
-    |Save Payment Info:
-    input type="checkbox" name="save_payment_info" value="true"
-    br
+    - if payment_service.supports_saved_payment_source
+      |Save Payment Info:
+      input type="checkbox" name="save_payment_info" value="true"
+      br
 
   /|Charge Description:
   /input type="text" name="description" value="test"
@@ -142,7 +144,7 @@ javascript:
     }
     var use_payment_source_checkbox = $('#use_payment_source_checkbox')[0];
     //alert("use payment source: " + use_payment_source_checkbox.checked);
-    if (use_payment_source_checkbox.checked) {
+    if (use_payment_source_checkbox && use_payment_source_checkbox.checked) {
       $("#card_fields").hide();
       $("#use_payment_source_checkbox").change(function() {
         if (use_payment_source_checkbox.checked) {

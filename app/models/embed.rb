@@ -143,102 +143,12 @@ class Embed < ActiveRecord::Base
 
 
   def step2(params)
-    # merchant_config_id = params[:merchant_config_id]
-    # payment_type = params[:payment_type]&.to_sym
-
     transaction_uuid = params[:transaction_uuid]
     transaction = Transaction.by_uuid(transaction_uuid)
 
     transaction.perform_payment(params)
 
-    # payment_service = payment_service_for_type(payment_type)
-    # paid_amount,fee = payment_service.handle_payment(transaction, params)
-    #
-    # transaction.update!(
-    #     status: 'completed',
-    #     payment_type: payment_type,
-    #     paid_amount: paid_amount,
-    #     estimated_fee: fee
-    # )
-    #
-    # if transaction.recurrence
-    #   recurring = RecurringPayment.create!(
-    #       master_transaction: transaction,
-    #       interval_units: transaction.recurrence,
-    #       interval_count: 1,
-    #       expires_date: nil,
-    #       status: :active
-    #   )
-    #
-    #   transaction.update!(recurring_payment: recurring)
-    #
-    #   recurring.increment_next_date
-    #
-    # end
-
     transaction
   end
 
-  # def pay_via_card(params)
-  #   transaction_uuid = params[:transaction_uuid]
-  #   transaction = Transaction.by_uuid(transaction_uuid)
-  #   # merchant_config = MerchantConfig.find(merchant_config_id)
-  #
-  #   # payment_service = merchant_config.payment_service
-  #   payment_service = card_payment_service
-  #
-  #   estimated_fee = payment_service.calculate_fee(transaction.base_amount, params)
-  #   paid_amount = transaction.base_amount
-  #
-  #   data = params.slice(:card_number, :card_mmyy, :card_cvv)
-  #   data[:amount] = paid_amount
-  #   puts "data: #{data}"
-  #
-  #   payment_service.charge(data)
-  #
-  #   # #todo: factor out the transaction update
-  #   # transaction.update!(status: 'completed', paid_amount: paid_amount, estimated_fee: estimated_fee)
-  #   # transaction
-  #   [paid_amount, estimated_fee]
-  # end
-
-  # def pay_via_dwolla(params)
-  #   transaction_uuid = params[:transaction_uuid]
-  #   # merchant_config_id = params[:merchant_config_id]
-  #   funding_source_id = params[:funding_source_id]
-  #
-  #   transaction = Transaction.by_uuid(transaction_uuid)
-  #   estimated_fee = 0.00
-  #   paid_amount = transaction.base_amount + estimated_fee
-  #
-  #   dwolla_service = DwollaService.instance
-  #   # transaction.payor.dwolla_token.refresh
-  #   # transaction.payee.dwolla_token.refresh
-  #   dwolla_service.make_payment(transaction.payor.dwolla_token, transaction.payee.dwolla_token, funding_source_id, paid_amount)
-  #
-  #   # # transaction.payor.dwolla_token.make_payment(transaction.payee.dwolla_token, transaction.base_amount)
-  #   # transaction.update!(status: 'completed', paid_amount: paid_amount, estimated_fee: estimated_fee)
-  #   # transaction
-  #   [paid_amount, estimated_fee]
-  #
-  # end
-
-  # def pay_via_paypal(params)
-  #   transaction_uuid = params[:transaction_uuid]
-  #   transaction = Transaction.by_uuid(transaction_uuid)
-  #
-  #   payment_service = paypal_service()
-  #
-  #   estimated_fee = payment_service.calculate_fee(transaction.base_amount, params)
-  #   paid_amount = transaction.base_amount  #todo fee allocation based on merchant config
-  #
-  #   paypal_service.complete_payment(params[:token], params[:payor_id], paid_amount)
-  #
-  #   # transaction.update!(status: 'completed', paid_amount: paid_amount, estimated_fee: estimated_fee)
-  #   # transaction
-  #
-  #   [paid_amount, estimated_fee]
-  #
-  # end
-  #
 end

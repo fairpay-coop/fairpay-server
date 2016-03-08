@@ -3,7 +3,7 @@ require 'yaml'
 require 'authorizenet'
 
 
-class AuthorizeNetService
+class AuthorizeNetService  < BaseCardService
 
   include AuthorizeNet::API
 
@@ -15,34 +15,19 @@ class AuthorizeNetService
     puts "api_login_id: #{api_login_id}"
     @transaction = AuthorizeNet::API::Transaction.new(api_login_id, api_transaction_key, :gateway => gateway)
 
-    fee_config = merchant_config.get_data_field(:fee)
-    @fee_service = FeeService.new(fee_config)
-  end
-
-  def fee_service
-    @fee_service
-  end
-
-  # factor this out to a concern
-  def calculate_fee(amount, params = nil)
-    @fee_service.calculate_fee(amount, params)
-  end
-
-  def estimate_fee(bin, amount)
-    @fee_service.estimate_fee(bin, amount)
+    initialize_fee_service(merchant_config)
   end
 
 
 
-  # which form partial to render for this payment type
-  def form_partial
-    'card'
+  def payment_type
+    :authorizenet
   end
 
-  def payment_type_display
-    'Card'
+  #todo: implement custom or get auth.net activemerchant to properly work
+  def supports_saved_payment_source
+    false
   end
-
 
   def handle_payment(transaction, params)
     estimated_fee = calculate_fee(transaction.base_amount, params)

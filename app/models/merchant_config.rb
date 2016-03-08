@@ -17,6 +17,7 @@ class MerchantConfig < ActiveRecord::Base
       stripe: 'Stripe',
       authorizenet: 'Authorize.Net',
       braintree: 'Braintree',
+      active_merchant: 'Active Merchant',
       dwolla: 'Dwolla',
       paypal: 'PayPal',
       mailchimp: 'MailChimp'
@@ -39,8 +40,6 @@ class MerchantConfig < ActiveRecord::Base
   end
 
   #todo: memoize this result?
-
-
   def payment_service
     case kind_sym
       when :dwolla
@@ -49,6 +48,8 @@ class MerchantConfig < ActiveRecord::Base
         AuthorizeNetService.new(self)
       when :braintree
         BraintreeService.new(self)
+      when :active_merchant
+        ActiveMerchantService.new(self)
       when :paypal
         PaypalService.new(data)
       when :mailchimp
@@ -62,9 +63,9 @@ class MerchantConfig < ActiveRecord::Base
 
 
 
-  def saved_payment_source(transaction, autocreate: true)
-    payment_source = transaction.payor.payment_source_for_type(payment_type, autocreate: autocreate)
-  end
+  # def saved_payment_source(transaction, autocreate: true)
+  #   payment_source = transaction.payor.payment_source_for_type(payment_type, autocreate: autocreate)
+  # end
 
 
 
@@ -72,13 +73,14 @@ class MerchantConfig < ActiveRecord::Base
   #   payment_service.form_name
   # end
 
-  # consider factoring out to payment service
+  # todo: can now be refactored
   def form_name
     card? ? 'card' : kind
   end
 
   def card?
-    kind_sym == :authorizenet || kind_sym == :braintree
+    # todo: this caan potentially be refactored now with service api
+    kind_sym == :authorizenet || kind_sym == :braintree || kind_sym == :active_merchant
   end
 
 
@@ -86,33 +88,29 @@ class MerchantConfig < ActiveRecord::Base
   # consider factoring out to payment service base class
   def fee_update_enabled
     payment_service.fee_service.fee_update_enabled
-    # if kind_sym == :authorizenet
-    #   true
-    # else
-    #   false
-    # end
   end
 
   #todo: need a better place to factor shared payment service logic too, probably a base class
   def card_fee_str(transaction, params = nil)
-    bin = nil
-    if params.present? && params[:card_number].present?
-      card = params[:card_number]
-      bin = (card && card.length >= 6) ? card[0..5] : nil
-    else
-      saved = saved_payment_source(transaction)
-      if saved
-        bin = saved.get_data_field(:bin)
-      end
-    end
-    result = payment_service.fee_service.card_fee_str(transaction.base_amount, bin)
-    puts "card fee str: #{result}"
-    # low, high = payment_service.calculate_fee(transaction.base_amount, params)
-    # result = "$#{format_amount(low)}"
-    # if high  # we've been given a range
-    #   result += "-#{format_amount(high)} (depends on card type)"
+    payment_service.card_fee_str(transaction, params)
+    # bin = nil
+    # if params.present? && params[:card_number].present?
+    #   card = params[:card_number]
+    #   bin = (card && card.length >= 6) ? card[0..5] : nil
+    # else
+    #   saved = payment_service.saved_payment_source(transaction)
+    #   if saved
+    #     bin = saved.get_data_field(:bin)
+    #   end
     # end
-    result
+    # result = payment_service.fee_service.card_fee_str(transaction.base_amount, bin)
+    # puts "card fee str: #{result}"
+    # # low, high = payment_service.calculate_fee(transaction.base_amount, params)
+    # # result = "$#{format_amount(low)}"
+    # # if high  # we've been given a range
+    # #   result += "-#{format_amount(high)} (depends on card type)"
+    # # end
+    # result
   end
 
   # def card_fee_range

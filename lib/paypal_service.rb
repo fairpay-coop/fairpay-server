@@ -1,4 +1,4 @@
-class PaypalService
+class PaypalService < BasePaymentService
 
   DEFAULT_CONFIG = {
       mode: ENV['PAYPAL_MODE'],
@@ -9,7 +9,7 @@ class PaypalService
 
   FEE_CONFIG = {base: 0.30, percent: 2.9}
 
-
+  #todo: refactor to use the config itself, not the hash
   def initialize(merchant_config = DEFAULT_CONFIG)
     @config = merchant_config
     @api = PayPal::SDK::Merchant.new(nil, merchant_config)
@@ -35,17 +35,28 @@ class PaypalService
     # @api = PayPal::SDK::Merchant.new()
     #
 
+    # clean this up once initializer api fixed
+    # initialize_fee_service(merchant_config)
     @fee_service = FeeService.new(FEE_CONFIG)
   end
 
-  def fee_service
-    @fee_service
+  def default_fee_config
+    FEE_CONFIG
   end
+  #
+  # def initialize_fee_service(merchant_config)
+  #   fee_config = merchant_config.get_data_field(:fee) || FEE_CONFIG
+  #   @fee_service = FeeService.new(fee_config)
+  # end
+  #
+  # def fee_service
+  #   @fee_service
+  # end
 
-  # factor this out to a concern
-  def calculate_fee(amount, params = nil)
-    @fee_service.calculate_fee(amount, params)
-  end
+  # # factor this out to a concern
+  # def calculate_fee(amount, params = nil)
+  #   @fee_service.calculate_fee(amount, params)
+  # end
 
 
   def api

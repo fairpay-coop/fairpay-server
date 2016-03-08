@@ -1,4 +1,6 @@
-class DwollaService
+class DwollaService  < BasePaymentService
+
+  # not sure if we should still use a singleton here or not
   include Singleton
 
 
@@ -35,13 +37,19 @@ class DwollaService
       end
     end
 
+    # clean this up once initializer api fixed
+    # initialize_fee_service(nil)
     @fee_service = FeeService.new(FEE_CONFIG)
-
   end
 
-  def fee_service
-    @fee_service
+  def default_fee_config
+    FEE_CONFIG
   end
+
+
+  # def fee_service
+  #   @fee_service
+  # end
 
 
   def api_client
@@ -149,9 +157,9 @@ class DwollaService
   end
 
 
-  def calculate_fee(amount, params)
-    0.0
-  end
+  # def calculate_fee(amount, params)
+  #   0.0
+  # end
 
 
   def payment_type_display
