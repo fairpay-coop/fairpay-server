@@ -58,6 +58,7 @@ class BraintreeService
     use_payment_source = params[:use_payment_source].to_s == 'true'  #todo: better pattern here?
     unless use_payment_source
       number = params[:card_number]
+      bin = number[0..5]
       mmyy = params[:card_mmyy]
       month = mmyy[0..1]
       year = "20#{mmyy[2..3]}"
@@ -77,6 +78,7 @@ class BraintreeService
         description = "...#{number[-4..-1]}, Exp: #{mmyy}"
         payment_source.set_data_field(:customer_vault_id, vault_id)
         payment_source.set_data_field(:description, description)
+        payment_source.set_data_field(:bin, bin)
         payment_source.save!
         use_payment_source = true
       else

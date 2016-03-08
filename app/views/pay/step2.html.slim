@@ -1,15 +1,16 @@
 
-h1.title Payment Test Flow - Step 2
+h1.title = @embed.name
+/ - Step 2"
 
-/|transaction id: #{@transaction.id}
-/br
-/|Payor: #{@transaction.payor.name}
-/br
-/|Payee: #{@transaction.payee.name}
+|Payee: #{@transaction.payee.name}
 br
 |Amount: #{@transaction.base_amount}
 br
-br
+- if @transaction.recurring_payment
+  br
+  |Recurring:
+  b
+    =< @transaction.recurring_payment.interval_display
 
 hr
 

@@ -27,40 +27,38 @@ form id="card_form"
     | Use saved payment info? #{payment_source.get_data_field(:description)}
     = " "
     /input type="checkbox" name="payment_source" value="#{payment_source.id}" checked="true"
-    input type="checkbox" name="use_payment_source" value="true" checked="true"
+    input type="checkbox" id="use_payment_source_checkbox" name="use_payment_source" value="true" checked="true"
     br
   - else
     input type="hidden" name="use_payment_source" value="false"
 
   / todo: dynamic hide display of below form
+  div id="card_fields"
+    |Card Number:
+    input type="text" id="card_number" name="card_number" value=""
+    br
+    |Card Exp (mmyy):
+    input type="text" name="card_mmyy" value=""
+    br
+    |Card CVV:
+    input type="text" name="card_cvv" value=""
+    br
+    |Billing Zip:
+    input type="text" name="billing_zip" value=""
+    br
+    |Save Payment Info:
+    input type="checkbox" name="save_payment_info" value="true"
+    br
 
-  |Card Number:
-  input type="text" id="card_number" name="card_number" value=""
-  br
-  |Card Exp (mmyy):
-  input type="text" name="card_mmyy" value=""
-  br
-  |Card CVV:
-  input type="text" name="card_cvv" value=""
-  br
-  |Billing Zip:
-  input type="text" name="billing_zip" value=""
-  br
   /|Charge Description:
   /input type="text" name="description" value="test"
   /br
-  |Save Payment Info:
-  input type="checkbox" name="save_payment_info" value="true"
-  br
 
   input id="step2_submit" type="submit" value="Pay with Card"
 
-
-br
-br
-|Status:
-div id="paymentStatus"
-br
+/br
+/|Status:
+/div id="paymentStatus"
 
 
 javascript:
@@ -83,11 +81,33 @@ javascript:
       }
     } else {
       if (lastBin != '') {
-        var default_fee_info = $('#default_fee_info').val();
-        $("#fee_info").html(default_fee_info);
+        //var default_fee_info = $('#default_fee_info').val();
+        //$("#fee_info").html(default_fee_info);
+        updateFeeInfo();
         lastBin = ''
       }
     }
+  }
+
+  function showDefaultFeeInfo() {
+    var default_fee_info = $('#default_fee_info').val();
+    $("#fee_info").html(default_fee_info);
+  }
+
+
+  function updateFeeInfo() {
+    //var use_payment_source = params.use_payment_source;
+    var card_number = $('#card_number').val();
+    var amount = $('#amount').val();
+    var embed_uuid = $('#embed_uuid').val();    var bin;
+    if (card_number.length >= 6) {
+      bin = card_number.slice(0, 6);
+    } else {
+      bin = null;
+    }
+    data = {bin: bin, amount: amount, embed_uuid: embed_uuid};
+    //alert("data: " + JSON.stringify(data));
+    FairPayApi.estimateFee(data, handleEstimateFeeResponse);
   }
 
   function handleEstimateFeeResponse(data) {
@@ -98,10 +118,13 @@ javascript:
       //        ", " + info.issuing_org + ", " + (info.is_regulated ? "regulated bank" : "unregulated bank") + "";
       //bindata += "<br>Transaction fee for this card: <b>$" + info.estimated_fee + "</b>";
       //bindata += "<br>&nbsp; &nbsp;" + info.fee_tip;
-
-      var bindata = "<b>$" + info.estimated_fee + "</b>";
-      if (info.fee_tip) {
-        bindata += "&nbsp; (" + info.fee_tip + ")";
+      if (info.fee_str) {
+        bindata = info.fee_str;
+      } else {
+        var bindata = "<b>$" + info.estimated_fee + "</b>";
+        if (info.fee_tip) {
+          bindata += "&nbsp; (" + info.fee_tip + ")";
+        }
       }
 
       $("#fee_info").html(bindata);
@@ -116,6 +139,21 @@ javascript:
     //alert(fee_update_enabled);
     if (fee_update_enabled == 'true') {
       $("#card_number").bind("keyup", cardNumberKeypressed);
+    }
+    var use_payment_source_checkbox = $('#use_payment_source_checkbox')[0];
+    //alert("use payment source: " + use_payment_source_checkbox.checked);
+    if (use_payment_source_checkbox.checked) {
+      $("#card_fields").hide();
+      $("#use_payment_source_checkbox").change(function() {
+        if (use_payment_source_checkbox.checked) {
+          $("#card_fields").hide();
+          //updateFeeInfo({use_payment_source:true});
+          showDefaultFeeInfo();
+        } else {
+          $("#card_fields").show();
+          updateFeeInfo();
+        }
+      });
     }
   }, false);
 
@@ -136,7 +174,7 @@ javascript:
     //alert('step2 response: ' + JSON.stringify(data));
     if (data.result) {
       var status = data.result.status;
-      $('#paymentStatus').html(status);
+      //$('#paymentStatus').html(status);
       $('#errorMessage').html('');      //var linkUrl = data.result.statusLink;
       //var linkHtml = '<a href="' + linkUrl + '">' + linkUrl + '</a>';
       //$('#statusLink').html(linkHtml);
@@ -145,7 +183,7 @@ javascript:
       }
     } else if (data.error) {
       //alert('error resp: ' + JSON.stringify(data.error));
-      $('#paymentStatus').html('error');
+      //$('#paymentStatus').html('error');
       $('#errorMessage').html(data.error.message);
       //$('#errorStack').html('<pre>' + data.error.stack + '</pre>');
     }

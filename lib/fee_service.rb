@@ -27,8 +27,30 @@ class FeeService
   end
 
 
+  #todo: need a better place to factor shared payment service logic too, probably a base class
+  def card_fee_str(amount, bin = nil)
+    if bin
+      data = estimate_fee(bin, amount)
+      data[:fee_str]
+      # fee = data[:estimated_fee]
+      # fee_tip = data[:tip]
+      # result = "$#{format_amount(fee)}"
+      # result += " (#{fee_tip})"  if fee_tip
+    else
+      low, high = calculate_fee(amount)  #todo clean this up!!
+      result = "$#{format_amount(low)}"
+      result += "-#{format_amount(high)} (depends on card type)"  if high
+      result
+    end
+  end
 
-    # returns either fee range pair if no card prefix provided or a single value if provided
+  def format_amount(amount)
+    '%.2f' % amount
+  end
+
+
+
+  # returns either fee range pair if no card prefix provided or a single value if provided
   def calculate_fee(amount, params = nil)
     if @interchange
       unless params.present? && params[:card_number].present?
@@ -59,6 +81,7 @@ class FeeService
 
 
   def fee_range(amount)
+    amount = amount.to_f
     low = apply_rate(amount, INTERCHANGE_LOW_BASE, INTERCHANGE_LOW_PERCENT)
     high = apply_rate(amount, INTERCHAGNE_HIGH_BASE, INTERCHANGE_HIGH_PERCENT)
     [low, high]
@@ -68,6 +91,13 @@ class FeeService
   # right now, this is just the interchange fee calculation
   ## todo: add in merchant processor (i.e. dharma merchant services) fee
   def estimate_fee(bin, amount)
+    unless bin && bin.length >= 6
+      fee_str = card_fee_str(amount)
+      return {fee_str: fee_str}
+    end
+
+    bin = bin[0..5]  if bin.length > 6  # trim just in case we were given a full number
+
     binbase = Binbase.find_by(bin: bin)
     puts "binbase: #{binbase}"
     base = 0.30
@@ -80,7 +110,7 @@ class FeeService
     unless binbase
       # placeholder default fee calculation
       fee = apply_rate(amount, INTERCHAGNE_DEFAULT_BASE, INTERCHANGE_DEFAULT_PERCENT)
-      return {estimated_fee: fee}
+      return {estimated_fee: fee, fee_str: "unknown"}
     end
 
     if binbase.card_brand == 'AMEX'
@@ -118,9 +148,21 @@ class FeeService
     end
 
     fee = apply_rate(amount, base, percent)
+
+    fee_str = "$#{format_amount(fee)}"
+    fee_str += " (#{message})"  if message
+
     puts "calcfee - #{bin}, base: #{base}, %: #{percent} = #{fee} - tip: #{message}"
-    {estimated_fee: fee, fee_tip: message, card_brand: binbase.card_brand, issuing_org: binbase.issuing_org,
-     card_type: binbase.card_type, card_category: binbase.card_category, is_regulated: binbase.is_regulated}
+    {
+        estimated_fee: fee,
+        fee_tip: message,
+        fee_str: fee_str, # combined and formatted string
+        card_brand: binbase.card_brand,
+        issuing_org: binbase.issuing_org,
+        card_type: binbase.card_type,
+        card_category: binbase.card_category,
+        is_regulated: binbase.is_regulated,
+    }
   end
 
   # calculates rate with configured mark-up
