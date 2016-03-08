@@ -13,7 +13,7 @@ class EmbedController < ApplicationController
 
   end
 
-
+  # beware: not currently used
   def step1
     render_json do
       embed_uuid = params[:uuid]
@@ -23,7 +23,7 @@ class EmbedController < ApplicationController
       name = params[:name]
       amount = params[:amount]   # todo: validate decimal conversion
 
-      transaction = embed.step1(email, name, amount)
+      transaction = embed.step1(params)  #email, name, amount)
 
       result = {transaction_uuid: transaction.uuid}
     end

@@ -25,7 +25,7 @@ class WidgetController < ApplicationController
     email = params[:email]
     name = params[:name]
 
-    transaction = embed.step1(email, name, amount)
+    transaction = embed.step1(params) #email, name, amount)
 
     session[:step2_uri] = "/widget/#{embed.uuid}/authComplete/#{transaction.uuid}"
 

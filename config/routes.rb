@@ -19,6 +19,7 @@ Rails.application.routes.draw do
 
   get   '/api/v1/embed/:uuid' => 'embed#widget_data'
   get   '/api/v1/embed/:uuid/estimate_fee' => 'embed#estimate_fee'
+
   # need better names for these actions
   post  '/api/v1/embed/:uuid/step1' => 'embed#step1'
   post  '/api/v1/embed/:uuid/step2' => 'embed#step2'
