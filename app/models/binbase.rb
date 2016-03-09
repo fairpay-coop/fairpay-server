@@ -29,8 +29,8 @@ class Binbase < ActiveRecord::Base
   DEFAULT_BIGBANKS_FILE = 'db/bigbanks.txt'
 
   def self.purge_imported
-    Binbase.destroy_all
-    BinbaseOrg.destroy_all
+    Binbase.delete_all
+    BinbaseOrg.delete_all
   end
 
   def self.import_data(data_file: DEFAULT_DATA_FILE, bigbanks_file: DEFAULT_BIGBANKS_FILE)
