@@ -93,6 +93,7 @@ class BaseCardService < BasePaymentService
 
       if save_payment_info
         puts "will save payment info"
+        bin = number[0..5]
         authorization_token = save_payment_info(card_data)
         payment_source = transaction.payor.payment_source_for_type(payment_type, autocreate: true)
         description = "...#{number[-4..-1]}, Exp: #{mmyy}"
