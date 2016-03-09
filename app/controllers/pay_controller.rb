@@ -38,6 +38,7 @@ class PayController < ApplicationController
   def step2
     @embed = Embed.by_uuid(params[:uuid])
     @transaction = Transaction.by_uuid(params[:transaction_uuid])
+    @dwolla_authenticated = session[:dwolla_authenticated]  # make sure to allow just authenticated session
     if current_user && current_user.email == @transaction.payor.email
       puts "authenticated user session - stored payments available"
       @profile_authenticated = true

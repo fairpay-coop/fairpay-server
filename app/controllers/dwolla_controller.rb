@@ -35,6 +35,7 @@ class DwollaController < ApplicationController
 
       transaction_uuid = params[:t]
       # step2_uri = session[:step2_uri]
+      session[:dwolla_authenticated] = true
       step2_uri = session[:current_url]
       if step2_uri
         redirect_to step2_uri
