@@ -14,11 +14,12 @@ class Transaction < ActiveRecord::Base
   #   t.references :parent, index: true
   #   t.decimal :base_amount
   #   t.decimal :estimated_fee
-  #   t.decimal :surcharged_fee
+  #   t.decimal :allocated_fee
   #   t.decimal :platform_fee
   #   t.decimal :paid_amount
   #   t.string :description
   #   t.json :data
+  #   t.string :fee_allocation  : payee, split, payor
   #   t.string :recurrence
   #   t.reference :recurring_payment, index: true, foreign_key: true
   #   t.timestamps null: false
@@ -98,16 +99,29 @@ class Transaction < ActiveRecord::Base
   end
 
   def perform_payment(params = {})
-    payment_type = (params[:payment_type] || self.payment_type)&.to_sym
+    self.payment_type = (params[:payment_type] || self.payment_type)&.to_sym
 
-    payment_service = payment_service_for_type(payment_type)
+    payment_service = payment_service_for_type(self.payment_type)
+
+    fee = payment_service.calculate_fee(self.base_amount, params)
+    puts "estimated fee: #{fee.inspect}"
+    if fee.is_a?(Array)
+      puts "ERROR - unexpected fee range with final calculation"
+      fee = fee.first.to_f
+    end
+    self.estimated_fee = fee
+    self.allocated_fee = fee * Embed.allocation_ratio(self.fee_allocation)
+    self.paid_amount = self.base_amount + allocated_fee
+
+    #todo: cleanup. we don't need the fee as part of this result now
     paid_amount,fee = payment_service.handle_payment(self, params)
 
     self.update!(
         status: 'completed',
-        payment_type: payment_type,
-        paid_amount: paid_amount,
-        estimated_fee: fee
+        allocated_fee: self.allocated_fee,
+        payment_type: self.payment_type,
+        paid_amount: self.paid_amount,
+        estimated_fee: self.estimated_fee
     )
 
     if self.recurrence
@@ -122,6 +136,10 @@ class Transaction < ActiveRecord::Base
       recurring.increment_next_date
     end
     TransactionAsyncCompletionJob.perform_async(self.id)
+  end
+
+  def fee_allocation_label
+    embed.fee_allocation_label(fee_allocation, self)
   end
 
   def async_completion

@@ -29,6 +29,12 @@ var FairPayApiSinglton = (function() {
             invoke(uri, data, successHandler);
         }
 
+        // todo: consider using a generate update_transaction
+        function updateFeeAllocation(data, successHandler) {
+            var uri = '/api/v1/embed/' + data.embed_uuid + '/update_fee_allocation';
+            invoke(uri, data, successHandler);
+        }
+
         function estimateFee(data, successHandler) {
             var embedUuid = data.embed_uuid ? data.embed_uuid : getEmbedUuid();
             delete data.embed_uuid;
@@ -117,6 +123,7 @@ var FairPayApiSinglton = (function() {
         return {
             submitStep1: submitStep1,
             submitCard: submitCard,
+            updateFeeAllocation: updateFeeAllocation,
             estimateFee: estimateFee,
             //joinMailingList: joinMailingList,
             //fetchContributionStatus: fetchContributionStatus,

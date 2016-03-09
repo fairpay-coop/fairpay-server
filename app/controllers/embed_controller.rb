@@ -45,6 +45,16 @@ class EmbedController < ApplicationController
     end
   end
 
+  def update_fee_allocation
+    puts "update fee allocation - params: #{params.inspect}"
+    render_json do
+      embed = Embed.by_uuid(params[:uuid])
+      result = embed.update_fee_allocation(params)
+      puts "update_fee_allocation - result: #{result}"
+      result
+    end
+  end
+
 
   def estimate_fee
     render_json do

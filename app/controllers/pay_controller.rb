@@ -58,6 +58,14 @@ class PayController < ApplicationController
   #   redirect_to "/pay/#{embed.uuid}/thanks/#{transaction.uuid}"
   # end
 
+  # probably only needed in api controller
+  def update_fee_allocation
+    embed = Embed.by_uuid(params[:uuid])
+    result = embed.update_fee_allocation(params)
+    render json: result
+  end
+
+
 
   def pay_via_dwolla
     # transaction_uuid = params[:transaction_uuid]

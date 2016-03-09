@@ -6,15 +6,68 @@ h1.title = @embed.name
 /|Payee: #{@transaction.payee.name}
 /br
 
-|Amount: #{@transaction.base_amount}
+|Base Amount: #{@transaction.base_amount}
 br
 - if @transaction.recurrence
   |Recurring:
   b
     =< @transaction.recurrence_display
 
+br
+|Fees paid by:
+br
+- allocation_options = @embed.fee_allocation_options(@transaction)
+- if allocation_options.size == 1
+    = allocation_options.first[:label]
+    br
+- else
+  form id="fee_allocation_form"
+    /note: auth token not currently used
+    = hidden_field_tag :authenticity_token, form_authenticity_token
+    = hidden_field_tag :embed_uuid, @embed.uuid
+    = hidden_field_tag :transaction_uuid, @transaction.uuid
+
+    - for option in allocation_options
+      |&nbsp;
+      = " "
+      = radio_button_tag :fee_allocation, option[:value].to_s, option[:checked]
+      =<> option[:label]
+      br
+    /|&nbsp;
+    /= " "
+
 hr
 
 - for merchant_config in @embed.merchant_configs
   = render merchant_config.form_name, merchant_config: merchant_config
   hr
+
+
+javascript:
+
+  document.addEventListener("DOMContentLoaded", function (e) {
+    var fee_allocation_form = $('#fee_allocation_form');
+    if (fee_allocation_form) {
+      $('input[type=radio][name=fee_allocation]').on('change', function () {
+        var allocation = $(this).val();
+        //alert("allocation changed: " + allocation);
+        updateFeeAllocation(allocation);
+      });
+    }
+  }, false);
+
+
+  function updateFeeAllocation(allocation) {
+    //alert('handleCard');
+    var form = document.getElementById("fee_allocation_form");
+    var data = {};
+    FairPayApi.copyFormValues(data, form, ['embed_uuid', 'transaction_uuid']);
+    data.fee_allocation = allocation;
+    //alert('data: ' + JSON.stringify(data));
+    FairPayApi.updateFeeAllocation(data, handleAllocationResponse);
+    return false;
+  }
+
+  function handleAllocationResponse(data) {
+    //alert('fee allocation response: ' + JSON.stringify(data));
+  }

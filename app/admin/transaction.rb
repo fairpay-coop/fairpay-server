@@ -1,7 +1,7 @@
 ActiveAdmin.register Transaction do
 
 
-  permit_params :payor_id, :payee_id, :base_amount, :kind  # /, :data_json
+  permit_params :payor_id, :payee_id, :base_amount, :kind, :fee_allocation, :allocated_fee, :paid_amount, :payment_type, :status, :recurrence  # /, :data_json
 
 
   index do
@@ -23,7 +23,10 @@ ActiveAdmin.register Transaction do
     f.inputs do
       f.input :payor, as: :select, collection: Profile.pluck(:name, :id)
       f.input :payee, as: :select, collection: Profile.pluck(:name, :id)
+      f.input :fee_allocation
       f.input :base_amount
+      f.input :allocated_fee
+      f.input :paid_amount
       f.input :payment_type
       f.input :status
       f.input :recurrence

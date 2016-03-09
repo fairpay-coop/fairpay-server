@@ -83,6 +83,7 @@ class Embed < ActiveRecord::Base
   end
 
   def recurrence_enabled
+    #todo: rename this field to 'recurrences' since it's a list?
     get_data_field(:recurrence).present?
   end
 
@@ -94,6 +95,49 @@ class Embed < ActiveRecord::Base
     values.map do |value|
       checked = (value.to_sym == :none)  #todo: make this configurable?
       { value: value, label: RECURRENCE_LABELS[value.to_sym], checked: checked }
+    end
+  end
+
+  FEE_ALLOCATION_VALUES = [:payee, :split, :payor]
+
+  def fee_allocations
+    result = get_data_field(:fee_allocations)
+    result = [:payee]  unless result.present?
+    result
+  end
+
+  def fee_allocation_options(transaction = nil)
+    values = get_data_field(:fee_allocations)
+    selected = transaction ? transaction.fee_allocation : values.first
+    values.map do |value|
+      checked = (value == selected)
+      { value: value, label: fee_allocation_label(value, transaction), checked: checked }
+    end
+  end
+
+  def fee_allocation_label(value, transaction = nil)
+    case value.to_sym
+      when :payee
+        transaction&.payee&.name || 'Payee'
+      when :split
+        'Split 50/50'
+      when :payor
+        'Myself'
+      else
+        raise "unexpected fee allocation label: #{value}"
+    end
+  end
+
+  def self.allocation_ratio(value)
+    case value.to_sym
+      when :payee
+        0.0
+      when :split
+        0.5
+      when :payor
+        1.0
+      else
+        raise "unexpected fee allocation label: #{value}"
     end
   end
 
@@ -130,15 +174,29 @@ class Embed < ActiveRecord::Base
       name = email  unless name.present?  # don't require 'name' as the api level, default to email
       payor = Profile.create!(email: email, name: name)
     end
+    fee_allocation = fee_allocations.first
+
     transaction = Transaction.create!(
         embed: self,
         payee: self.profile,
         payor: payor,
         base_amount: amount,
         status: :provisional,
+        fee_allocation: fee_allocation,
         recurrence: recurrence,
         mailing_list: mailing_list
     )
+  end
+
+  # expected params: :transaction_uuid, :fee_allocation
+  def update_fee_allocation(params)
+    transaction_uuid = params[:transaction_uuid]
+    transaction = Transaction.by_uuid(transaction_uuid)
+
+    allocation = params[:fee_allocation]
+    #todo: validation
+    transaction.update!(fee_allocation: allocation)
+    transaction.fee_allocation
   end
 
 

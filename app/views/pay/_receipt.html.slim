@@ -10,8 +10,13 @@
 /|,
 /=< transaction.payee.email
 /br
-= render 'payor_payee', transaction: transaction
+= render 'pay/payor_payee', transaction: transaction
 
+- if transaction.base_amount != transaction.paid_amount
+  |Base Amount: $
+  b
+    = transaction.format_amount(transaction.base_amount)
+  br
 |Paid Amount: $
 b
   = transaction.format_amount(transaction.paid_amount)
@@ -21,6 +26,9 @@ br
 |Payment Method: #{transaction.payment_type_display}
 br
 |Transaction Fee: $#{transaction.format_amount(transaction.estimated_fee)}
+br
+|Fee Allocation: #{transaction.fee_allocation_label}
+/ ($#{transaction.format_amount(transaction.allocated_fee)})
 br
 |Transaction Id: #{transaction.uuid}
 br

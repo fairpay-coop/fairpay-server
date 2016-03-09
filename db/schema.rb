@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160307203523) do
+ActiveRecord::Schema.define(version: 20160309072133) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -161,7 +161,7 @@ ActiveRecord::Schema.define(version: 20160307203523) do
     t.integer  "parent_id"
     t.decimal  "base_amount"
     t.decimal  "estimated_fee"
-    t.decimal  "surcharged_fee"
+    t.decimal  "allocated_fee"
     t.decimal  "platform_fee"
     t.decimal  "paid_amount"
     t.string   "description"
@@ -172,6 +172,7 @@ ActiveRecord::Schema.define(version: 20160307203523) do
     t.string   "payment_type"
     t.integer  "recurring_payment_id"
     t.string   "mailing_list"
+    t.string   "fee_allocation"
   end
 
   add_index "transactions", ["parent_id"], name: "index_transactions_on_parent_id", using: :btree
