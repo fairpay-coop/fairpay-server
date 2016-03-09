@@ -40,7 +40,7 @@ class DwollaService  < BasePaymentService
 
     # clean this up once initializer api fixed
     # initialize_fee_service(nil)
-    @fee_service = FeeService.new(FEE_CONFIG)
+    @fee_service = FeeService.new(FEE_CONFIG, self)
   end
 
   def default_fee_config

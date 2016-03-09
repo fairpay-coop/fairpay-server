@@ -30,7 +30,7 @@ class AuthorizeNetService  < BaseCardService
   end
 
   def handle_payment(transaction, params)
-    estimated_fee = calculate_fee(transaction.base_amount, params)
+    estimated_fee = calculate_fee(transaction, params)
     paid_amount = transaction.base_amount
 
     data = params.slice(:card_number, :card_mmyy, :card_cvv, :billing_zip)

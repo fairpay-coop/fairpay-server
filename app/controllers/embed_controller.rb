@@ -61,7 +61,7 @@ class EmbedController < ApplicationController
       embed = Embed.by_uuid(params[:uuid])
       bin = params[:bin]
       amount = params[:amount]
-      embed.card_payment_service.estimate_fee(bin, amount)
+      embed.card_payment_service.estimate_fee(amount, bin)
     end
   end
 

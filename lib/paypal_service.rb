@@ -37,7 +37,7 @@ class PaypalService < BasePaymentService
 
     # clean this up once initializer api fixed
     # initialize_fee_service(merchant_config)
-    @fee_service = FeeService.new(FEE_CONFIG)
+    @fee_service = FeeService.new(FEE_CONFIG, self)
   end
 
   def default_fee_config
@@ -82,8 +82,8 @@ class PaypalService < BasePaymentService
 
 
   def handle_payment(transaction, params)
-    estimated_fee = calculate_fee(transaction.base_amount, params)
-    paid_amount = transaction.base_amount  #todo fee allocation based on merchant config
+    estimated_fee = calculate_fee(transaction, params)
+    paid_amount = transaction.amount
 
     complete_payment(params[:token], params[:payor_id], paid_amount)
 

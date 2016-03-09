@@ -6,13 +6,13 @@ class FeeService
   #   interchange: true - add interchange rates per bin
   #   base: 0.15        - base fee to add per transaction
   #   percent: 0.10     - percentage fee of total payment amount
-  def initialize(fee_config_param)
+  def initialize(fee_config_param, payment_service)
     fee_config = fee_config_param  # is it safe in ruby to reassign function param?
     unless fee_config
       puts "ERROR: missing fee config - using dummy config"
       fee_config = {base: 0, percent: 0}
     end
-
+    @payment_service = payment_service
     @config = fee_config.with_indifferent_access
     @interchange = @config[:interchange].to_s == 'true'
     @base = @config[:base].to_f
@@ -28,20 +28,28 @@ class FeeService
 
 
   #todo: need a better place to factor shared payment service logic too, probably a base class
-  def card_fee_str(amount, bin = nil)
+  def card_fee_str(transaction, bin = nil)
+    amount = transaction.amount
     if bin
-      data = estimate_fee(bin, amount)
+      data = estimate_fee(amount, bin)
       data[:fee_str]
       # fee = data[:estimated_fee]
       # fee_tip = data[:tip]
       # result = "$#{format_amount(fee)}"
       # result += " (#{fee_tip})"  if fee_tip
     else
-      low, high = calculate_fee(amount)  #todo clean this up!!
+      low, high = calculate_fee(transaction)
       result = "$#{format_amount(low)}"
       result += "-#{format_amount(high)} (depends on card type)"  if high
       result
     end
+  end
+
+  def fee_range_str(amount)
+    low, high = fee_range(amount)
+    result = "$#{format_amount(low)}"
+    result += "-#{format_amount(high)} (depends on card type)"  if high
+    result
   end
 
   def format_amount(amount)
@@ -51,16 +59,25 @@ class FeeService
 
 
   # returns either fee range pair if no card prefix provided or a single value if provided
-  def calculate_fee(amount, params = nil)
+  def calculate_fee(transaction, params = {})
+    amount = transaction.base_amount
+
     if @interchange
-      unless params.present? && params[:card_number].present?
-        # returns a range when card prefix not provided
-        fee_range(amount)  # note, returns an array with low/high range when params are missing
+      use_payment_source = params[:use_payment_source].to_s == 'true'  #todo: better pattern here?
+      if use_payment_source
+        payment_source = transaction.payor.payment_source_for_type(@payment_service.payment_type)
+        bin = payment_source&.get_data_field(:bin)
       else
         card = params[:card_number]
         bin = card ? card[0..5] : nil
-        data = estimate_fee(bin, amount)
+      end
+
+      if bin.present?
+        data = estimate_fee(amount, bin)
         fee = data[:estimated_fee]
+      else
+        # returns a range when card prefix not provided
+        fee_range(amount)  # note, returns an array with low/high range when params are missing
       end
     else
       apply_rate(amount)
@@ -69,8 +86,11 @@ class FeeService
 
 
 
-  INTERCHANGE_LOW_BASE = 0.22
-  INTERCHANGE_LOW_PERCENT = 0.05
+  INTERCHANGE_LOW_DEBIT_BASE = 0.22
+  INTERCHANGE_LOW_DEBIT_PERCENT = 0.05
+
+  INTERCHANGE_LOW_CREDIT_BASE = 0.12
+  INTERCHANGE_LOW_CREDIT_PERCENT = 1.80
 
   INTERCHAGNE_HIGH_BASE = 0.30
   INTERCHANGE_HIGH_PERCENT = 3.5
@@ -81,18 +101,30 @@ class FeeService
 
 
   def fee_range(amount)
+    [fee_range_low(amount), fee_range_high(amount)]
+  end
+
+  def fee_range_low(amount)
     amount = amount.to_f
-    low = apply_rate(amount, INTERCHANGE_LOW_BASE, INTERCHANGE_LOW_PERCENT)
+    low_debit = apply_rate(amount, INTERCHANGE_LOW_DEBIT_BASE, INTERCHANGE_LOW_DEBIT_PERCENT)
+    low_credit = apply_rate(amount, INTERCHANGE_LOW_CREDIT_BASE, INTERCHANGE_LOW_CREDIT_PERCENT)
+    low = [low_debit,low_credit].min
+  end
+
+  def fee_range_high(amount)
+    amount = amount.to_f
     high = apply_rate(amount, INTERCHAGNE_HIGH_BASE, INTERCHANGE_HIGH_PERCENT)
-    [low, high]
   end
 
 
   # right now, this is just the interchange fee calculation
   ## todo: add in merchant processor (i.e. dharma merchant services) fee
-  def estimate_fee(bin, amount)
+  #todo: perhaps rename this to 'fee_for_amount'. should never be used directly
+  def estimate_fee(amount, bin = nil)
     unless bin && bin.length >= 6
-      fee_str = card_fee_str(amount)
+      # fee_str = card_fee_str(amount)
+      fee_str = fee_range_str(amount)
+      #fee_range(amount)  # note, returns an array with low/high range when params are missing
       return {fee_str: fee_str}
     end
 
@@ -109,7 +141,12 @@ class FeeService
     # return {error: 'BIN not found'} unless binbase
     unless binbase
       # placeholder default fee calculation
-      fee = apply_rate(amount, INTERCHAGNE_DEFAULT_BASE, INTERCHANGE_DEFAULT_PERCENT)
+      # fee = apply_rate(amount, INTERCHAGNE_DEFAULT_BASE, INTERCHANGE_DEFAULT_PERCENT)
+
+      # if unable to match bin, assume lowest fee. (don't want to overcharge)
+      # todo: figure out best way to message this
+      # todo: log non-matched bins for later investigation / stats
+      fee = fee_range_low(amount)
       return {estimated_fee: fee, fee_str: "unknown"}
     end
 

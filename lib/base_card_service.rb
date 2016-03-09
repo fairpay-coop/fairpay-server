@@ -70,21 +70,15 @@ class BaseCardService < BasePaymentService
     use_payment_source = params[:use_payment_source].to_s == 'true'  #todo: better pattern here?
     save_payment_info = params[:save_payment_info].to_s == 'true'
 
-    if use_payment_source
-      payment_source = transaction.payor.payment_source_for_type(payment_type)
-      bin = payment_source&.get_data_field(:bin)
-      params[:card_number] = bin
-    end
+    charge_amount = transaction.amount
 
-    estimated_fee = calculate_fee(transaction.base_amount, params)
-    charge_amount = transaction.base_amount
-
+    # if use_payment_source
+    #   payment_source = transaction.payor.payment_source_for_type(payment_type)
     unless use_payment_source
       puts "payment params: #{params.inspect}"
 
       number = params[:card_number]
       raise "'card_number' param missing"  unless number
-      bin = number[0..5]
       mmyy = params[:card_mmyy]
       month = mmyy[0..1]
       year = "20#{mmyy[2..3]}"
@@ -124,7 +118,7 @@ class BaseCardService < BasePaymentService
     # #todo: factor out the transaction update
     # transaction.update!(status: 'completed', paid_amount: paid_amount, estimated_fee: estimated_fee)
     # transaction
-    [charge_amount, estimated_fee]
+    # [charge_amount, estimated_fee]
   end
 
 

@@ -27,9 +27,10 @@ br
 br
 |Transaction Fee: $#{transaction.format_amount(transaction.estimated_fee)}
 br
-|Fee Allocation: #{transaction.fee_allocation_label}
-/ ($#{transaction.format_amount(transaction.allocated_fee)})
-br
+- if transaction.estimated_fee > 0
+  |Fee Allocation: #{transaction.fee_allocation_label}
+  / ($#{transaction.format_amount(transaction.allocated_fee)})
+  br
 |Transaction Id: #{transaction.uuid}
 br
 |Status: #{transaction.status}

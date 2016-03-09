@@ -54,6 +54,10 @@ class Transaction < ActiveRecord::Base
   #   payment_source = payor.payment_source_for_type(payment_type, autocreate: true)
   # end
 
+  def amount
+    paid_amount || base_amount
+  end
+
   def recurrence_display
     if recurring_payment
       recurring_payment.interval_display
@@ -74,7 +78,7 @@ class Transaction < ActiveRecord::Base
 
 
   def card_fee_range
-    embed.card_payment_service.calculate_fee(base_amount)
+    embed.card_payment_service.calculate_fee(self)
   end
 
   def card_fee_str
@@ -87,11 +91,11 @@ class Transaction < ActiveRecord::Base
   end
 
   def paypal_fee
-    embed.paypal_service.calculate_fee(base_amount)
+    embed.paypal_service.calculate_fee(self)
   end
 
   def paypal_fee_str
-    format_amount(embed.paypal_service.calculate_fee(base_amount))
+    format_amount(embed.paypal_service.calculate_fee(self))
   end
 
   def payment_type_display
@@ -103,7 +107,7 @@ class Transaction < ActiveRecord::Base
 
     payment_service = payment_service_for_type(self.payment_type)
 
-    fee = payment_service.calculate_fee(self.base_amount, params)
+    fee = payment_service.calculate_fee(self, params)
     puts "estimated fee: #{fee.inspect}"
     if fee.is_a?(Array)
       puts "ERROR - unexpected fee range with final calculation"
@@ -112,16 +116,18 @@ class Transaction < ActiveRecord::Base
     self.estimated_fee = fee
     self.allocated_fee = fee * Embed.allocation_ratio(self.fee_allocation)
     self.paid_amount = self.base_amount + allocated_fee
+    self.save!
 
     #todo: cleanup. we don't need the fee as part of this result now
-    paid_amount,fee = payment_service.handle_payment(self, params)
+    #paid_amount,fee =
+    payment_service.handle_payment(self, params)
 
     self.update!(
         status: 'completed',
-        allocated_fee: self.allocated_fee,
-        payment_type: self.payment_type,
-        paid_amount: self.paid_amount,
-        estimated_fee: self.estimated_fee
+        # allocated_fee: self.allocated_fee,
+        # payment_type: self.payment_type,
+        # paid_amount: self.paid_amount,
+        # estimated_fee: self.estimated_fee
     )
 
     if self.recurrence
@@ -136,6 +142,13 @@ class Transaction < ActiveRecord::Base
       recurring.increment_next_date
     end
     TransactionAsyncCompletionJob.perform_async(self.id)
+  end
+
+  #todo:, need to refactor rest of system to use this fee calc entry point
+  def calculate_fee(params)
+    self.payment_type = (params[:payment_type] || self.payment_type)&.to_sym
+    payment_service = payment_service_for_type(self.payment_type)
+    fee = payment_service.calculate_fee(self, params)
   end
 
   def fee_allocation_label
