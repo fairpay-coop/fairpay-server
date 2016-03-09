@@ -7,6 +7,7 @@ ActiveAdmin.register Transaction do
   index do
     selectable_column
     id_column
+    column :uuid
     column :payor
     column :payee
     column :base_amount

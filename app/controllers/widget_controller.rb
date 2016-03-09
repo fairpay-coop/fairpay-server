@@ -27,7 +27,8 @@ class WidgetController < ApplicationController
 
     transaction = embed.step1(params) #email, name, amount)
 
-    session[:step2_uri] = "/widget/#{embed.uuid}/authComplete/#{transaction.uuid}"
+    # session[:step2_uri] = "/widget/#{embed.uuid}/authComplete/#{transaction.uuid}"
+    session[:current_url] = "/widget/#{embed.uuid}/authComplete/#{transaction.uuid}"
 
     redirect_to "/widget/#{embed.uuid}/capturePayment/#{transaction.uuid}"
   end

@@ -1,5 +1,6 @@
 class RecurringPayment < ActiveRecord::Base
   include UuidAssignable
+  include ApplicationHelper
 
   # create_table :recurring_payments do |t|
   #   t.string :uuid, index: true
@@ -27,9 +28,9 @@ class RecurringPayment < ActiveRecord::Base
   end
 
   #todo: what is the best place for a global helper method like this?
-  def base_url
-    ENV['BASE_URL']
-  end
+  # def base_url
+  #   ENV['BASE_URL']
+  # end
 
 
   def status_url

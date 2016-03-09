@@ -2,8 +2,10 @@
 h1.title = @embed.name
 / - Step 2"
 
-|Payee: #{@transaction.payee.name}
-br
+= render 'payor_payee', transaction: @transaction
+/|Payee: #{@transaction.payee.name}
+/br
+
 |Amount: #{@transaction.base_amount}
 br
 - if @transaction.recurrence

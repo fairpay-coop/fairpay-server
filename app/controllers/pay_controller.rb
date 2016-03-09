@@ -25,8 +25,11 @@ class PayController < ApplicationController
 
     transaction = embed.step1(data)
 
-    step2_uri = "/pay/#{embed.uuid}/step2/#{transaction.uuid}" #"?payment_type=#{payment_type}"
-    session[:step2_uri] = step2_uri
+    #todo: remove this
+    step2_uri = "/pay/#{embed.uuid}/step2/#{transaction.uuid}"
+    # session[:step2_uri] = step2_uri
+
+    session[:current_url] = transaction.step2_url
 
     redirect_to step2_uri
   end
@@ -35,6 +38,12 @@ class PayController < ApplicationController
   def step2
     @embed = Embed.by_uuid(params[:uuid])
     @transaction = Transaction.by_uuid(params[:transaction_uuid])
+    if current_user && current_user.email == @transaction.payor.email
+      puts "authenticated user session - stored payments available"
+      @profile_authenticated = true
+    end
+    # used to resume after login
+    session[:current_url] = @transaction.step2_url
   end
 
   def step2_post
@@ -68,7 +77,8 @@ class PayController < ApplicationController
   def thanks
     @embed = Embed.by_uuid(params[:uuid])
     @transaction = Transaction.by_uuid(params[:transaction_uuid])
-
+    # used to redisplay after signup
+    session[:current_url] = @transaction.finished_url
   end
 
 

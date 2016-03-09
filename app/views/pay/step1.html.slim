@@ -9,12 +9,28 @@ form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1" onsubmit="r
 
   = hidden_field_tag :authenticity_token, form_authenticity_token
   /input type="hidden" name="embed_uuid" value="#{@embed.id}"
-  => "Name:"
-  input type="text" name="name" value=""
-  br
-  => "Email:"
-  input type="text" id="email" name="email" value=""
-  br
+
+  - if user_signed_in?
+    - profile = current_user.profile
+    /=> "Name: #{profile.name}"
+    /br
+    /=> "Email: #{profile.email}"
+    /br
+    => "Name:"
+    input type="text" name="name" value="#{profile.name}"
+    br
+    => "Email:"
+    input type="text" id="email" name="email" value="#{profile.email}"
+    br
+
+  -else
+    => "Name:"
+    input type="text" name="name" value=""
+    br
+    => "Email:"
+    input type="text" id="email" name="email" value=""
+    br
+
   => "Amount:"
   input id="step1Amount" type="text" name="amount" value=""
   br

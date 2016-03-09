@@ -1,5 +1,6 @@
 class Transaction < ActiveRecord::Base
   include UuidAssignable
+  include ApplicationHelper
 
   # create_table :transactions do |t|
   #   t.string :uuid, index: true
@@ -61,6 +62,15 @@ class Transaction < ActiveRecord::Base
       nil
     end
   end
+
+  def finished_url
+    "#{base_url}/pay/#{embed.uuid}/thanks/#{uuid}"
+  end
+
+  def step2_url
+    "#{base_url}/pay/#{embed.uuid}/step2/#{uuid}"
+  end
+
 
   def card_fee_range
     embed.card_payment_service.calculate_fee(base_amount)

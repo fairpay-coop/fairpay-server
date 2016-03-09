@@ -25,11 +25,16 @@ form id="card_form"
 
   - payment_source = payment_service.saved_payment_source(@transaction)
   - if payment_source&.get_data_field(:description)
-    | Use saved payment info? #{payment_source.get_data_field(:description)}
-    = " "
-    /input type="checkbox" name="payment_source" value="#{payment_source.id}" checked="true"
-    input type="checkbox" id="use_payment_source_checkbox" name="use_payment_source" value="true" checked="true"
-    br
+    - if @profile_authenticated
+      | Use saved payment info? #{payment_source.get_data_field(:description)}
+      = " "
+      /input type="checkbox" name="payment_source" value="#{payment_source.id}" checked="true"
+      input type="checkbox" id="use_payment_source_checkbox" name="use_payment_source" value="true" checked="true"
+      br
+    - else
+      b Please sign in to use your previously saved payment information.
+      br
+      = link_to('Sign In', new_user_session_path)
   - else
     input type="hidden" name="use_payment_source" value="false"
 

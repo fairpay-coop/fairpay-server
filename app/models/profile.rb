@@ -19,6 +19,12 @@ class Profile < ActiveRecord::Base
     name || ("#{first_name} #{last_name}")
   end
 
+
+  def user
+    User.find_by(email: email)
+  end
+
+
   def payment_source_for_type(type, autocreate: true)
     if autocreate
       payment_sources.find_or_create_by(kind: type)

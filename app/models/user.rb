@@ -8,4 +8,9 @@ class User < ActiveRecord::Base
     expose :id, :email
   end
 
+
+  def profile
+    Profile.find_by(email: email)
+  end
+
 end

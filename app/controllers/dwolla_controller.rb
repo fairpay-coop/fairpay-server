@@ -34,7 +34,8 @@ class DwollaController < ApplicationController
       transaction.payor.associate_dwolla_account_id(dwolla_token.account_id)
 
       transaction_uuid = params[:t]
-      step2_uri = session[:step2_uri]
+      # step2_uri = session[:step2_uri]
+      step2_uri = session[:current_url]
       if step2_uri
         redirect_to step2_uri
       else
