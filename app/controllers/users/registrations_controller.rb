@@ -49,7 +49,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   def after_sign_up_path_for(resource)
     # puts "after signup path - #{session[:finished_url]} - var: #{@finished_url}"
-    current_url == session[:current_url]
+    current_url = session[:current_url]
     puts "after signup path - current url: #{current_url}"
     current_url || super
   end
