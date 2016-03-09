@@ -161,7 +161,7 @@ class Embed < ActiveRecord::Base
   end
 
   def step1(params)
-    email = params[:email]
+    email = params[:email]&.downcase  #todo: confirm if devise is already also doing this
     name = params[:name]
     amount = params[:amount]
     recurrence = params[:recurrence]
