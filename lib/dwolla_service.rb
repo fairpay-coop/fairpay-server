@@ -2,6 +2,7 @@ class DwollaService  < BasePaymentService
 
   # not sure if we should still use a singleton here or not
   include Singleton
+  include ApplicationHelper
 
 
   # def self.instance
@@ -20,7 +21,7 @@ class DwollaService  < BasePaymentService
 
     puts "dwolla env: #{dwolla_environment}, client id: #{client_id}"
 
-    # @oauth_redirect_url = 'http://local.fairpay.coop:3000/dwolla/oauth_complete'
+    @oauth_redirect_url = "#{base_url}/dwolla/oauth_complete"
     # @payment_redirect_url = 'http://local.fairpay.coop:3000/dwolla/payment_complete'
 
     @dwolla = DwollaV2::Client.new(id: client_id, secret: client_secret) do |optional_config|
@@ -58,7 +59,8 @@ class DwollaService  < BasePaymentService
 
   def auth
     # @dwolla.auths.new(redirect_url: @redirect_url, scope: SCOPE)
-    @dwolla.auths.new(redirect_url: '', scope: SCOPE)
+    puts "redirect url: #{@oauth_redirect_url}"
+    @dwolla.auths.new(redirect_uri: @oauth_redirect_url, scope: SCOPE)
   end
 
   def auth_url

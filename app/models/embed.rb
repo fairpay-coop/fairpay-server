@@ -107,7 +107,7 @@ class Embed < ActiveRecord::Base
   end
 
   def fee_allocation_options(transaction = nil)
-    values = get_data_field(:fee_allocations)
+    values = fee_allocations
     selected = transaction ? transaction.fee_allocation : values.first
     values.map do |value|
       checked = (value == selected)
