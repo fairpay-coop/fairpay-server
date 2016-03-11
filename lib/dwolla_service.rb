@@ -91,12 +91,14 @@ class DwollaService  < BasePaymentService
     token_for_data(data)
   end
 
-  def list_funding_sources(token)
+  def list_funding_sources(token, amount = 0.0)
     raw = token.get "/accounts/#{token.account_id}/funding-sources"
     puts "raw: #{raw.to_json}"
-    result = {}
+    result = []
+    default_id = nil
     raw[:_embedded][:'funding-sources'].each do |data|
       puts "data: #{data}"
+      selected = false
       name = data[:name]
       id = data[:id]
       href = data[:_links][:self][:href]
@@ -104,10 +106,30 @@ class DwollaService  < BasePaymentService
         details = token.get "funding-sources/#{id}"
         puts "balance details: #{details.to_json}"
         balance_obj = details[:balance]
-        name = "Dwolla Balance: #{balance_obj[:value]} #{balance_obj[:currency]}"  if balance_obj
+        if balance_obj
+          # for now assume USD
+          balance = balance_obj[:value].to_f
+          name = "Dwolla Balance: #{balance_obj[:value]} #{balance_obj[:currency]}"
+          if amount <= balance
+            default_id = id
+            # selected = true
+            result.insert(0, {id: id, name: name, selected: true})
+          else
+            puts "balance unavailable - source skipped - token: #{token}"
+            #todo: display balance as a disabled option instead of silently skipping
+          end
+        end
+      else
+        result << {id: id, name: name}
       end
-
-      result[id] = name
+    end
+    unless default_id
+      first = result.first
+      if first
+        first[:selected] = true
+      else
+        puts "warning, no available funding sources found for dwolla token: #{token}"
+      end
     end
     result
   end

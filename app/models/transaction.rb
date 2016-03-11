@@ -26,6 +26,12 @@ class Transaction < ActiveRecord::Base
   #   t.strting :payment_type
   #   t.string :mailing_list
 
+  # data attributes:
+  #   correlation_id - passed in and returned with confirmation redirect and/or callback
+  #   return_url - where to redirect browser upon completion of playment flow (need both success & failure urls?)
+  #   callback_url - where to post payment status to upon completion
+  #   description - should this be here instead of a dedicated field?
+
 
   belongs_to :payor, class_name: 'Profile'
   belongs_to :payee, class_name: 'Profile'

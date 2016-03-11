@@ -56,11 +56,11 @@
             =
             |Dwolla Funding Source:
             br
-            - for funding_source in @transaction.payor.dwolla_token.funding_sources
+            - for option in @transaction.payor.dwolla_token.funding_sources(@transaction.base_amount)
               p.control
                 label.radio
-                  = radio_button_tag :funding_source_id, funding_source[0], type:"radio"
-                  = funding_source[1]
+                  = radio_button_tag :funding_source_id, option[:id], option[:selected], type: "radio"
+                  = option[:name]
             p.control
               input.button.is-primary.is-small type="submit" value="Pay with Dwolla"
 

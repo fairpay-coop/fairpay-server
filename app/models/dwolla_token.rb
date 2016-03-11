@@ -37,8 +37,8 @@ class DwollaToken < ActiveRecord::Base
     # self.save!
   end
 
-  def funding_sources
-    DwollaService.instance.list_funding_sources(token)
+  def funding_sources(amount = nil)
+    DwollaService.instance.list_funding_sources(token, amount)
   end
 
   def default_funding_source_uri

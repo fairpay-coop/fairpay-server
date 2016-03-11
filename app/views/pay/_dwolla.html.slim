@@ -16,9 +16,9 @@ br
         = hidden_field_tag :amount, @transaction.base_amount
         |Dwolla Funding Source:
         br
-        - for funding_source in @transaction.payor.dwolla_token.funding_sources
-          = radio_button_tag :funding_source_id, funding_source[0]
-          = " " + funding_source[1]
+        - for option in @transaction.payor.dwolla_token.funding_sources(@transaction.base_amount)
+          = radio_button_tag :funding_source_id, option[:id], option[:selected]
+          = " " + option[:name]
           br
         input type="submit" value="Pay with Dwolla"
     - else
