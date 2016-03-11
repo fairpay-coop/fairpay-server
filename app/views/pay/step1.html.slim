@@ -16,11 +16,13 @@ form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1" onsubmit="r
     /br
     /=> "Email: #{profile.email}"
     /br
+    /todo: clean this up or rework to pull data via api more spa / angular style
+
     => "Name:"
     input type="text" name="name" value="#{profile.name}"
     br
     => "Email:"
-    input type="text" id="email" name="email" value="#{profile.email}"
+    input type="text" id="email" name="email" value="#{profile.email}" autocapitalize="off"
     br
 
   -else
@@ -28,7 +30,7 @@ form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1" onsubmit="r
     input type="text" name="name" value=""
     br
     => "Email:"
-    input type="text" id="email" name="email" value=""
+    input type="text" id="email" name="email" value="" autocapitalize="off"
     br
 
   => "Amount:"
