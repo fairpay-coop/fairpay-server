@@ -56,6 +56,8 @@ Rails.application.routes.draw do
   get  'pay/:uuid/update_fee_allocation/:transaction_uuid' => 'pay#update_fee_allocation'
 
   get  'pay/:uuid/thanks/:transaction_uuid' => 'pay#thanks'
+  get  'pay/:uuid/merchant_receipt/:transaction_uuid' => 'pay#merchant_receipt'
+
 
   get  'recurring/:uuid/cancel' => 'recurring#cancel'
   get  'recurring/:uuid' => 'recurring#status'

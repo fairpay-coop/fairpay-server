@@ -14,7 +14,7 @@ class Transaction < ActiveRecord::Base
   #   t.references :parent, index: true
   #   t.decimal :base_amount
   #   t.decimal :estimated_fee
-  #   t.decimal :allocated_fee
+  #   t.decimal :allocated_fee   # customer paid fee surcharge - todo: rename this
   #   t.decimal :platform_fee
   #   t.decimal :paid_amount
   #   t.string :description
@@ -159,6 +159,10 @@ class Transaction < ActiveRecord::Base
 
   def fee_allocation_label
     embed.fee_allocation_label(fee_allocation, self)
+  end
+
+  def fee_allocation_label_merchant
+    embed.fee_allocation_label_merchant(fee_allocation, self)
   end
 
   def async_completion

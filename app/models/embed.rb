@@ -128,6 +128,19 @@ class Embed < ActiveRecord::Base
     end
   end
 
+  def fee_allocation_label_merchant(value, transaction = nil)
+    case value.to_sym
+      when :payee  #todo: use 'mode' config flag for better labels
+        'Payee'
+      when :split
+        'Split 50/50'
+      when :payor
+        'Payor'
+      else
+        raise "unexpected fee allocation label: #{value}"
+    end
+  end
+
   def self.allocation_ratio(value)
     case value.to_sym
       when :payee
