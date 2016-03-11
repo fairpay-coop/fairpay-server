@@ -25,7 +25,7 @@ form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1" onsubmit="r
     input type="text" id="email" name="email" value="#{profile.email}" autocapitalize="off"
     br
 
-  -else
+  - else
     => "Name:"
     input type="text" name="name" value=""
     br
@@ -33,9 +33,23 @@ form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1" onsubmit="r
     input type="text" id="email" name="email" value="" autocapitalize="off"
     br
 
-  => "Amount:"
-  input id="step1Amount" type="text" name="amount" value=""
-  br
+  - include_amount_field = false
+  - if @embed.suggested_amounts.present?
+    - for amount in @embed.suggested_amounts
+      - if amount > 0
+        = radio_button_tag :chosen_amount, amount
+        =<> amount
+        |&nbsp;
+        = " "
+      - else
+        - include_amount_field = true
+    br
+
+  - if include_amount_field
+    => "Amount:"
+    input id="step1Amount" type="text" name="entered_amount" value=""
+    br
+
   - if @embed.recurrence_enabled
     - for option in @embed.recurrence_options
       = radio_button_tag :recurrence, option[:value].to_s, option[:checked]
@@ -54,8 +68,9 @@ form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1" onsubmit="r
 
 javascript:
   function validateStep1Form() {
+    var amount_chosen = $("input[name=chosen_amount]:checked").length;
     var amount = $('#step1Amount').val();
-    if (amount == null || amount == "") {
+    if (amount_chosen == 0 && (amount == null || amount == "")) {
       alert("Please enter an amount");
       return false;
     }

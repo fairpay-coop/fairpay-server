@@ -21,7 +21,13 @@ class PayController < ApplicationController
     embed_uuid = params[:uuid]
     embed = Embed.by_uuid(embed_uuid)
 
-    data = params.slice(:name, :email, :amount, :recurrence, :mailing_list)
+    entered_amount = params[:entered_amount]
+    entered_amount = nil  unless entered_amount.present?
+    chosen_amount = params[:chosen_amount]
+    amount = entered_amount || chosen_amount
+
+    data = params.slice(:name, :email, :recurrence, :mailing_list)
+    data[:amount] = amount
 
     transaction = embed.step1(data)
 

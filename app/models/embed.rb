@@ -98,6 +98,10 @@ class Embed < ActiveRecord::Base
     end
   end
 
+  def suggested_amounts
+    get_data_field(:suggested_amounts)
+  end
+
   FEE_ALLOCATION_VALUES = [:payee, :split, :payor]
 
   def fee_allocations
