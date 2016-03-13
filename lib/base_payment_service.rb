@@ -50,11 +50,6 @@ class BasePaymentService
     end
     result = fee_service.card_fee_str(transaction, bin)
     puts "card fee str: #{result}"
-    # low, high = payment_service.calculate_fee(transaction.base_amount, params)
-    # result = "$#{format_amount(low)}"
-    # if high  # we've been given a range
-    #   result += "-#{format_amount(high)} (depends on card type)"
-    # end
     result
   end
 

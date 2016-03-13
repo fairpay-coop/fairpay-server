@@ -158,6 +158,10 @@ class Embed < ActiveRecord::Base
     end
   end
 
+  def capture_memo
+    get_data_field(:capture_memo)  #todo better handling of json attrs
+  end
+
   #todo: data driven recurrence choices
 
   #todo: data driven contribution amount choices
@@ -184,6 +188,8 @@ class Embed < ActiveRecord::Base
     recurrence = params[:recurrence]
     recurrence = nil  if recurrence == 'none'
     mailing_list = params[:mailing_list]
+    description = params[:description]
+    memo = params[:memo]
 
     raise "email required" unless email.present?
     payor = Profile.find_by(email: email)
@@ -201,8 +207,11 @@ class Embed < ActiveRecord::Base
         status: :provisional,
         fee_allocation: fee_allocation,
         recurrence: recurrence,
-        mailing_list: mailing_list
+        mailing_list: mailing_list,
+        description: description
     )
+    transaction.update_data_field(:memo, memo)  #todo, clean up handling of json attrs
+    transaction
   end
 
   # expected params: :transaction_uuid, :fee_allocation

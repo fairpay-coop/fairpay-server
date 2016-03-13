@@ -1,6 +1,5 @@
 class PaymentNotifier < ApplicationMailer
 
-
   # send a signup email to the user, pass in the user object that   contains the user's email address
   def receipt(transaction)
     @transaction = transaction

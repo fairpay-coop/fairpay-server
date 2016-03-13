@@ -1,5 +1,6 @@
 class MerchantConfig < ActiveRecord::Base
   include DataFieldable
+  include ApplicationHelper   # had been used for format_amount
 
 
   # create_table :merchant_configs do |t|
@@ -68,7 +69,6 @@ class MerchantConfig < ActiveRecord::Base
   # end
 
 
-
   # def form_name
   #   payment_service.form_name
   # end
@@ -93,37 +93,6 @@ class MerchantConfig < ActiveRecord::Base
   #todo: need a better place to factor shared payment service logic too, probably a base class
   def card_fee_str(transaction, params = nil)
     payment_service.card_fee_str(transaction, params)
-    # bin = nil
-    # if params.present? && params[:card_number].present?
-    #   card = params[:card_number]
-    #   bin = (card && card.length >= 6) ? card[0..5] : nil
-    # else
-    #   saved = payment_service.saved_payment_source(transaction)
-    #   if saved
-    #     bin = saved.get_data_field(:bin)
-    #   end
-    # end
-    # result = payment_service.fee_service.card_fee_str(transaction.base_amount, bin)
-    # puts "card fee str: #{result}"
-    # # low, high = payment_service.calculate_fee(transaction.base_amount, params)
-    # # result = "$#{format_amount(low)}"
-    # # if high  # we've been given a range
-    # #   result += "-#{format_amount(high)} (depends on card type)"
-    # # end
-    # result
-  end
-
-  # def card_fee_range
-  #   embed.card_payment_service.calculate_fee(base_amount)
-  # end
-  #
-  # def card_fee_str
-  #   low,high = card_fee_range
-  #   "#{format_amount(low)}-#{format_amount(high)}"
-  # end
-
-  def format_amount(amount)
-    '%.2f' % amount
   end
 
 

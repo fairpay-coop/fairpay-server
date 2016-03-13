@@ -1,5 +1,6 @@
 class Transaction < ActiveRecord::Base
   include UuidAssignable
+  include DataFieldable
   include ApplicationHelper
 
   # create_table :transactions do |t|
@@ -92,9 +93,6 @@ class Transaction < ActiveRecord::Base
     "#{format_amount(low)}-#{format_amount(high)}"
   end
 
-  def format_amount(amount)
-    '%.2f' % amount
-  end
 
   def paypal_fee
     embed.paypal_service.calculate_fee(self)

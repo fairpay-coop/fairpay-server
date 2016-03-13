@@ -1,4 +1,5 @@
 class PayController < ApplicationController
+  include ApplicationHelper
 
   def embed
     uuid = params[:uuid]
@@ -15,18 +16,20 @@ class PayController < ApplicationController
     embed_uuid = params[:uuid]
     @embed = Embed.by_uuid(embed_uuid)
 
+    @amount = amount_param(:amount) || @embed.get_data_field(:amount)
+    @description = params[:description] || @embed.get_data_field(:description)
   end
 
   def step1_post
     embed_uuid = params[:uuid]
     embed = Embed.by_uuid(embed_uuid)
 
-    entered_amount = params[:entered_amount]
-    entered_amount = nil  unless entered_amount.present?
-    chosen_amount = params[:chosen_amount]
-    amount = entered_amount || chosen_amount
+    assigned_amount = amount_param(:assigned_amount)
+    entered_amount = amount_param(:entered_amount)
+    chosen_amount = amount_param(:chosen_amount)
+    amount = assigned_amount || entered_amount || chosen_amount
 
-    data = params.slice(:name, :email, :recurrence, :mailing_list)
+    data = params.slice(:name, :email, :recurrence, :mailing_list, :description, :memo)
     data[:amount] = amount
 
     transaction = embed.step1(data)

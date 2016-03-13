@@ -1,5 +1,6 @@
 
 class FeeService
+  include ApplicationHelper  # defines format_amount
 
 
   # fee_config example:
@@ -33,10 +34,6 @@ class FeeService
     if bin
       data = estimate_fee(amount, bin)
       data[:fee_str]
-      # fee = data[:estimated_fee]
-      # fee_tip = data[:tip]
-      # result = "$#{format_amount(fee)}"
-      # result += " (#{fee_tip})"  if fee_tip
     else
       low, high = calculate_fee(transaction)
       result = "$#{format_amount(low)}"
@@ -50,10 +47,6 @@ class FeeService
     result = "$#{format_amount(low)}"
     result += "-#{format_amount(high)} (depends on card type)"  if high
     result
-  end
-
-  def format_amount(amount)
-    '%.2f' % amount
   end
 
 

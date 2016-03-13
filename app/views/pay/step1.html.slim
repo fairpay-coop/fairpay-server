@@ -33,24 +33,35 @@ form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1" onsubmit="r
     input type="text" id="email" name="email" value="" autocapitalize="off"
     br
 
-  - include_amount_field = false
-  - if @embed.suggested_amounts.present?
-    - for amount in @embed.suggested_amounts
-      - if amount > 0
-        = radio_button_tag :chosen_amount, amount
-        =<> amount
-        |&nbsp;
-        = " "
-      - else
-        - include_amount_field = true
+  - if @description
+    = hidden_field_tag :description, @description
+    => "Description: #{@description}"
     br
-  - else
-    - include_amount_field = true
 
-  - if include_amount_field
-    => "Amount:"
-    input id="step1Amount" type="text" name="entered_amount" value=""
+  - if @amount
+    = hidden_field_tag :assigned_amount, @amount
+    => "Amount: $#{format_amount(@amount)}"
     br
+
+  - else
+    - include_amount_field = false
+    - if @embed.suggested_amounts.present?
+      - for amount in @embed.suggested_amounts
+        - if amount > 0
+          = radio_button_tag :chosen_amount, amount
+          =<> amount
+          |&nbsp;
+          = " "
+        - else
+          - include_amount_field = true
+      br
+    - else
+      - include_amount_field = true
+
+    - if include_amount_field
+      => "Amount:"
+      input id="step1Amount" type="text" name="entered_amount" value=""
+      br
 
   - if @embed.recurrence_enabled
     - for option in @embed.recurrence_options
@@ -65,14 +76,25 @@ form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1" onsubmit="r
     input type="checkbox" name="mailing_list" value="join"
     br
 
+  - if @embed.capture_memo
+    => "Memo:"
+    input type="text" name="memo"
+    br
+
   input id="step1Submit" type="submit" value="Next"
 
 
 javascript:
   function validateStep1Form() {
-    var amount_chosen = $("input[name=chosen_amount]:checked").length;
-    var amount = $('#step1Amount').val();
-    if (amount_chosen == 0 && (amount == null || amount == "")) {
+    var assigned_amount = number_field_val('assigned_amount');
+    var entered_amount = number_field_val('entered_amount');
+    var amount_chosen_count = $("input[name=chosen_amount]:checked").length;
+    //var amount = $('#step1Amount').val();
+    //if (amount_chosen == 0 && (amount == null || amount == "")) {
+    //  alert("Please enter an amount");
+    //  return false;
+    //}
+    if (assigned_amount == 0 && entered_amount == 0 && amount_chosen_count == 0) {
       alert("Please enter an amount");
       return false;
     }
@@ -81,4 +103,17 @@ javascript:
       alert("Please enter an email");
       return false;
     }
+  }
+
+  function number_field_val(name) {
+    return Number(field_val(name, 0));
+  }
+
+  function field_val(name, default_value) {
+    var field_spec = 'input[name="' + name + '"]';
+    var raw = $(field_spec).val(); // confirm if this statement is always safe
+    //alert(name + " raw val: " + raw);
+    var val = raw ? raw : default_value;
+    //alert(name + " val: " + val);
+    return val;
   }

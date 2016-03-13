@@ -12,24 +12,33 @@
 /br
 = render 'pay/payor_payee', transaction: transaction
 
+- transaction.description
+|Description: #{transaction.description}
+br
+
+- memo = transaction.get_data_field(:memo)
+- if memo
+  |Memo: #{memo}
+  br
+
 - if transaction.base_amount != transaction.paid_amount
   |Base Amount: $
   b
-    = transaction.format_amount(transaction.base_amount)
+    = ApplicationHelper.format_amount(transaction.base_amount)
   br
 |Paid Amount: $
 b
-  = transaction.format_amount(transaction.paid_amount)
+  = ApplicationHelper.format_amount(transaction.paid_amount)
 br
 br
 
 |Payment Method: #{transaction.payment_type_display}
 br
-|Transaction Fee: $#{transaction.format_amount(transaction.estimated_fee)}
+|Transaction Fee: $#{ApplicationHelper.format_amount(transaction.estimated_fee)}
 br
 - if transaction.estimated_fee > 0
   |Fee Allocation: #{transaction.fee_allocation_label}
-  / ($#{transaction.format_amount(transaction.allocated_fee)})
+  / ($#{format_amount(transaction.allocated_fee)})
   br
 |Transaction Id: #{transaction.uuid}
 br

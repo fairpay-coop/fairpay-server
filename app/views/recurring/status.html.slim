@@ -11,11 +11,11 @@ br
 |Payee: #{transaction.payee.name}
 br
 / todo: better patterm for formatting numbers with slim?
-|Payment Amount: #{transaction.format_amount(transaction.paid_amount)}
+|Payment Amount: #{format_amount(transaction.paid_amount)}
 br
 |Payment Type: #{transaction.payment_type_display}
 br
-|Transaction Fee: $#{transaction.format_amount(transaction.estimated_fee)}
+|Transaction Fee: $#{format_amount(transaction.estimated_fee)}
 br
 |Recurrence: #{@recurring.interval_display}
 br
