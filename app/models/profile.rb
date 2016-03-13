@@ -1,4 +1,5 @@
 class Profile < ActiveRecord::Base
+  include DataFieldable
 
   # create_table :profiles do |t|
   #   t.string :name
@@ -7,6 +8,7 @@ class Profile < ActiveRecord::Base
   #   t.timestamps null: false
   # add_column :profiles, :first_name, :string
   # add_column :profiles, :last_name, :string
+  # add_column :profiles, :data, :json
 
 
   has_many :merchant_configs

@@ -35,9 +35,27 @@ class ActiveMerchantService < BaseCardService
   # def handle_payment(transaction, params)
 
 
-  def charge(amount, card_data)
+  def payment_data(transaction, params)
+    number = params[:card_number]
+    raise "'card_number' param missing"  unless number
+    mmyy = params[:card_mmyy]
+    month = mmyy[0..1]
+    year = "20#{mmyy[2..3]}"
+    card_data = {
+        first_name: transaction.payor.first_name,
+        last_name: transaction.payor.last_name,
+        number: number,
+        month: month,
+        year: year,
+        verification_value: params[:card_cvv],
+        billing_zip: params[:billing_zip]
+    }
+  end
+
+  def charge(transaction, params)
+    card_data = payment_data(transaction, params)
     credit_card = ActiveMerchant::Billing::CreditCard.new(card_data)
-    amount_cents = amount * 100
+    amount_cents = transaction.amount * 100
 
     # Validating the card automatically detects the card type
     if credit_card.validate.empty?
@@ -55,9 +73,9 @@ class ActiveMerchantService < BaseCardService
     end
   end
 
-  def purchase(amount, customer_vault_id)
-    amount_cents = amount * 100
-    response = @gateway.purchase(amount_cents, customer_vault_id)
+  def purchase(transaction, authorization_token)   # todo: finish partial refactoring to remove separate amount & vault params
+    amount_cents = transaction.amount * 100.0
+    response = @gateway.purchase(amount_cents, authorization_token)
     puts "purchase response: #{response.inspect}"
     if response.success?
       puts "Successfully charged stored card info - #{response.message}"
@@ -66,7 +84,8 @@ class ActiveMerchantService < BaseCardService
     end
   end
 
-  def save_payment_info(card_data)
+  def save_payment_info(transaction, params)
+    card_data = payment_data(transaction, params)
     credit_card = ActiveMerchant::Billing::CreditCard.new(card_data)
 
     # factor this with above

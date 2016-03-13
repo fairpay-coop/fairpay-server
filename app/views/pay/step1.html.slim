@@ -44,6 +44,8 @@ form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1" onsubmit="r
       - else
         - include_amount_field = true
     br
+  - else
+    - include_amount_field = true
 
   - if include_amount_field
     => "Amount:"
