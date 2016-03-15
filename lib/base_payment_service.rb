@@ -43,7 +43,7 @@ class BasePaymentService
       card = params[:card_number]
       bin = (card && card.length >= 6) ? card[0..5] : nil
     else
-      saved = saved_payment_source(transaction)
+      saved = saved_payment_source(transaction, autocreate:false)
       if saved
         bin = saved.get_data_field(:bin)
       end

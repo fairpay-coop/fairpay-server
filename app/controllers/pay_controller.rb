@@ -50,7 +50,7 @@ class PayController < ApplicationController
     @dwolla_authenticated = session[:dwolla_authenticated]  # make sure to allow just authenticated session
     if current_user && current_user.email == @transaction.payor.email
       puts "authenticated user session - stored payments available"
-      @profile_authenticated = true
+      @profile_authenticated = true   # rename this to something dwolla specific
     end
     # used to resume after login
     session[:current_url] = @transaction.step2_url

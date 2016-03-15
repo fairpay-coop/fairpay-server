@@ -2,7 +2,7 @@ b Dwolla
 br
 | Transaction Fee: $0.00
 br
-- unless @transaction.payor.has_dwolla_auth
+- unless @transaction.payor.has_dwolla_auth()
   = link_to "authorize", "/dwolla/auth?t=#{@transaction.uuid}"
 - else
     - if @profile_authenticated || @dwolla_authenticated

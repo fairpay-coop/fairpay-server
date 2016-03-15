@@ -27,8 +27,12 @@ class Profile < ActiveRecord::Base
   end
 
 
-  def payment_source_for_type(type, autocreate: true)
+  def payment_source_for_type(type, autocreate: true)  # todo: make this default false
     if autocreate
+      # unless payment_sources.find_by(kind: type)
+      #   puts "autocreating payment source"
+      #   puts caller.join("\n")
+      # end
       payment_sources.find_or_create_by(kind: type)
     else
       payment_sources.find_by(kind: type)
@@ -38,10 +42,10 @@ class Profile < ActiveRecord::Base
 
 
   def has_dwolla_auth
-    dwolla_payment_source&.get_data_field(:account_id).present?
+    dwolla_payment_source(autocreate:false)&.get_data_field(:account_id).present?
   end
 
-  def dwolla_payment_source(autocreate: true)
+  def dwolla_payment_source(autocreate: true)   # todo: make this default false
     payment_source_for_type(:dwolla, autocreate: autocreate)
   end
 

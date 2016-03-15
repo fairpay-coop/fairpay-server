@@ -23,7 +23,7 @@ form id="card_form"
   input type="hidden" id="default_fee_info" value="#{card_fee_str}"
   input type="hidden" id="fee_update_enabled" value="#{merchant_config.fee_update_enabled}"
 
-  - payment_source = payment_service.saved_payment_source(@transaction)
+  - payment_source = payment_service.saved_payment_source(@transaction, autocreate:false)
   - if payment_source&.get_data_field(:description)
     - if @profile_authenticated
       | Use saved payment info? #{payment_source.get_data_field(:description)}
