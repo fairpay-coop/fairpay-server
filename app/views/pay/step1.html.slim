@@ -10,7 +10,7 @@ form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1" onsubmit="r
   = hidden_field_tag :authenticity_token, form_authenticity_token
   /input type="hidden" name="embed_uuid" value="#{@embed.id}"
 
-  - if user_signed_in?
+  - if user_signed_in? && current_user.profile  #todo: autocreate a profile user directly created
     - profile = current_user.profile
     /=> "Name: #{profile.name}"
     /br
