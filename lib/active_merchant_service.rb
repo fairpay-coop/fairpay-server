@@ -48,7 +48,7 @@ class ActiveMerchantService < BaseCardService
         month: month,
         year: year,
         verification_value: params[:card_cvv],
-        billing_zip: params[:billing_zip]
+        # billing_zip: params[:billing_zip]  #todo: bill address support
     }
   end
 
