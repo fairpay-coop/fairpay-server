@@ -107,6 +107,10 @@ class Transaction < ActiveRecord::Base
   end
 
   def perform_payment(params = {})
+    if status == 'completed'
+      puts "warning, duplicate payment attempted for transaction: #{self.inspect}"
+      raise "payment already complete (#{self.uuid})"
+    end
     self.payment_type = (params[:payment_type] || self.payment_type)&.to_sym
 
     payment_service = payment_service_for_type(self.payment_type)
