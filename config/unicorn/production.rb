@@ -1,4 +1,4 @@
-root = "/home/deploy/fairway-server/current"
+root = "/home/deploy/fairpay-server/current"
 working_directory root
 
 pid "#{root}/tmp/pids/unicorn.pid"
