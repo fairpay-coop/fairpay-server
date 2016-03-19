@@ -64,6 +64,10 @@ class DwollaService  < BasePaymentService
   end
 
   def auth_url
+
+    # puts "dwolla environment: #{ENV['DWOLLA_ENVIRONMENT']}"
+    # puts "dwolla client id: #{ENV['DWOLLA_CLIENT_ID']}"
+
     auth.url + "&dwolla_landing=login"  #todo: figure clean api method
   end
 
