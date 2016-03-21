@@ -204,14 +204,15 @@ class Transaction < ActiveRecord::Base
     # gibbon.lists(mailchimp_list_id).members.create(body: body)
   end
 
-  def merchant_config_for_type(payment_type)
-    result = payee.merchant_configs.find_by(kind: payment_type)
-    raise "merchant config not found for payee: #{payee}, payment type: #{payment_type}"  unless result
-    result
-  end
+  # def merchant_config_for_type(payment_type)
+  #   result = payee.merchant_configs.find_by(kind: payment_type)
+  #   raise "merchant config not found for payee: #{payee}, payment type: #{payment_type}"  unless result
+  #   result
+  # end
 
   def payment_service_for_type(payment_type)
-    merchant_config_for_type(payment_type).payment_service
+    # merchant_config_for_type(payment_type).payment_service
+    embed.payment_service_for_type(payment_type)
   end
 
 

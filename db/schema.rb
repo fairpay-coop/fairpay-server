@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160312131443) do
+ActiveRecord::Schema.define(version: 20160320152710) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -83,6 +83,7 @@ ActiveRecord::Schema.define(version: 20160312131443) do
     t.string   "account_id"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
+    t.string   "client_id"
   end
 
   create_table "embeds", force: :cascade do |t|
@@ -117,11 +118,14 @@ ActiveRecord::Schema.define(version: 20160312131443) do
     t.integer  "profile_id"
     t.string   "kind"
     t.json     "data"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
     t.string   "name"
+    t.integer  "merchant_config_id"
+    t.string   "source_key"
   end
 
+  add_index "payment_sources", ["merchant_config_id"], name: "index_payment_sources_on_merchant_config_id", using: :btree
   add_index "payment_sources", ["profile_id"], name: "index_payment_sources_on_profile_id", using: :btree
 
   create_table "profiles", force: :cascade do |t|
@@ -202,6 +206,7 @@ ActiveRecord::Schema.define(version: 20160312131443) do
 
   add_foreign_key "embeds", "profiles"
   add_foreign_key "merchant_configs", "profiles"
+  add_foreign_key "payment_sources", "merchant_configs"
   add_foreign_key "payment_sources", "profiles"
   add_foreign_key "recurring_payments", "transactions", column: "master_transaction_id"
   add_foreign_key "transactions", "embeds"

@@ -56,7 +56,10 @@
             =
             |Dwolla Funding Source:
             br
-            - for option in @transaction.payor.dwolla_token.funding_sources(@transaction.base_amount)
+            /- for option in @transaction.payor.dwolla_token.funding_sources(@transaction.base_amount)
+            - dwolla_service = @transaction.embed.dwolla_service
+            - funding_sources = dwolla_service.funding_sources(@transaction)
+            - for option in funding_sources
               p.control
                 label.radio
                   = radio_button_tag :funding_source_id, option[:id], option[:selected], type: "radio"

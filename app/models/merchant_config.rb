@@ -44,7 +44,7 @@ class MerchantConfig < ActiveRecord::Base
   def payment_service
     case kind_sym
       when :dwolla
-        DwollaService.instance
+        DwollaService.new(self)
       when :authorizenet
         AuthorizeNetService.new(self)
       when :braintree

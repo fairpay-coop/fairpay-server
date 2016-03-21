@@ -1,39 +1,60 @@
 class DwollaService  < BasePaymentService
-
-  # not sure if we should still use a singleton here or not
-  include Singleton
   include ApplicationHelper
-
-
-  # def self.instance
-  #   @@instance ||= DwollaService.new
-  # end
+  # not sure if we should still use a singleton here or not
+  # include Singleton
 
   SCOPE = "Send|Request|Funding|Balance"
 
   FEE_CONFIG = {base: 0, percent: 0}
 
-  def initialize
-    dwolla_environment = ENV['DWOLLA_ENVIRONMENT']
-    @environment = dwolla_environment.to_sym  if dwolla_environment
-    client_id = ENV['DWOLLA_CLIENT_ID']
-    client_secret = ENV['DWOLLA_CLIENT_SECRET']
+  DEFAULT_CONFIG = {
+      mode: ENV['DWOLLA_ENVIRONMENT'],
+      client_id: ENV['DWOLLA_CLIENT_ID'],
+      client_secret: ENV['DWOLLA_CLIENT_SECRET'],
+  }
 
-    puts "dwolla env: #{dwolla_environment}, client id: #{client_id}"
+  # merchant config params:
+  #  mode: 'default' (production), 'sandbox'
+  #  client_id
+  #  client_secret
+  #
+  # beware, if customized dwolla config is used for a particular embed,
+  # then (for now) payor profiles must be kept distinct between dwolla realms
+  # todo:
+
+
+  def initialize(merchant_config)
+    config = merchant_config&.indifferent_data
+    unless config && config[:client_id]
+      config = DEFAULT_CONFIG
+      puts "using default dwolla config: #{config.inspect}"
+    end
+
+    @environment = (config[:mode] || :default).to_sym
+    @environment = :default  if @environment == :live  # support 'live' as a standardized alias for 'default'
+
+    @client_id = config[:client_id]
+    client_secret = config[:client_secret]
+    client_id = client_id
+
+    puts "dwolla env: #{@environment}, client id: #{@client_id}"
 
     @oauth_redirect_url = "#{base_url}/dwolla/oauth_complete"
-    # @payment_redirect_url = 'http://local.fairpay.coop:3000/dwolla/payment_complete'
 
-    @dwolla = DwollaV2::Client.new(id: client_id, secret: client_secret) do |optional_config|
+    @dwolla = DwollaV2::Client.new(id: @client_id, secret: client_secret) do |optional_config|
       optional_config.environment = @environment  if @environment
       optional_config.on_grant do |token|
         puts "dwollav2.on_grant - access token: #{token.access_token}, account id: #{token.account_id}"
-        existing = DwollaToken.find_by_account_id(token.account_id)
+        puts "token inspect: #{token.inspect}"
+        # existing = DwollaToken.find_by_account_id(token.account_id, @client_id)
+        existing = dwolla_token_for_account_id(token.account_id)
         if existing
           puts "existing token record id: #{existing.id}"
           existing.update(access_token: token.access_token, refresh_token: token.refresh_token)
         else
-          DwollaToken.create! token
+          token_data = token.stringify_keys
+          token_data["client_id"] = @client_id
+          DwollaToken.create! token_data
         end
       end
     end
@@ -57,6 +78,10 @@ class DwollaService  < BasePaymentService
     @dwolla
   end
 
+  def client_id
+    @client_id
+  end
+
   def auth
     # @dwolla.auths.new(redirect_url: @redirect_url, scope: SCOPE)
     puts "redirect url: #{@oauth_redirect_url}"
@@ -75,27 +100,81 @@ class DwollaService  < BasePaymentService
     token = auth.callback({code: code})
   end
 
-  def refresh(expired_token)
+  def refresh_raw_token(expired_token)
     token = @dwolla.auths.refresh expired_token
     puts "refreshed token: #{token}"
     token
   end
 
+  def refresh_dwolla_token(dwolla_token)
+    raw_token = token_for_data(dwolla_token)
+    refreshed = refresh_raw_token(raw_token)
+    self.update!(access_token: refreshed.access_token)
+    # need to make sure both local and persisted instances are updated
+    self.access_token = refreshed.access_token
+    self.updated_at = Time.now
+    # self.save!
+  end
+
+  # def raw_token(dwolla_token)
+  #   token_for_data(dwolla_token)
+  # end
+
+
+
+
   def token_for_data(data)
     @dwolla.tokens.new data
   end
 
+  def dwolla_token_for_account_id(account_id)
+    DwollaToken.find_by(account_id: account_id, client_id: client_id)
+  end
+
   def token_for_account_id(account_id)
-    data = DwollaToken.find_by(account_id: account_id)
+    data = dwolla_token_for_account_id(account_id)
     token_for_data(data)
   end
 
-  def token_for_profile_id(profile_id)
-    data = DwollaToken.find_by(profile_id: profile_id)
-    token_for_data(data)
+  def dwolla_token_for_access_token(access_token)
+    DwollaToken.find_by(client_id: client_id, access_token: access_token)
   end
 
-  def list_funding_sources(token, amount = 0.0)
+
+
+  # def token_for_profile_id(profile_id)
+  #   data = DwollaToken.find_by(profile_id: profile_id)
+  #   token_for_data(data)
+  # end
+
+  def payment_source_for_transaction(transaction)
+    transaction.payor.dwolla_payment_source(client_id)
+  end
+
+  def has_dwolla_auth(transaction)
+    payment_source = payment_source_for_transaction(transaction)
+    payment_source&.get_data_field(:account_id).present?
+  end
+
+  def funding_sources(transaction)
+    # token = transaction.payor.dwolla_token
+    dwolla_token = dwolla_token_for_profile(transaction.payor)
+    list_funding_sources(dwolla_token, transaction.base_amount)
+  end
+
+
+  def dwolla_token_for_profile(profile)
+    payment_source = profile.dwolla_payment_source(client_id)
+    if payment_source
+      account_id = payment_source.get_data_field(:account_id)
+      dwolla_token_for_account_id(account_id)
+    end
+  end
+
+
+
+  def list_funding_sources(dwolla_token, amount = 0.0)
+    token = dwolla_token.token(self)
     raw = token.get "/accounts/#{token.account_id}/funding-sources"
     puts "raw: #{raw.to_json}"
     result = []
@@ -154,13 +233,32 @@ class DwollaService  < BasePaymentService
   end
 
 
+  def associate_dwolla_account_id(profile, account_id)
+    payment_source = profile.dwolla_payment_source(client_id, autocreate: true)
+    payment_source.update_data_field(:account_id, account_id)
+  end
+
+
+  # def dwolla_token_make_payment(payor_dwolla_token, payee_dwolla_token, amount)
+  #   # access tokens expire after 1 hour.  for now assume always needs refreshing before any transaction
+  #   # self.refresh
+  #   puts "access token before refresh: #{payee_dwolla_token.access_token}"
+  #   # payee_dwolla_token.refresh
+  #   puts "access token after refresh: #{payee_dwolla_token.access_token}"
+  #   make_payment(payor_dwolla_token.token, self.default_funding_source_uri, payee_dwolla_token.account_uri, amount)
+  # end
+
+
   def handle_payment(transaction, params)
     funding_source_id = params[:funding_source_id]
 
     estimated_fee = 0.00
     paid_amount = transaction.base_amount + estimated_fee
 
-    make_payment(transaction.payor.dwolla_token, transaction.payee.dwolla_token, funding_source_id, paid_amount)
+    payor_token = dwolla_token_for_profile(transaction.payor)
+    payee_token = dwolla_token_for_profile(transaction.payee)
+    raise "missing payee_token - profile id: #{transaction.payee.id}"  unless payee_token
+    make_payment(payor_token, payee_token, funding_source_id, paid_amount)
 
     [paid_amount, estimated_fee]
   end
@@ -171,7 +269,7 @@ class DwollaService  < BasePaymentService
     raise "funding source required"  unless funding_source_id
 
     #note payor  and payee tokens are automatically refreshed as needed
-    destination = payee_token.account_uri
+    destination = payee_token.account_uri(self)
     funding_source = funding_source_uri_for_id(funding_source_id)
 
     payload = {
@@ -181,8 +279,18 @@ class DwollaService  < BasePaymentService
         },
         amount: {currency: 'USD', value: amount}
     }
-    payor_token.token.post '/transfers', payload
+    payor_token.token(self).post '/transfers', payload
   end
+
+  # def account_uri_for_dwolla_token(dwolla_token)
+  #   data = token.get("accounts/#{account_id}")
+  #   data[:_links][:self][:href]
+  # end
+
+  # def token_for_dwolla_token(dwolla_token)
+  #   refresh  if dwolla_token.stale_token?
+  #   raw_token
+  # end
 
 
   # def calculate_fee(amount, params)

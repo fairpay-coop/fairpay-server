@@ -37,38 +37,92 @@ class Embed < ActiveRecord::Base
     merchant_configs.find_by(kind: ['authorizenet', 'braintree', 'dwolla', 'paypal'])
   end
 
-
   def payment_configs
-    payment_types.map { |type| merchant_config_for_type(type) }
+    #todo: memoize this
+    payment_types.map { |identifier| merchant_config_for_identifier(identifier) }
   end
 
-  def merchant_configs
-    payment_types.map { |type| merchant_config_for_type(type) }
-  end
-
-
-  def merchant_config_for_type(payment_type)
-    result = all_merchant_configs.find_by(kind: payment_type)
-    raise "merchant config now found for payment type: #{payment_type}"  unless result
-    result
+  def payment_config_for_type(payment_type)
+    payment_configs.find{ |mc| mc.kind == payment_type.to_s }
   end
 
   def payment_service_for_type(payment_type)
-    merchant_config_for_type(payment_type).payment_service
+    payment_config_for_type(payment_type).payment_service
   end
 
-  #todo: still used?
+
+
+  # def merchant_configs
+  #   payment_types.map { |type| merchant_config_for_type(type) }
+  # end
+
+
+  # def merchant_config_for_type(payment_type)
+  #   # result = MerchantConfig.find_by(internal_name: payment_type)
+  #   # # todo: security checks that this profile has access to named merchant config
+  #   # result = all_merchant_configs.find_by(kind: payment_type)  unless result
+  #
+  #   result = merchant_configs.find{ |mc| mc.kind == payment_type.to_s || mc.internal_name == payment_type.to_s }
+  #
+  #
+  #   raise "merchant config now found for payment type: #{payment_type}"  unless result
+  #   result
+  # end
+
+  # identifier is either the 'internal_name' or 'kind'
+  def merchant_config_for_identifier(identifier)
+    result = MerchantConfig.find_by(internal_name: identifier)
+    # todo: security checks that this profile has access to named merchant config
+    result = all_merchant_configs.find_by(kind: identifier)  unless result
+    raise "merchant config not found for identifier: #{identifier}"  unless result
+    result
+  end
+
+
   def card_merchant_config
     # todo: add a category of configs to more cleanly support this filter
     # all_merchant_configs.find_by(kind: ['authorizenet', 'braintree'])
     payment_configs.detect(&:card?)   # could be better optimized
   end
 
+
+  def dwolla_service
+    payment_service_for_type(:dwolla)
+  end
+
+
+  # this can all be nicely refactored
+  def card_payment_service
+    card_merchant_config&.payment_service
+  end
+
+  # still used?
+  def paypal_service
+    # merchant_config = all_merchant_configs.find_by(kind: 'paypal')
+    # merchant_config&.payment_service
+    payment_service_for_type(:paypal)
+  end
+
+
+
+
   def mailing_list_config
-    mailing_list_type = get_data_field(:mailing_list)
-    mailing_list_type = mailing_list_type['type']  if mailing_list_type.is_a?(Hash)
-    if mailing_list_type
-      all_merchant_configs.find_by(kind: mailing_list_type)
+    # mailing_list_type = get_data_field(:mailing_list)
+    # mailing_list_type = mailing_list_type['type']  if mailing_list_type.is_a?(Hash)
+    # if mailing_list_type
+    #   all_merchant_configs.find_by(kind: mailing_list_type)
+    # else
+    #   nil
+    # end
+
+    mailing_list_data = get_data_field(:mailing_list)
+    if mailing_list_data.is_a?(Hash)
+      identifier = mailing_list_data['type']
+    else
+      identifier = mailing_list_data  #todo: confirm is a string
+    end
+    if identifier
+      merchant_config_for_identifier(identifier)
     else
       nil
     end
@@ -166,20 +220,7 @@ class Embed < ActiveRecord::Base
 
   #todo: data driven contribution amount choices
 
-  # this can all be nicely refactored
-  def card_payment_service
-    card_merchant_config&.payment_service
-  end
 
-  # still used?
-  def paypal_service
-    merchant_config = all_merchant_configs.find_by(kind: 'paypal')
-    merchant_config&.payment_service
-  end
-
-  def dwolla_service
-    DwollaService.instance
-  end
 
   def step1(params)
     email = params[:email]&.downcase  #todo: confirm if devise is already also doing this

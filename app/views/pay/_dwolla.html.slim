@@ -1,8 +1,10 @@
 b Dwolla
 br
+- dwolla_service = merchant_config.payment_service
+
 | Transaction Fee: $0.00
 br
-- unless @transaction.payor.has_dwolla_auth()
+- unless dwolla_service.has_dwolla_auth(@transaction)
   = link_to "authorize", "/dwolla/auth?t=#{@transaction.uuid}"
 - else
     - if @profile_authenticated || @dwolla_authenticated
@@ -12,11 +14,12 @@ br
         = hidden_field_tag :embed_uuid, @embed.uuid
         = hidden_field_tag :transaction_uuid, @transaction.uuid
         = hidden_field_tag :payment_type, 'dwolla'
-        /= hidden_field_tag :merchant_config_id, @embed.merchant_configs.first.id
         = hidden_field_tag :amount, @transaction.base_amount
         |Dwolla Funding Source:
         br
-        - for option in @transaction.payor.dwolla_token.funding_sources(@transaction.base_amount)
+        - funding_sources = dwolla_service.funding_sources(@transaction)
+        /  ##in @transaction.payor.dwolla_token.funding_sources(@transaction.base_amount)
+        - for option in funding_sources
           = radio_button_tag :funding_source_id, option[:id], option[:selected]
           = " " + option[:name]
           br
@@ -26,7 +29,6 @@ br
       br
       = link_to('Sign In', new_user_session_path)
 
-/- if params[:payment_type] == 'authorizenet'
 
 javascript:
   function validateDwollaForm() {

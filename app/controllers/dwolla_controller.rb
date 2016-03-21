@@ -1,17 +1,24 @@
 
-# require 'dwolla_swagger'
-
 class DwollaController < ApplicationController
 
-  def initialize
-    @dwolla_service = DwollaService.instance
+  # def initialize
+  #   @dwolla_service = DwollaService.instance
+  # end
+
+  def dwolla_service(transaction)
+    transaction.embed.dwolla_service
   end
 
   def auth
     transaction_uuid = params[:t]
     puts "t uuid: #{transaction_uuid}"
     session[:transaction_uuid] = params[:t]
-    redirect_to @dwolla_service.auth_url
+
+    transaction = Transaction.find_by(uuid: transaction_uuid)
+    raise "transaction not found for uuid: #{transaction_uuid}"  unless transaction
+    service = dwolla_service(transaction)
+
+    redirect_to service.auth_url
   end
 
   def oauth_complete
@@ -19,21 +26,22 @@ class DwollaController < ApplicationController
     code = params[:code]
     p "code: #{code}"
     if code
-      token = @dwolla_service.exchange_code_for_token(code)
-      # token = @dwolla_service.auth_callback(params)
-      # dwolla_token = DwollaToken.find_by(account_id: token.account_id)
-      dwolla_token = DwollaToken.find_by(access_token: token.access_token)
-      raise "DwollaToken not found for access_token: #{token.access_token}"  unless dwolla_token
-      transaction_uuid = session[:transaction_uuid]
+      transaction_uuid = session[:transaction_uuid]  # todo: investigate if possible to pass tran id along with callback url
       raise "transaction_uuid not found in session"  unless transaction_uuid
       puts "t uuid: #{transaction_uuid}"
       transaction = Transaction.find_by(uuid: transaction_uuid)
       raise "transaction not found for uuid: #{transaction_uuid}"  unless transaction
 
-      # dwolla_token.update({profile: transaction.payor})
-      transaction.payor.associate_dwolla_account_id(dwolla_token.account_id)
+      service = dwolla_service(transaction)
 
-      transaction_uuid = params[:t]
+      token = service.exchange_code_for_token(code)
+      # dwolla_token = DwollaToken.find_by(app_id: service.client_id, access_token: token.access_token)
+      dwolla_token = service.dwolla_token_for_access_token(token.access_token)
+      raise "DwollaToken not found for access_token: #{token.access_token}"  unless dwolla_token
+
+      service.associate_dwolla_account_id(transaction.payor, dwolla_token.account_id)
+
+      # transaction_uuid = params[:t]
       # step2_uri = session[:step2_uri]
       session[:dwolla_authenticated] = true
       step2_uri = session[:current_url]

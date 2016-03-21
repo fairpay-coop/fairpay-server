@@ -3,6 +3,8 @@ class PaymentSource < ActiveRecord::Base
 
   # create_table :payment_sources do |t|
   #   t.references :profile, index: true, foreign_key: true
+  #   t.references :merchant_config, index: true, foreigh_key: true
+  #   t.string :source_key, index: true  - used when potentially sharable between merchant configs (i.e. dwolla tokens)
   #   t.string :kind
   #   t.json :data
   #   t.timestamps null: false

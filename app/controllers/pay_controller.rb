@@ -104,7 +104,7 @@ class PayController < ApplicationController
     bin = params[:bin]
     amount = params[:amount]
     embed = Embed.by_uuid(params[:uuid])
-    result = embed.card_payament_service.estimate_fee(amount, bin)
+    result = embed.card_payment_service.estimate_fee(amount, bin)
     render json: result
 
     transaction = Transaction.by_uuid(params[:transaction_uuid])

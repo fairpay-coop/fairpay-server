@@ -27,6 +27,7 @@ class Profile < ActiveRecord::Base
   end
 
 
+  #todo: rip out all usages.  migrate to mechant config or type/key
   def payment_source_for_type(type, autocreate: true)  # todo: make this default false
     if autocreate
       # unless payment_sources.find_by(kind: type)
@@ -39,28 +40,44 @@ class Profile < ActiveRecord::Base
     end
   end
 
-
-
-  def has_dwolla_auth
-    dwolla_payment_source(autocreate:false)&.get_data_field(:account_id).present?
-  end
-
-  def dwolla_payment_source(autocreate: true)   # todo: make this default false
-    payment_source_for_type(:dwolla, autocreate: autocreate)
-  end
-
-  def dwolla_token
-    payment_source = dwolla_payment_source
-    if payment_source
-      account_id = payment_source.get_data_field(:account_id)
-      DwollaToken.find_by_account_id(account_id)
+  def payment_source_for_merchant_config(merchant_config, autocreate: false)
+    if autocreate
+      payment_sources.find_or_create_by(merchant_config: merchant_config)
+    else
+      payment_sources.find_by(merchant_config: merchant_config)
     end
   end
 
-  def associate_dwolla_account_id(account_id)
-    payment_source = dwolla_payment_source(autocreate: true)
-    payment_source.update_data_field(:account_id, account_id)
+  def payment_source_for_type_key(type, source_key, autocreate: false)
+    if autocreate
+      payment_sources.find_or_create_by(kind: type, source_key: source_key)
+    else
+      payment_sources.find_by(kind: type, source_key: source_key)
+    end
   end
+
+
+
+  # def has_dwolla_auth
+  #   dwolla_payment_source(autocreate:false)&.get_data_field(:account_id).present?
+  # end
+
+  def dwolla_payment_source(client_id, autocreate: false)
+    payment_source_for_type_key(:dwolla, client_id, autocreate: autocreate)
+  end
+
+  # def dwolla_token
+  #   payment_source = dwolla_payment_source
+  #   if payment_source
+  #     account_id = payment_source.get_data_field(:account_id)
+  #     DwollaToken.find_by_account_id(account_id)
+  #   end
+  # end
+
+  # def associate_dwolla_account_id(account_id)
+  #   payment_source = dwolla_payment_source(autocreate: true)
+  #   payment_source.update_data_field(:account_id, account_id)
+  # end
 
   #todo: revisit
   def first_name
