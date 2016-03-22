@@ -36,6 +36,11 @@ br
     /|&nbsp;
     /= " "
 
+- consider_this = @embed.get_data_field(:consider_this)
+- if consider_this
+  | Consider this: #{consider_this}
+  br
+
 hr
 
 - for merchant_config in @embed.payment_configs
