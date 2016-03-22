@@ -35,6 +35,7 @@ Rails.application.routes.draw do
   get  '/api/v1/embed/:uuid/step2' => 'embed#step2'
 
   get  '/api/v1/embed/:uuid/update_fee_allocation' => 'embed#update_fee_allocation'
+  get  '/api/v1/embed/:uuid/send_dwolla_info' => 'embed#send_dwolla_info'
 
 
   get  '/dwolla/auth' => 'dwolla#auth'
@@ -54,6 +55,7 @@ Rails.application.routes.draw do
   get  'pay/:uuid/pay_via_dwolla/:transaction_uuid' => 'pay#pay_via_dwolla'
 
   get  'pay/:uuid/update_fee_allocation/:transaction_uuid' => 'pay#update_fee_allocation'
+  get  'pay/:uuid/send_dwolla_info/:transaction_uuid' => 'pay#send_dwolla_info'
 
   get  'pay/:uuid/thanks/:transaction_uuid' => 'pay#thanks'
   get  'pay/:uuid/merchant_receipt/:transaction_uuid' => 'pay#merchant_receipt'

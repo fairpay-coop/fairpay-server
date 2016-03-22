@@ -75,6 +75,11 @@ class PayController < ApplicationController
     render json: result
   end
 
+  def send_dwolla_info
+    embed = Embed.by_uuid(params[:uuid])
+    result = embed.send_dwolla_info(params)
+    render json: result
+  end
 
 
   def pay_via_dwolla

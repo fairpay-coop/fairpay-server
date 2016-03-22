@@ -276,4 +276,13 @@ class Embed < ActiveRecord::Base
     transaction
   end
 
+
+  def send_dwolla_info(params)
+    tran_uuid = params[:transaction_uuid]
+    transaction = Transaction.by_uuid(tran_uuid)
+    puts "send dwolla info - tran id: #{tran_uuid}"
+    PaymentNotifier.dwolla_info(transaction).deliver_now
+    {status: :success}
+  end
+
 end

@@ -13,5 +13,12 @@ class PaymentNotifier < ApplicationMailer
     mail( to: @transaction.payee.email, subject: subject )
   end
 
+  def dwolla_info(transaction)
+    @transaction = transaction
+    subject = "More about Dwolla"
+    mail( to: @transaction.payor.email, subject: subject )
+  end
+
+
 
 end

@@ -5,7 +5,31 @@ br
 | Transaction Fee: $0.00
 br
 - unless dwolla_service.has_dwolla_auth(@transaction)
-  = link_to "authorize", "/dwolla/auth?t=#{@transaction.uuid}"
+  - if merchant_config.get_data_field(:flow) == 'prompt_existing'
+    form id="dwolla_user_form"
+      = hidden_field_tag :authenticity_token, form_authenticity_token
+      = hidden_field_tag :embed_uuid, @embed.uuid
+      = hidden_field_tag :transaction_uuid, @transaction.uuid
+      /div#dwolla_prompt_existing
+      |Are you an existing Dwolla user?
+      br
+      = radio_button_tag :dwolla_user, :true
+      = " Yes  "
+      |&nbsp;
+      =< radio_button_tag :dwolla_user, :false
+      = " No"
+      br
+      div id="dwolla_auth" style="display: none;"
+        = link_to "Provide Dwolla Authorization", "/dwolla/auth?t=#{@transaction.uuid}"
+        br
+      div id="dwolla_send_more_info" style="display: none;"
+        input type="checkbox" name="send_dwolla_info" value="true"
+        =< "Send me more information by email about the Dwolla e-check service which can be used to avoid credit card fees in the future."
+        br
+  - else
+    = link_to "authorize", "/dwolla/auth?t=#{@transaction.uuid}"
+    br
+
 - else
     - if @profile_authenticated || @dwolla_authenticated
       /= link_to "confirm payment w/ default funding source", "/pay/#{@embed.uuid}/pay_via_dwolla/#{@transaction.uuid}"
@@ -31,6 +55,54 @@ br
 
 
 javascript:
+
+  document.addEventListener("DOMContentLoaded", function (e) {
+    var form = $('#dwolla_user_form');
+    if (form) {
+      $('input[type=radio][name=dwolla_user]').on('change', function () {
+        var dwolla_user = $(this).val();
+        //alert("dwolla user: " + dwolla_user);
+        updateDwollaChoices(dwolla_user);
+      });
+      $('input[type=checkbox][name=send_dwolla_info]').on('change', function () {
+        var checked = $("input[name=send_dwolla_info]").is(':checked');
+        //var send_info = $(this).;
+        //alert("send_info checked: " + checked);
+        if (checked) {
+          sendDwollaInfo();
+        }
+      });
+    }
+
+    var fee_allocation_form = $('#fee_allocation_form');
+    if (fee_allocation_form) {
+    }
+  }, false);
+
+  function updateDwollaChoices(dwolla_user) {
+    //alert('handleCard');
+    if (dwolla_user == 'true') {
+      $("#dwolla_auth").show();
+      $("#dwolla_send_more_info").hide();
+    } else {
+      $("#dwolla_auth").hide();
+      $("#dwolla_send_more_info").show();
+    }
+  }
+
+  function sendDwollaInfo() {
+    var form = document.getElementById("dwolla_user_form");
+    var data = {};
+    FairPayApi.copyFormValues(data, form, ['embed_uuid', 'transaction_uuid']);
+    //alert('data: ' + JSON.stringify(data));
+    FairPayApi.sendDwollaInfo(data, handleSendDwollaInfoResponse);
+    return false;
+  }
+
+  function handleSendDwollaInfoResponse(data) {
+    //alert('handleSendDwollaInfoResponse: ' + JSON.stringify(data));
+  }
+
   function validateDwollaForm() {
     var count = $("input[name=funding_source_id]:checked").length;
     //var funding_source_id = $("#dwolla_form input[type='radio']:checked").val();

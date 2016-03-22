@@ -55,6 +55,16 @@ class EmbedController < ApplicationController
     end
   end
 
+  def send_dwolla_info
+    puts "send_dwolla_info - params: #{params.inspect}"
+    render_json do
+      embed = Embed.by_uuid(params[:uuid])
+      result = embed.send_dwolla_info(params)
+      puts "send_dwolla_info - result: #{result}"
+      result
+    end
+  end
+
 
   def estimate_fee
     render_json do

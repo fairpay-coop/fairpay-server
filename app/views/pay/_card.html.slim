@@ -53,8 +53,8 @@ form id="card_form"
     input type="text" name="billing_zip" value=""
     br
     - if payment_service.supports_saved_payment_source
-      |Save Payment Info:
       input type="checkbox" name="save_payment_info" value="true"
+      =< "Securely save payment infomation for fast future payments."
       br
 
   /|Charge Description:

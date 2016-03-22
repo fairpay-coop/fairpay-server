@@ -35,6 +35,11 @@ var FairPayApiSinglton = (function() {
             invoke(uri, data, successHandler);
         }
 
+        function sendDwollaInfo(data, successHandler) {
+            var uri = '/api/v1/embed/' + data.embed_uuid + '/send_dwolla_info';
+            invoke(uri, data, successHandler);
+        }
+
         function estimateFee(data, successHandler) {
             var embedUuid = data.embed_uuid ? data.embed_uuid : getEmbedUuid();
             delete data.embed_uuid;
@@ -124,6 +129,7 @@ var FairPayApiSinglton = (function() {
             submitStep1: submitStep1,
             submitCard: submitCard,
             updateFeeAllocation: updateFeeAllocation,
+            sendDwollaInfo: sendDwollaInfo,
             estimateFee: estimateFee,
             //joinMailingList: joinMailingList,
             //fetchContributionStatus: fetchContributionStatus,
