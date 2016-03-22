@@ -30,7 +30,7 @@ class DwollaService  < BasePaymentService
       puts "using default dwolla config: #{config.inspect}"
     end
 
-    @environment = (config[:mode] || :default).to_sym
+    @environment = (config[:mode] || config[:environment] || :default).to_sym  #todo: consolidate config on 'mode' vs 'environment'
     @environment = :default  if @environment == :live  # support 'live' as a standardized alias for 'default'
 
     @client_id = config[:client_id]
