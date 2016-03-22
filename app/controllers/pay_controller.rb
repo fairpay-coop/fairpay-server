@@ -3,18 +3,18 @@ class PayController < ApplicationController
 
   def embed
     uuid = params[:uuid]
-    @embed = Embed.by_uuid(uuid)
+    @embed = Embed.resolve(uuid)
   end
 
   def iframe
     uuid = params[:uuid]
-    @embed = Embed.by_uuid(uuid)
+    @embed = Embed.resolve(uuid)
   end
 
 
   def step1
     embed_uuid = params[:uuid]
-    @embed = Embed.by_uuid(embed_uuid)
+    @embed = Embed.resolve(embed_uuid)
 
     @amount = amount_param(:amount) || @embed.get_data_field(:amount)
     @description = params[:description] || @embed.get_data_field(:description)

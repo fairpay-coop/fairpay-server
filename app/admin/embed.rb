@@ -9,7 +9,7 @@ ActiveAdmin.register Embed do
     column :uuid
     column :profile
     column :name
-    # column :internal_name
+    column :internal_name
     # column :kind
     column :disabled
     column :updated_at
@@ -23,7 +23,7 @@ ActiveAdmin.register Embed do
 
       # f.input :kind, as: :select, collection: Embed.kinds.map { |key,name| [name, key] }
       f.input :name
-      # f.input :internal_name
+      f.input :internal_name
 
       f.input :data_json, as: :text
 

@@ -8,9 +8,8 @@ class Embed < ActiveRecord::Base
   #   t.string :kind
   #   t.json :data
   #   t.timestamps null: false
-  # add_column :embeds, :name, :string
-  # not sure yet if we need an internal name here
-  # add_column :embeds, :internal_name, :string
+  #   t.string :name
+  #   t.string :internal_namae
 
   belongs_to :profile
 
@@ -283,6 +282,13 @@ class Embed < ActiveRecord::Base
     puts "send dwolla info - tran id: #{tran_uuid}"
     PaymentNotifier.dwolla_info(transaction).deliver_now
     {status: :success}
+  end
+
+  # fetches instance by either uuid or internal name
+  def self.resolve(identifier, required:true)
+    result = by_uuid(identifier) || Embed.find_by_internal_name(identifier)
+    raise "Embed not found for identifier: #{identifier}"  if required && !result
+    result
   end
 
 end
