@@ -9,8 +9,6 @@ class Campaign < ActiveRecord::Base
   #   t.text :summary
   #   t.text :details
   #   t.references :profile, index: true, foreign_key: true
-  #  not yet sure which way will be most useful to point
-  #   t.references :embed, index: true, foreign_key: true
   #   t.string :kind
   #   t.string :status
   #   t.json :data
@@ -30,9 +28,9 @@ class Campaign < ActiveRecord::Base
 
   belongs_to :profile
 
-  #  not yet sure which way will be most useful to point
-  belongs_to :embed
-  # has_many :embeds
+  has_many :embeds
+
+  has_many :offers
 
   after_initialize :assign_uuid
 
@@ -41,5 +39,25 @@ class Campaign < ActiveRecord::Base
     name
   end
 
+  def financial_pcnt
+    if financial_goal
+      (100 * financial_total / financial_goal).round
+    else
+      nil
+    end
+  end
+
+  def available_offers
+    offers.select(&:is_available)
+  end
+
+  def apply_contribution(transaction)
+    financial_total = 0  unless financial_total  # db is set not-null, but can't seem to rely on that here
+    financial_total += transaction.base_amount
+    supporter_total = 0  unless supporter_total
+    supporter_total += 1  #todo: check for uniq contributors
+    # save!  #todo: make sure this is transactionally safe
+    self.update!(financial_total: financial_total, supporter_total: supporter_total)
+  end
 
 end

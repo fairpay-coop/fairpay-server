@@ -1,6 +1,6 @@
 ActiveAdmin.register Offer do
 
-  permit_params :uuid, :internal_name, :name, :summary, :details, :profile_id, :campaign_id, :kind, :status, :data_json, :financial_value, :limit, :allocated, :expiry_date, :minimum_payment, :payment_interval_count, :payment_interval_units
+  permit_params :uuid, :internal_name, :name, :summary, :details, :profile_id, :campaign_id, :kind, :status, :data_json, :financial_value, :limit, :allocated, :expiry_date, :minimum_contribution, :contribution_interval_count, :contribution_interval_units
 
 
   index do
@@ -33,9 +33,9 @@ ActiveAdmin.register Offer do
       f.input :limit
       f.input :allocated
       f.input :expiry_date
-      f.input :minimum_payment
-      f.input :payment_interval_count #todo: select options
-      f.input :payment_interval_units
+      f.input :minimum_contribution
+      f.input :contribution_interval_count #todo: select options
+      f.input :contribution_interval_units
 
     end
     f.actions

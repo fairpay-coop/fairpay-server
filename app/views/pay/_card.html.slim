@@ -174,7 +174,7 @@ javascript:
     FairPayApi.copyFormValues(data, form, ['embed_uuid', 'transaction_uuid', 'payment_type', 'amount', 'card_number', 'card_mmyy', 'card_cvv', 'billing_zip', 'save_payment_info', 'use_payment_source']);
     //alert('data: ' + JSON.stringify(data));
     if (validateCardFields(data)) {
-      FairPayApi.submitCard(data, handleCardResponse);
+      FairPayApi.submitPayment(data, handleCardResponse);
     }
     return false;
   }

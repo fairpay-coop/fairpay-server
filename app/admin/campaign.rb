@@ -7,7 +7,6 @@ ActiveAdmin.register Campaign do
     id_column
     column :name
     column :profile
-    column :embed
     column :financial_goal
     column :financial_total
     column :supporter_goal
@@ -41,7 +40,6 @@ ActiveAdmin.register Campaign do
   form do |f|
     f.inputs do
       f.input :profile, as: :select, collection: Profile.pluck(:name, :id)
-      f.input :embed, as: :select, collection: Embed.pluck(:name, :id)
       f.input :kind  #, as: :select, collection: Campaign.kinds.map { |key,name| [name, key] }
       f.input :name
       f.input :internal_name

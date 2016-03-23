@@ -25,8 +25,8 @@ var FairPayApiSinglton = (function() {
             invoke(uri, data, successHandler);
         }
 
-        function submitCard(data, successHandler) {
-            var uri = base_uri + data.embed_uuid + '/submit_card';
+        function submitPayment(data, successHandler) {
+            var uri = base_uri + data.embed_uuid + '/submit_payment';
             invoke(uri, data, successHandler);
         }
 
@@ -128,7 +128,7 @@ var FairPayApiSinglton = (function() {
 
         return {
             submitStep1: submitStep1,
-            submitCard: submitCard,
+            submitPayment: submitPayment,
             updateFeeAllocation: updateFeeAllocation,
             sendDwollaInfo: sendDwollaInfo,
             estimateFee: estimateFee,

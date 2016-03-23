@@ -26,6 +26,7 @@ class Transaction < ActiveRecord::Base
   #   t.timestamps null: false
   #   t.string :payment_type
   #   t.string :mailing_list
+  #  add_reference :transactions, :offer, index: true, foreign_key: true
 
   # data attributes:
   #   correlation_id - passed in and returned with confirmation redirect and/or callback
@@ -40,6 +41,7 @@ class Transaction < ActiveRecord::Base
   belongs_to :payment_source
   belongs_to :merchant_config
   belongs_to :recurring_payment
+  belongs_to :offer
 
   # not yet used - but likely to be useful for cases like a refund
   belongs_to :parent, class_name: 'Transaction'
@@ -149,8 +151,31 @@ class Transaction < ActiveRecord::Base
       self.update!(recurring_payment: recurring)
       recurring.increment_next_date
     end
+    update_campaign
     TransactionAsyncCompletionJob.perform_async(self.id)
   end
+
+  def update_campaign
+    if embed.campaign
+      embed.campaign.apply_contribution(self)
+      offer = resolve_chosen_offer
+      if offer
+        # puts "chosen offer: #{offer.uuid}"
+        offer.allocate
+      end
+    end
+  end
+
+  def resolve_chosen_offer
+    offer_uuid = get_data_field(:chosen_offer_uuid)
+    if offer_uuid.present?
+      puts "chosen offer: #{offer_uuid}"
+      Offer.resolve(offer_uuid)
+    else
+      nil
+    end
+  end
+
 
   #todo:, need to refactor rest of system to use this fee calc entry point
   def calculate_fee(params)

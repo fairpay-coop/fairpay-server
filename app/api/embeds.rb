@@ -57,9 +57,10 @@ class Embeds < Grape::API
           optional :mailing_list, type: Boolean
           optional :description, type: String
           optional :memo, type: String
+          optional :chosen_offer_uuid, type: String
         end
 
-        data = params.slice(:amount, :email, :name, :recurrence, :mailing_list, :description, :memo)
+        data = params.slice(:amount, :email, :name, :recurrence, :mailing_list, :description, :memo, :chosen_offer_uuid)
 
         puts("data: #{data.inspect}")
 
@@ -76,7 +77,7 @@ class Embeds < Grape::API
 
 
 
-      get :submit_card do
+      get :submit_payment do
         puts "submit card - params: #{params.inspect}"
         embed = Embed.resolve(params[:embed_uuid])
 

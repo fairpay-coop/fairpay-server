@@ -1,7 +1,7 @@
 ActiveAdmin.register Transaction do
 
 
-  permit_params :payor_id, :payee_id, :base_amount, :kind, :fee_allocation, :allocated_fee, :paid_amount, :payment_type, :status, :recurrence  # /, :data_json
+  permit_params :payor_id, :payee_id, :base_amount, :kind, :fee_allocation, :allocated_fee, :paid_amount, :payment_type, :status, :recurrence, :offer_id  # /, :data_json
 
 
   index do
@@ -14,6 +14,7 @@ ActiveAdmin.register Transaction do
     column :payment_type
     column :status
     column :recurrence
+    column :offer
     column :updated_at
     actions
   end
@@ -30,7 +31,8 @@ ActiveAdmin.register Transaction do
       f.input :payment_type
       f.input :status
       f.input :recurrence
-      # f.input :data_json, as: :text
+      f.input :offer, as: :select, collection: Offer.pluck(:name, :id)
+      f.input :data_json, as: :text
     end
     f.actions
   end

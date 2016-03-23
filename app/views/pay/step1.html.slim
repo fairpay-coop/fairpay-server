@@ -3,6 +3,21 @@ h1.title = @embed.name
 
 br
 
+
+- if @embed.campaign
+  = render 'pay/campaign_progress', campaign: @embed.campaign
+  /- campaign = @embed.campaign
+  /b Campaign Progress:
+  /br
+  /|$#{format_amount(campaign.financial_total,0)} of $#{format_amount(campaign.financial_goal,0)} goal
+  /br
+  /|#{campaign.financial_pcnt}% funded
+  /br
+  /|Total supporters: #{campaign.supporter_total}
+  /br
+  /br
+
+
 div id="errorMessage" style="display: none;"
 
 /form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1" onsubmit="return validateStep1Form()"
@@ -13,26 +28,20 @@ form id="step1_form" onsubmit="return handleStep1()"
 
   - if user_signed_in? && current_user.profile  #todo: autocreate a profile user directly created
     - profile = current_user.profile
-    /=> "Name: #{profile.name}"
-    /br
-    /=> "Email: #{profile.email}"
-    /br
-    /todo: clean this up or rework to pull data via api more spa / angular style
+  => "Name:"
+  input type="text" name="name" value="#{profile&.name}"
+  br
+  => "Email:"
+  input type="text" id="email" name="email" value="#{profile&.email}" autocapitalize="off"
+  br
 
-    => "Name:"
-    input type="text" name="name" value="#{profile.name}"
-    br
-    => "Email:"
-    input type="text" id="email" name="email" value="#{profile.email}" autocapitalize="off"
-    br
-
-  - else
-    => "Name:"
-    input type="text" name="name" value=""
-    br
-    => "Email:"
-    input type="text" id="email" name="email" value="" autocapitalize="off"
-    br
+  /- else
+  /  => "Name:"
+  /  input type="text" name="name" value=""
+  /  br
+  /  => "Email:"
+  /  input type="text" id="email" name="email" value="" autocapitalize="off"
+  /  br
 
   - if @description
     = hidden_field_tag :description, @description
@@ -82,6 +91,17 @@ form id="step1_form" onsubmit="return handleStep1()"
     input type="text" name="memo"
     br
 
+  - if @embed.present_offers
+    |Choose a reward:
+    br
+    - for offer in @embed.offers
+      = radio_button_tag :chosen_offer_uuid, offer.uuid
+      =<> offer.label
+      /|&nbsp;
+      /= " "
+      br
+    /br
+
   input id="step1Submit" type="submit" value="Next"
 
 
@@ -93,7 +113,8 @@ javascript:
     var data = {};
     var form = document.getElementById("step1_form");
     FairPayApi.copyFormValues(data, form, ['embed_uuid', 'name', 'email', 'recurrence', 'mailing_list', 'description', 'memo']);
-    data['amount'] = resolveAmount();
+    data.amount = resolveAmount();
+    data.chosen_offer_uuid = chosenOfferUuid();
     //alert('data: ' + JSON.stringify(data));
 
     if (validateStep1Data(data)) {
@@ -142,6 +163,12 @@ javascript:
     } else {
       return 0;
     }
+  }
+
+  function chosenOfferUuid() {
+    var result = $("input[name=chosen_offer_uuid]:checked").val();
+    //alert("chosen offer id: " + result);
+    return result;
   }
 
   function validateStep1Data(data) {

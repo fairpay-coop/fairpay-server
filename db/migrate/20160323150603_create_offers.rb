@@ -15,12 +15,15 @@ class CreateOffers < ActiveRecord::Migration
 
       t.decimal :financial_value
       t.integer :limit
-      t.integer :allocated
+      t.integer :allocated, null: false, default: 0
       t.date    :expiry_date
-      t.integer :minimum_payment
+      t.integer :minimum_contribution, null: false, default: 0
       # for subscriptions
-      t.integer :payment_interval_count  # usually 1
-      t.string  :payment_interval_units  # month, year
+      t.integer :contribution_interval_count  # usually 1
+      t.string  :contribution_interval_units  # month, year
     end
+
+    add_reference :transactions, :offer, index: true, foreign_key: true
+
   end
 end

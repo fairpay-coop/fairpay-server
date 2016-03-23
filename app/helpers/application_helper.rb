@@ -19,13 +19,13 @@ module ApplicationHelper
   end
 
 
-  def format_amount(amount)
-    '%.2f' % amount
+  def format_amount(amount, decimals=2)
+    "%.#{decimals}f" % amount
   end
 
   #todo: figure out better way to include in ActionMailer rendered views
-  def self.format_amount(amount)
-    '%.2f' % amount
+  def self.format_amount(amount, decimals=2)
+    "%.#{decimals}f" % amount
   end
 
 

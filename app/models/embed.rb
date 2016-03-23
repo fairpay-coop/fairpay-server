@@ -13,6 +13,7 @@ class Embed < ActiveRecord::Base
   # add_column :embeds, :disabled, :boolean, default: false, null: false  #todo: replace this with a 'status'?
 
   belongs_to :profile
+  belongs_to :campaign
 
   after_initialize :assign_uuid
 
@@ -232,6 +233,7 @@ class Embed < ActiveRecord::Base
     mailing_list = params[:mailing_list]
     description = params[:description]
     memo = params[:memo]
+    chosen_offer_uuid = params[:chosen_offer_uuid]
 
     raise "email required" unless email.present?
     payor = Profile.find_by(email: email)
@@ -240,6 +242,8 @@ class Embed < ActiveRecord::Base
       payor = Profile.create!(email: email, name: name)
     end
     fee_allocation = fee_allocations.first
+
+    offer = Offer.resolve(chosen_offer_uuid, required:false)
 
     transaction = Transaction.create!(
         embed: self,
@@ -250,9 +254,11 @@ class Embed < ActiveRecord::Base
         fee_allocation: fee_allocation,
         recurrence: recurrence,
         mailing_list: mailing_list,
-        description: description
+        description: description,
+        offer: offer
     )
     transaction.update_data_field(:memo, memo)  #todo, clean up handling of json attrs
+    transaction.update_data_field(:chosen_offer_uuid, chosen_offer_uuid)  # save raw uuid just in case relation lookup failed
     transaction
   end
 
@@ -268,6 +274,7 @@ class Embed < ActiveRecord::Base
   end
 
 
+  #todo: rename this to 'submit_payment'
   def step2(params)
     transaction_uuid = params[:transaction_uuid]
     transaction = Transaction.by_uuid(transaction_uuid)
@@ -292,5 +299,13 @@ class Embed < ActiveRecord::Base
   #   raise "Embed not found for identifier: #{identifier}"  if required && !result
   #   result
   # end
+
+  def present_offers
+    campaign&.offers.present?
+  end
+
+  def offers
+    campaign&.available_offers
+  end
 
 end

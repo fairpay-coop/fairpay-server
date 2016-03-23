@@ -81,7 +81,6 @@ ActiveRecord::Schema.define(version: 20160323150603) do
     t.text     "summary"
     t.text     "details"
     t.integer  "profile_id"
-    t.integer  "embed_id"
     t.string   "kind"
     t.string   "status"
     t.json     "data"
@@ -89,17 +88,16 @@ ActiveRecord::Schema.define(version: 20160323150603) do
     t.date     "closing_date"
     t.decimal  "financial_goal"
     t.decimal  "financial_minimum"
-    t.decimal  "financial_total"
-    t.decimal  "financial_pledges"
+    t.decimal  "financial_total",   default: 0.0, null: false
+    t.decimal  "financial_pledges", default: 0.0, null: false
     t.integer  "supporter_goal"
     t.integer  "supporter_minimum"
-    t.integer  "supporter_total"
-    t.integer  "supporter_pledges"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+    t.integer  "supporter_total",   default: 0,   null: false
+    t.integer  "supporter_pledges", default: 0,   null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
   end
 
-  add_index "campaigns", ["embed_id"], name: "index_campaigns_on_embed_id", using: :btree
   add_index "campaigns", ["internal_name"], name: "index_campaigns_on_internal_name", using: :btree
   add_index "campaigns", ["profile_id"], name: "index_campaigns_on_profile_id", using: :btree
   add_index "campaigns", ["uuid"], name: "index_campaigns_on_uuid", using: :btree
@@ -157,15 +155,15 @@ ActiveRecord::Schema.define(version: 20160323150603) do
     t.string   "kind"
     t.string   "status"
     t.json     "data"
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
     t.decimal  "financial_value"
     t.integer  "limit"
-    t.integer  "allocated"
+    t.integer  "allocated",                   default: 0, null: false
     t.date     "expiry_date"
-    t.integer  "minimum_payment"
-    t.integer  "payment_interval_count"
-    t.string   "payment_interval_units"
+    t.integer  "minimum_contribution",        default: 0, null: false
+    t.integer  "contribution_interval_count"
+    t.string   "contribution_interval_units"
   end
 
   add_index "offers", ["campaign_id"], name: "index_offers_on_campaign_id", using: :btree
@@ -237,8 +235,10 @@ ActiveRecord::Schema.define(version: 20160323150603) do
     t.integer  "recurring_payment_id"
     t.string   "mailing_list"
     t.string   "fee_allocation"
+    t.integer  "offer_id"
   end
 
+  add_index "transactions", ["offer_id"], name: "index_transactions_on_offer_id", using: :btree
   add_index "transactions", ["parent_id"], name: "index_transactions_on_parent_id", using: :btree
   add_index "transactions", ["payee_id"], name: "index_transactions_on_payee_id", using: :btree
   add_index "transactions", ["payor_id"], name: "index_transactions_on_payor_id", using: :btree
@@ -263,7 +263,6 @@ ActiveRecord::Schema.define(version: 20160323150603) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
-  add_foreign_key "campaigns", "embeds"
   add_foreign_key "campaigns", "profiles"
   add_foreign_key "embeds", "campaigns"
   add_foreign_key "embeds", "profiles"
@@ -275,6 +274,7 @@ ActiveRecord::Schema.define(version: 20160323150603) do
   add_foreign_key "recurring_payments", "transactions", column: "master_transaction_id"
   add_foreign_key "transactions", "embeds"
   add_foreign_key "transactions", "merchant_configs"
+  add_foreign_key "transactions", "offers"
   add_foreign_key "transactions", "payment_sources"
   add_foreign_key "transactions", "profiles", column: "payee_id"
   add_foreign_key "transactions", "profiles", column: "payor_id"

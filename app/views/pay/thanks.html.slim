@@ -28,7 +28,10 @@ h3.title Payment Complete
 
     input type="submit" name="commit" value="Submit" class="button is-primary"
 
-
+  br
+  br
+  - if @embed.campaign
+    = render 'pay/campaign_progress', campaign: @embed.campaign
 
   /= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f|
   /  = devise_error_messages!

@@ -1,6 +1,7 @@
 class Offer < ActiveRecord::Base
   include DataFieldable
   include UuidAssignable
+  include ApplicationHelper
 
   # create_table :offers do |t|
   #   t.string :uuid, index: true
@@ -18,10 +19,10 @@ class Offer < ActiveRecord::Base
   #   t.integer :limit
   #   t.integer :allocated
   #   t.date    :expiry_date
-  #   t.integer :minimum_payment
+  #   t.integer :minimum_contribution
   #   # for subscriptions
-  #   t.integer :payment_interval_count  # usually 1
-  #   t.string  :payment_interval_units  # month, year
+  #   t.integer :contribution_interval_count  # usually 1
+  #   t.string  :contribution_interval_units  # month, year
 
 
   belongs_to :profile
@@ -34,6 +35,42 @@ class Offer < ActiveRecord::Base
     name
   end
 
+  def limited
+    limit.to_i > 0
+  end
 
+  def remaining
+    if limited
+      limit - allocated
+    else
+      nil
+    end
+  end
+
+  def is_available
+    !limited || allocated < limit
+  end
+
+  def availability
+    if limited
+      "#{remaining}/#{limit} avail"
+    else
+      'unlimited'
+    end
+  end
+
+  def label
+    result = "#{name} (#{availability})"
+    result += ", min donation: $#{format_amount(minimum_contribution,0)}"  if minimum_contribution > 0
+    result
+  end
+
+  # update persisted stats indicating an offer was taken
+  def allocate
+    allocated = 0  unless allocated
+    allocated += 1
+    # save!  #todo: make sure this is transactionally safe
+    self.update!(allocated: allocated)
+  end
 
 end
