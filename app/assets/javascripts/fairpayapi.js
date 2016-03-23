@@ -17,33 +17,34 @@ var FairPayApiSinglton = (function() {
         var endpoint = '';
         var apiKey = 'dummy';
         var embedUuid;  // the default embed to use
+        var base_uri = '/api/v1/embeds/';
 
         function submitStep1(data, successHandler) {
             var embedUuid = data.embed_uuid ? data.embed_uuid : getEmbedUuid();
-            var uri = '/api/v1/embed/' + embedUuid + '/step1';
+            var uri = base_uri + embedUuid + '/step1';
             invoke(uri, data, successHandler);
         }
 
         function submitCard(data, successHandler) {
-            var uri = '/api/v1/embed/' + data.embed_uuid + '/step2';
+            var uri = base_uri + data.embed_uuid + '/step2';
             invoke(uri, data, successHandler);
         }
 
         // todo: consider using a generate update_transaction
         function updateFeeAllocation(data, successHandler) {
-            var uri = '/api/v1/embed/' + data.embed_uuid + '/update_fee_allocation';
+            var uri = base_uri + data.embed_uuid + '/update_fee_allocation';
             invoke(uri, data, successHandler);
         }
 
         function sendDwollaInfo(data, successHandler) {
-            var uri = '/api/v1/embed/' + data.embed_uuid + '/send_dwolla_info';
+            var uri = base_uri + data.embed_uuid + '/send_dwolla_info';
             invoke(uri, data, successHandler);
         }
 
         function estimateFee(data, successHandler) {
             var embedUuid = data.embed_uuid ? data.embed_uuid : getEmbedUuid();
             delete data.embed_uuid;
-            var uri = '/api/v1/embed/' + embedUuid + '/estimate_fee';
+            var uri = base_uri + embedUuid + '/estimate_fee';
             invoke(uri, data, successHandler);
         }
 
@@ -71,7 +72,7 @@ var FairPayApiSinglton = (function() {
 
 
         function invoke(uri, data, successHandler) {
-            var url = endpoint + uri;
+            var url = endpoint + uri + ".jsonp";
             data.apiKey = apiKey;
             $.ajax({
                 url: url

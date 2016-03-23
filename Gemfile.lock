@@ -226,6 +226,8 @@ GEM
     rack (1.6.4)
     rack-accept (0.4.5)
       rack (>= 0.4)
+    rack-jsonp-middleware (0.0.10)
+      rack
     rack-mount (0.8.3)
       rack (>= 1.0.0)
     rack-test (0.6.3)
@@ -379,6 +381,7 @@ DEPENDENCIES
   jquery-ui-rails
   paypal-sdk-merchant
   pg
+  rack-jsonp-middleware
   rails (= 4.2.5.1)
   rails_12factor
   sass-rails (~> 5.0)

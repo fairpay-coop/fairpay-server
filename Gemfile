@@ -62,6 +62,7 @@ gem 'grape'
 gem 'grape-entity'
 gem 'grape-swagger'
 gem 'grape-swagger-rails'
+gem 'rack-jsonp-middleware'
 
 # email stuff
 gem 'sendgrid-ruby'

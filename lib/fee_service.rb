@@ -114,6 +114,7 @@ class FeeService
   ## todo: add in merchant processor (i.e. dharma merchant services) fee
   #todo: perhaps rename this to 'fee_for_amount'. should never be used directly
   def estimate_fee(amount, bin = nil)
+    raise "invalid bin"  if bin.starts_with?('9')
     unless bin && bin.length >= 6
       # fee_str = card_fee_str(amount)
       fee_str = fee_range_str(amount)

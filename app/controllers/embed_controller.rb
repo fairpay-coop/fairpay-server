@@ -1,5 +1,7 @@
 class EmbedController < ApplicationController
 
+  ## beware, this has now been superceeded by the Grape app/api/embeds.rb
+
   def widget_data
     render_json do
       uuid = params[:uuid]
