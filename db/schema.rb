@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160320152710) do
+ActiveRecord::Schema.define(version: 20160323150603) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -74,6 +74,36 @@ ActiveRecord::Schema.define(version: 20160320152710) do
 
   add_index "binbases", ["bin"], name: "index_binbases_on_bin", using: :btree
 
+  create_table "campaigns", force: :cascade do |t|
+    t.string   "uuid"
+    t.string   "internal_name"
+    t.string   "name"
+    t.text     "summary"
+    t.text     "details"
+    t.integer  "profile_id"
+    t.integer  "embed_id"
+    t.string   "kind"
+    t.string   "status"
+    t.json     "data"
+    t.date     "starting_date"
+    t.date     "closing_date"
+    t.decimal  "financial_goal"
+    t.decimal  "financial_minimum"
+    t.decimal  "financial_total"
+    t.decimal  "financial_pledges"
+    t.integer  "supporter_goal"
+    t.integer  "supporter_minimum"
+    t.integer  "supporter_total"
+    t.integer  "supporter_pledges"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
+
+  add_index "campaigns", ["embed_id"], name: "index_campaigns_on_embed_id", using: :btree
+  add_index "campaigns", ["internal_name"], name: "index_campaigns_on_internal_name", using: :btree
+  add_index "campaigns", ["profile_id"], name: "index_campaigns_on_profile_id", using: :btree
+  add_index "campaigns", ["uuid"], name: "index_campaigns_on_uuid", using: :btree
+
   create_table "dwolla_tokens", force: :cascade do |t|
     t.string   "access_token"
     t.string   "refresh_token"
@@ -96,8 +126,10 @@ ActiveRecord::Schema.define(version: 20160320152710) do
     t.string   "name"
     t.string   "internal_name"
     t.boolean  "disabled",      default: false, null: false
+    t.integer  "campaign_id"
   end
 
+  add_index "embeds", ["campaign_id"], name: "index_embeds_on_campaign_id", using: :btree
   add_index "embeds", ["profile_id"], name: "index_embeds_on_profile_id", using: :btree
   add_index "embeds", ["uuid"], name: "index_embeds_on_uuid", using: :btree
 
@@ -113,6 +145,33 @@ ActiveRecord::Schema.define(version: 20160320152710) do
   end
 
   add_index "merchant_configs", ["profile_id"], name: "index_merchant_configs_on_profile_id", using: :btree
+
+  create_table "offers", force: :cascade do |t|
+    t.string   "uuid"
+    t.string   "internal_name"
+    t.string   "name"
+    t.text     "summary"
+    t.text     "details"
+    t.integer  "profile_id"
+    t.integer  "campaign_id"
+    t.string   "kind"
+    t.string   "status"
+    t.json     "data"
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+    t.decimal  "financial_value"
+    t.integer  "limit"
+    t.integer  "allocated"
+    t.date     "expiry_date"
+    t.integer  "minimum_payment"
+    t.integer  "payment_interval_count"
+    t.string   "payment_interval_units"
+  end
+
+  add_index "offers", ["campaign_id"], name: "index_offers_on_campaign_id", using: :btree
+  add_index "offers", ["internal_name"], name: "index_offers_on_internal_name", using: :btree
+  add_index "offers", ["profile_id"], name: "index_offers_on_profile_id", using: :btree
+  add_index "offers", ["uuid"], name: "index_offers_on_uuid", using: :btree
 
   create_table "payment_sources", force: :cascade do |t|
     t.integer  "profile_id"
@@ -204,8 +263,13 @@ ActiveRecord::Schema.define(version: 20160320152710) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
+  add_foreign_key "campaigns", "embeds"
+  add_foreign_key "campaigns", "profiles"
+  add_foreign_key "embeds", "campaigns"
   add_foreign_key "embeds", "profiles"
   add_foreign_key "merchant_configs", "profiles"
+  add_foreign_key "offers", "campaigns"
+  add_foreign_key "offers", "profiles"
   add_foreign_key "payment_sources", "merchant_configs"
   add_foreign_key "payment_sources", "profiles"
   add_foreign_key "recurring_payments", "transactions", column: "master_transaction_id"

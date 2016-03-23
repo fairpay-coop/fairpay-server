@@ -10,6 +10,7 @@ class Embed < ActiveRecord::Base
   #   t.timestamps null: false
   #   t.string :name
   #   t.string :internal_namae
+  # add_column :embeds, :disabled, :boolean, default: false, null: false  #todo: replace this with a 'status'?
 
   belongs_to :profile
 
@@ -286,10 +287,10 @@ class Embed < ActiveRecord::Base
   end
 
   # fetches instance by either uuid or internal name
-  def self.resolve(identifier, required:true)
-    result = by_uuid(identifier) || Embed.find_by_internal_name(identifier)
-    raise "Embed not found for identifier: #{identifier}"  if required && !result
-    result
-  end
+  # def self.resolve(identifier, required:true)
+  #   result = by_uuid(identifier) || Embed.find_by_internal_name(identifier)
+  #   raise "Embed not found for identifier: #{identifier}"  if required && !result
+  #   result
+  # end
 
 end

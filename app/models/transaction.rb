@@ -138,7 +138,7 @@ class Transaction < ActiveRecord::Base
         # estimated_fee: self.estimated_fee
     )
 
-    if self.recurrence
+    if self.recurrence.present?  #todo: make sure we don't get blanks strings assigned here
       recurring = RecurringPayment.create!(
           master_transaction: self,
           interval_units: self.recurrence,

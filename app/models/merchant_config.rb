@@ -10,6 +10,7 @@ class MerchantConfig < ActiveRecord::Base
   #   t.timestamps null: false
   # add_column :merchant_configs, :name, :string
   # add_column :merchant_configs, :internal_name, :string
+  # add_column :merchant_configs, :disabled, :boolean, default: false, null: false
 
   belongs_to :profile
 

@@ -16,6 +16,15 @@ module UuidAssignable
       self.find_by(uuid: uuid)
     end
 
+    # fetches instance by either uuid or internal name
+    def resolve(identifier, required:true)
+      #todo: be smart about existance of 'internal_name', for now assume not called unless exists
+      result = by_uuid(identifier) || find_by_internal_name(identifier)
+      raise "#{self.name} not found for identifier: #{identifier}"  if required && !result
+      result
+    end
+
+
   end
 
 
