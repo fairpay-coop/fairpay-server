@@ -21,12 +21,12 @@ var FairPayApiSinglton = (function() {
 
         function submitStep1(data, successHandler) {
             var embedUuid = data.embed_uuid ? data.embed_uuid : getEmbedUuid();
-            var uri = base_uri + embedUuid + '/step1';
+            var uri = base_uri + embedUuid + '/submit_step1';
             invoke(uri, data, successHandler);
         }
 
         function submitCard(data, successHandler) {
-            var uri = base_uri + data.embed_uuid + '/step2';
+            var uri = base_uri + data.embed_uuid + '/submit_card';
             invoke(uri, data, successHandler);
         }
 

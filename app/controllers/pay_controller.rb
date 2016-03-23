@@ -47,6 +47,10 @@ class PayController < ApplicationController
   def step2
     @embed = Embed.by_uuid(params[:uuid])
     @transaction = Transaction.by_uuid(params[:transaction_uuid])
+
+    raise "invalid transaction id: #{params[:transaction_uuid]}" unless @transaction #todo confirm provisional status
+    raise "missing transaction amount"  unless @transaction.base_amount && @transaction.base_amount > 0
+
     @dwolla_authenticated = session[:dwolla_authenticated]  # make sure to allow just authenticated session
     if current_user && current_user.email == @transaction.payor.email
       puts "authenticated user session - stored payments available"

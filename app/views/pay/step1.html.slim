@@ -1,14 +1,15 @@
 
 h1.title = @embed.name
 
-/|embed id: #{@embed.id}
-/br
 br
 
-form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1" onsubmit="return validateStep1Form()"
+div id="errorMessage" style="display: none;"
+
+/form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1" onsubmit="return validateStep1Form()"
+form id="step1_form" onsubmit="return handleStep1()"
 
   = hidden_field_tag :authenticity_token, form_authenticity_token
-  /input type="hidden" name="embed_uuid" value="#{@embed.id}"
+  = hidden_field_tag :embed_uuid, @embed.uuid
 
   - if user_signed_in? && current_user.profile  #todo: autocreate a profile user directly created
     - profile = current_user.profile
@@ -85,25 +86,105 @@ form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1" onsubmit="r
 
 
 javascript:
-  function validateStep1Form() {
+
+  //$("#card_form").submit(handleCard);
+
+  function handleStep1() {
+    var data = {};
+    var form = document.getElementById("step1_form");
+    FairPayApi.copyFormValues(data, form, ['embed_uuid', 'name', 'email', 'recurrence', 'mailing_list', 'description', 'memo']);
+    data['amount'] = resolveAmount();
+    //alert('data: ' + JSON.stringify(data));
+
+    if (validateStep1Data(data)) {
+      FairPayApi.submitStep1(data, handleStep1Response);
+    }
+    return false;
+  }
+
+  function handleStep1Response(data) {
+    //alert('step1 response: ' + JSON.stringify(data));
+    if (data.result) {
+      //var status = data.result.status;
+      //$('#errorMessage').html('');      //var linkUrl = data.result.statusLink;
+      if (data.result.redirect_url) {
+        window.location = data.result.redirect_url;
+      }
+    } else if (data.error) {
+      showError(data.error.message);
+    }
+  }
+
+  function showError(message) {
+    $('#errorMessage').show();
+    $('#errorMessage').html(message);
+    //$('#errorStack').html('<pre>' + data.error.stack + '</pre>');
+  }
+
+  function hideError(message) {
+    $('#errorMessage').hide();
+    $('#errorMessage').html('');
+  }
+  function resolveAmount() {
     var assigned_amount = number_field_val('assigned_amount');
     var entered_amount = number_field_val('entered_amount');
     var amount_chosen_count = $("input[name=chosen_amount]:checked").length;
-    //var amount = $('#step1Amount').val();
-    //if (amount_chosen == 0 && (amount == null || amount == "")) {
-    //  alert("Please enter an amount");
-    //  return false;
+    var chosen_amount = $("input[name=chosen_amount]:checked").val();
+    //if (amount_chosen_count > 0) {
+    //  alert("chosen_amount: " + chosen_amount);
     //}
-    if (assigned_amount == 0 && entered_amount == 0 && amount_chosen_count == 0) {
-      alert("Please enter an amount");
-      return false;
-    }
-    var email = $('#email').val();
-    if (email == null || email == "") {
-      alert("Please enter an email");
-      return false;
+    if (assigned_amount > 0) {
+      return assigned_amount;
+    } else if (entered_amount > 0) {
+      return entered_amount;
+    } else if (amount_chosen_count > 0) {
+      return chosen_amount;
+    } else {
+      return 0;
     }
   }
+
+  function validateStep1Data(data) {
+    if (data['amount'] == 0) {
+      showError("Please enter an amount");
+      return false;
+    }
+    if (!validatePresent(data['email'], 'an Email')) {
+      return false;
+    }
+    return true;
+  }
+
+  //todo: factor this over to fairpayapi.js
+  function validatePresent(value, field_description) {
+    if (value == undefined || value == null || value.length == 0) {
+      showError("Please enter " + field_description);
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  //function validateStep1Form() {
+  //  var assigned_amount = number_field_val('assigned_amount');
+  //  var entered_amount = number_field_val('entered_amount');
+  //  var amount_chosen_count = $("input[name=chosen_amount]:checked").length;
+  //  //var amount = $('#step1Amount').val();
+  //  //if (amount_chosen == 0 && (amount == null || amount == "")) {
+  //  //  alert("Please enter an amount");
+  //  //  return false;
+  //  //}
+  //  if (assigned_amount == 0 && entered_amount == 0 && amount_chosen_count == 0) {
+  //    alert("Please enter an amount");
+  //    return false;
+  //  }
+  //  var email = $('#email').val();
+  //  if (email == null || email == "") {
+  //    alert("Please enter an email");
+  //    return false;
+  //  }
+  //  return true;
+  //}
 
   function number_field_val(name) {
     return Number(field_val(name, 0));

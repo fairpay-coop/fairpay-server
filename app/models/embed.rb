@@ -222,6 +222,7 @@ class Embed < ActiveRecord::Base
 
 
   def step1(params)
+    puts "embed - step1 - params: #{params}"
     email = params[:email]&.downcase  #todo: confirm if devise is already also doing this
     name = params[:name]
     amount = params[:amount]

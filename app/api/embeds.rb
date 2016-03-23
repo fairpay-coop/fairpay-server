@@ -1,6 +1,5 @@
 class Embeds < Grape::API
 
-  # resource :embeds do
   namespace :embeds do
 
     # desc 'Return all the embeds.'
@@ -46,16 +45,47 @@ class Embeds < Grape::API
       #   end
       # end
 
+      get :submit_step1 do
+        puts "step1 - params: #{params.inspect}"
+        embed = Embed.resolve(params[:embed_uuid])
 
-      get :step2 do
-        puts "step2 - params: #{params.inspect}"
+        params do
+          required :amount, type: Float
+          required :email, type: String
+          optional :name, type: String
+          optional :recurrence, type: String
+          optional :mailing_list, type: Boolean
+          optional :description, type: String
+          optional :memo, type: String
+        end
+
+        data = params.slice(:amount, :email, :name, :recurrence, :mailing_list, :description, :memo)
+
+        puts("data: #{data.inspect}")
+
+        transaction = embed.step1(data)
+        puts("tran: #{transaction.inspect}")
+
+        wrap_result( {
+            status: transaction.status,
+            transaction_uuid: transaction.uuid,
+            redirect_url: transaction.step2_url,
+            transaction: transaction
+        } )
+      end
+
+
+
+      get :submit_card do
+        puts "submit card - params: #{params.inspect}"
         embed = Embed.resolve(params[:embed_uuid])
 
         transaction = embed.step2(params)
-        result = {status: transaction.status,
-                  paid_amount: transaction.paid_amount,
-                  estimated_fee: transaction.estimated_fee,
-                  redirect_url: "/pay/#{params[:uuid]}/thanks/#{params[:transaction_uuid]}"
+        result = {
+            status: transaction.status,
+            paid_amount: transaction.paid_amount,
+            estimated_fee: transaction.estimated_fee,
+            redirect_url: transaction.finished_url
         }
         puts "step2 - result: #{result}"
         wrap_result result

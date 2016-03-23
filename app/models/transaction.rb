@@ -24,7 +24,7 @@ class Transaction < ActiveRecord::Base
   #   t.string :recurrence
   #   t.reference :recurring_payment, index: true, foreign_key: true
   #   t.timestamps null: false
-  #   t.strting :payment_type
+  #   t.string :payment_type
   #   t.string :mailing_list
 
   # data attributes:
@@ -170,7 +170,7 @@ class Transaction < ActiveRecord::Base
   def async_completion
     puts "async completion - #{id}"
     send_receipts
-    if mailing_list
+    if mailing_list && mailing_list != 'false'
       puts "mailing lib subscribe - #{payor.email}"
       mailing_list_subscribe
     end

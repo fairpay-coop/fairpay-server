@@ -12,6 +12,8 @@ class API < Grape::API
       { result: result }
     end
 
+    include ApplicationHelper
+
   end
 
   rescue_from Grape::Exceptions::ValidationErrors do |e|
@@ -23,7 +25,7 @@ class API < Grape::API
     Rails.logger.error("\n\n#{e.class.name} - #{e.message}:\n   " +
                            Rails.backtrace_cleaner.clean(e.backtrace).join("\n   "))
     # error_response({ message: "rescued from #{e.class.name}" })
-    error!( {error: {code: 100, message: e.message} } )
+    error!( {error: {code: 100, message: e.message} }, 200 )
   end
 
   # what does the => '/' imply here?  it seems like any other path here completely breaks things, and it doesn't seem to be needed

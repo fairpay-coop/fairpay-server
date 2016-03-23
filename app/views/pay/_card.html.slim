@@ -173,9 +173,41 @@ javascript:
     var data = {};
     FairPayApi.copyFormValues(data, form, ['embed_uuid', 'transaction_uuid', 'payment_type', 'amount', 'card_number', 'card_mmyy', 'card_cvv', 'billing_zip', 'save_payment_info', 'use_payment_source']);
     //alert('data: ' + JSON.stringify(data));
-    FairPayApi.submitCard(data, handleCardResponse);
+    if (validateCardFields(data)) {
+      FairPayApi.submitCard(data, handleCardResponse);
+    }
     return false;
   }
+
+  function validateCardFields(data) {
+    if (data['use_payment_source']) {
+      return true;
+    }
+    if ( ! validatePresent(data['card_number'], 'Card Number') ) {
+      return false;
+    }
+    if ( ! validatePresent(data['card_mmyy'], 'Card Expiration') ) {
+      return false;
+    }
+    if ( ! validatePresent(data['card_cvv'], 'Card CVV') ) {
+      return false;
+    }
+    if ( ! validatePresent(data['billing_zip'], 'Billing Zip') ) {
+      return false;
+    }
+    return true;
+  }
+
+  //todo: factor this over to fairpayapi.js
+  function validatePresent(value, field_description) {
+    if (value == undefined || value == null || value.length == 0) {
+      alert("Please enter " + field_description);
+      return false;
+    } else {
+      return true;
+    }
+  }
+
 
   function handleCardResponse(data) {
     //alert('step2 response: ' + JSON.stringify(data));
