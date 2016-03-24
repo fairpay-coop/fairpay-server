@@ -10,6 +10,7 @@ ActiveAdmin.register Offer do
     column :name
     column :profile
     column :campaign
+    column :kind
     column :limit
     column :allocated
     column :status

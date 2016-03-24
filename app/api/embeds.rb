@@ -42,7 +42,8 @@ class Embeds < Grape::API
               label: offer.label,
               minimum_contribution: offer.minimum_contribution,
               remaining: offer.remaining,
-              limit: offer.limit
+              limit: offer.limit,
+              kind: offer.kind
           }
         end
 

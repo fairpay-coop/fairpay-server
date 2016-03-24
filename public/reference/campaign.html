@@ -53,7 +53,7 @@ Reward Choices:
             h = '';
             for (var i = 0; i < offers.length; i++) {
                 offer = offers[i];
-                h += (offer.label + ' - id: ' + offer.uuid + '<br>');
+                h += (offer.label + ' [' + offer.kind + '] - id: ' + offer.uuid + '<br>');
             }
             h += '<br>';
             $('#rewards').html(h);
