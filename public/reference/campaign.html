@@ -1,0 +1,72 @@
+<html>
+<header></header>
+<body onload="populateCampaignStatus();">
+<h2>Reference Campaign Site</h2>
+
+Campaign Status:
+<div id="campaignStatus"></div><br><br>
+
+
+Reward Choices:
+<div id="rewards"></div><br><br>
+
+<form id="campaignForm" onsubmit="return handleCampaignForm()">
+    Amount: <input type="text" name="amount"><br>
+    Offer ID: <input type="text" name="offer_uuid"><br>
+    <input type="submit" name="Submit"><br>
+</form>
+
+<br><br>
+<div id="rawStatus"></div><br>
+<div id="errorMessage"></div><br>
+<div id="errorStack"></div><br>
+
+
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="/js/fairpayapi.js?v=1"></script>
+
+<script>
+    FairPayApi.setEndpoint('http://jfedev.fairpay.coop:3000');
+    FairPayApi.setApiKey('hvaw');
+    FairPayApi.setEmbedUuid('lrUpervTpRU');
+
+
+    function populateCampaignStatus() {
+        FairPayApi.campaignStatus({}, handleCampaignStatus);
+    }
+
+    function handleCampaignStatus(data) {
+        if (data.result) {
+//            $('#rawStatus').html('Raw Status: ' + JSON.stringify(data.result));
+            campaign = data.result.campaign;
+            var h = 'Total Supporters: ' + campaign.supporter_total + '<br>' +
+                    'Raised: $' + campaign.financial_total + ' of $' + campaign.financial_goal + ' goal,<br>' +
+                    campaign.financial_pcnt + '% funded<br>';
+            $('#campaignStatus').html(h);
+
+            offers = data.result.offers;
+            h = '';
+            for (var i = 0; i < offers.length; i++) {
+                offer = offers[i];
+                h += (offer.label + ' - id: ' + offer.uuid + '<br>');
+            }
+            $('#rewards').html(h);
+
+        } else if (data.error) {
+//      $('#error').html('error: ' + JSON.stringify(data.error));
+            $('#errorMessage').html('Error: ' + data.error.message);
+//            $('#errorStack').html('<pre>' + data.error.stack + '</pre>');
+        }
+        return false;
+    }
+
+    function handleCampaignForm() {
+        var amount = $('input[name=amount]').val();
+        var offer_uuid = $('input[name=offer_uuid]').val();
+        var return_url = window.location;
+        FairPayApi.launchPaymentFlow(amount, offer_uuid, return_url);
+        return false;
+    }
+</script>
+
+</body></html>

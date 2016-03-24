@@ -1,7 +1,4 @@
 
-// beware: copy of the old seedapi.js, not yet migrated, and will probably want to completely rework to use an iframe
-
-
 var FairPayApiSinglton = (function() {
 
     var instance;
@@ -21,8 +18,11 @@ var FairPayApiSinglton = (function() {
 
 
         function launchPaymentFlow(amount, offer_uuid, return_url) {
-            var embedUuid = data.embed_uuid ? data.embed_uuid : getEmbedUuid();
-            var paymentUrl = '/pay/' + embedUuid + '?amount=' + amount + '&offer=' + offer_uuid + '&return_url=' + return_url;
+            var embedUuid = getEmbedUuid();
+            //todo: fetch payment url via api call
+            var paymentUrl = endpoint + '/pay/' + embedUuid + '?amount=' + amount + '&offer=' + offer_uuid + '&return_url=' + return_url;
+            alert('payment url: ' + paymentUrl);
+            console.log('launch payment flow - url: ' + paymentUrl);
             window.location = paymentUrl;
             //var uri = base_uri + embedUuid + '/campaign_status';
             //invoke(uri, data, successHandler);

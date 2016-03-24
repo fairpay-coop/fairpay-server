@@ -29,6 +29,34 @@ class Embeds < Grape::API
         } )
       end
 
+      get :campaign_status do
+        puts "campaign_status - params: #{params.inspect}"
+        embed = Embed.resolve(params[:embed_uuid])
+        campaign = embed&.campaign
+        raise "campaign now found for embed uuid: #{params[:embed_uuid]}"  unless campaign
+
+        offers_data = campaign.offers.map do |offer|
+          {
+              uuid: offer.uuid,
+              name: offer.name,
+              label: offer.label,
+              minimum_contribution: offer.minimum_contribution,
+              remaining: offer.remaining,
+              limit: offer.limit
+          }
+        end
+
+        wrap_result( {
+            campaign: {
+                financial_total: campaign.financial_total,
+                supporter_total: campaign.supporter_total,
+                financial_goal: campaign.financial_goal,
+                financial_pcnt: campaign.financial_pcnt
+            },
+            offers: offers_data
+        } )
+      end
+
       # # beware: not currently used
       # def step1
       #   render_json do
