@@ -21,7 +21,7 @@ var FairPayApiSinglton = (function() {
             var embedUuid = getEmbedUuid();
             //todo: fetch payment url via api call
             var paymentUrl = endpoint + '/pay/' + embedUuid + '?amount=' + amount + '&offer=' + offer_uuid + '&return_url=' + return_url;
-            alert('payment url: ' + paymentUrl);
+            //alert('payment url: ' + paymentUrl);
             console.log('launch payment flow - url: ' + paymentUrl);
             window.location = paymentUrl;
             //var uri = base_uri + embedUuid + '/campaign_status';
