@@ -2,5 +2,8 @@
 br
 |To register as new Dwolla user go here:
 br
-|https://www.dwolla.com/register
+- if @transaction.embed.dwolla_service.is_sandbox
+  |https://uat.dwolla.com/Sandbox
+-else
+  |https://www.dwolla.com/register
 br

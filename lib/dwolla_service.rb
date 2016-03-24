@@ -74,6 +74,10 @@ class DwollaService  < BasePaymentService
   # end
 
 
+  def is_sandbox
+    @environment == :sandbox
+  end
+
   def api_client
     @dwolla
   end
