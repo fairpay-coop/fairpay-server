@@ -43,7 +43,13 @@ form id="step1_form" onsubmit="return handleStep1()"
   /  input type="text" id="email" name="email" value="" autocapitalize="off"
   /  br
 
-  - if @description
+  - if @return_url.present?
+    = hidden_field_tag :return_url, @return_url
+
+  - if @correlation_id.present?
+    = hidden_field_tag :correlation_id, @correlation_id
+
+  - if @description.present?
     = hidden_field_tag :description, @description
     => "Description: #{@description}"
     br
@@ -91,16 +97,23 @@ form id="step1_form" onsubmit="return handleStep1()"
     input type="text" name="memo"
     br
 
-  - if @embed.present_offers
-    |Choose a reward:
+  - if @assigned_offer.present?
+    / when offer is passed in as a param
+    = hidden_field_tag :assigned_offer_uuid, @assigned_offer.uuid
+    |Reward: #{@assigned_offer.label}
     br
-    - for offer in @embed.offers
-      = radio_button_tag :chosen_offer_uuid, offer.uuid
-      =<> offer.label
-      /|&nbsp;
-      /= " "
+
+  - else
+    - if @embed.present_offers
+      |Choose a reward:
       br
-    /br
+      - for offer in @embed.offers
+        = radio_button_tag :chosen_offer_uuid, offer.uuid
+        =<> offer.label
+        /|&nbsp;
+        /= " "
+        br
+      /br
 
   input id="step1Submit" type="submit" value="Next"
 
@@ -112,9 +125,9 @@ javascript:
   function handleStep1() {
     var data = {};
     var form = document.getElementById("step1_form");
-    FairPayApi.copyFormValues(data, form, ['embed_uuid', 'name', 'email', 'recurrence', 'mailing_list', 'description', 'memo']);
+    FairPayApi.copyFormValues(data, form, ['embed_uuid', 'name', 'email', 'recurrence', 'mailing_list', 'description', 'memo', 'return_url', 'correlation_id']);
     data.amount = resolveAmount();
-    data.chosen_offer_uuid = chosenOfferUuid();
+    data.offer_uuid = resolveOfferUuid();
     //alert('data: ' + JSON.stringify(data));
 
     if (validateStep1Data(data)) {
@@ -165,10 +178,14 @@ javascript:
     }
   }
 
-  function chosenOfferUuid() {
-    var result = $("input[name=chosen_offer_uuid]:checked").val();
-    //alert("chosen offer id: " + result);
-    return result;
+  function resolveOfferUuid() {
+    var chosen = $("input[name=chosen_offer_uuid]:checked").val();
+    if (chosen && chosen != null) {
+      return chosen;
+    } else {
+      var assigned = field_val('assigned_offer_uuid', null);
+      return assigned;
+    }
   }
 
   function validateStep1Data(data) {

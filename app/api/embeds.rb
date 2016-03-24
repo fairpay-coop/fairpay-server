@@ -57,10 +57,12 @@ class Embeds < Grape::API
           optional :mailing_list, type: Boolean
           optional :description, type: String
           optional :memo, type: String
-          optional :chosen_offer_uuid, type: String
+          optional :offer_uuid, type: String
+          optional :return_url, type: String
+          optional :correlation_id, type: String
         end
 
-        data = params.slice(:amount, :email, :name, :recurrence, :mailing_list, :description, :memo, :chosen_offer_uuid)
+        data = params.slice(:amount, :email, :name, :recurrence, :mailing_list, :description, :memo, :offer_uuid, :return_url, :correlation_id)
 
         puts("data: #{data.inspect}")
 

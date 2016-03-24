@@ -6,6 +6,7 @@ ActiveAdmin.register Offer do
   index do
     selectable_column
     id_column
+    column :uuid
     column :name
     column :profile
     column :campaign

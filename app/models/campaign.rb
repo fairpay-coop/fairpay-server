@@ -52,12 +52,10 @@ class Campaign < ActiveRecord::Base
   end
 
   def apply_contribution(transaction)
-    financial_total = 0  unless financial_total  # db is set not-null, but can't seem to rely on that here
-    financial_total += transaction.base_amount
-    supporter_total = 0  unless supporter_total
-    supporter_total += 1  #todo: check for uniq contributors
+    new_financial_total = financial_total.to_f + transaction.base_amount
+    new_supporter_total = supporter_total.to_i + 1  #todo: check for uniq contributors
     # save!  #todo: make sure this is transactionally safe
-    self.update!(financial_total: financial_total, supporter_total: supporter_total)
+    self.update!(financial_total: new_financial_total, supporter_total: new_supporter_total)
   end
 
 end

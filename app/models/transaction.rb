@@ -158,7 +158,7 @@ class Transaction < ActiveRecord::Base
   def update_campaign
     if embed.campaign
       embed.campaign.apply_contribution(self)
-      offer = resolve_chosen_offer
+      offer = resolve_offer
       if offer
         # puts "chosen offer: #{offer.uuid}"
         offer.allocate
@@ -166,16 +166,29 @@ class Transaction < ActiveRecord::Base
     end
   end
 
-  def resolve_chosen_offer
-    offer_uuid = get_data_field(:chosen_offer_uuid)
+  def resolve_offer
+    offer_uuid = get_data_field(:offer_uuid)
     if offer_uuid.present?
-      puts "chosen offer: #{offer_uuid}"
+      puts "selected offer: #{offer_uuid}"
       Offer.resolve(offer_uuid)
     else
       nil
     end
   end
 
+  def resolve_return_url
+    result = get_data_field(:return_url) || embed.get_data_field(:return_url)
+    correlation_id = get_data_field(:correlation_id)
+    if result.present? && correlation_id.present?
+      if result.include?('?')
+        result += "&"
+      else
+        result += "?"
+      end
+      result += "correlation_id=#{correlation_id}"
+    end
+    result
+  end
 
   #todo:, need to refactor rest of system to use this fee calc entry point
   def calculate_fee(params)

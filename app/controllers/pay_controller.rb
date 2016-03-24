@@ -18,6 +18,14 @@ class PayController < ApplicationController
 
     @amount = amount_param(:amount) || @embed.get_data_field(:amount)
     @description = params[:description] || @embed.get_data_field(:description)
+    @return_url = params[:return_url] || @embed.get_data_field(:return_url)
+    @correlation_id = params[:correlation_id]
+
+    offer_uuid = params[:offer]
+    if offer_uuid
+      puts "passed in offer uuid: #{offer_uuid}"
+      @assigned_offer = Offer.resolve(offer_uuid, required:false)
+    end
   end
 
   def step1_post

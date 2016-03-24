@@ -233,7 +233,9 @@ class Embed < ActiveRecord::Base
     mailing_list = params[:mailing_list]
     description = params[:description]
     memo = params[:memo]
-    chosen_offer_uuid = params[:chosen_offer_uuid]
+    offer_uuid = params[:offer_uuid]
+    return_url = params[:return_url]
+    correlation_id = params[:correlation_id]
 
     raise "email required" unless email.present?
     payor = Profile.find_by(email: email)
@@ -243,7 +245,7 @@ class Embed < ActiveRecord::Base
     end
     fee_allocation = fee_allocations.first
 
-    offer = Offer.resolve(chosen_offer_uuid, required:false)
+    offer = Offer.resolve(offer_uuid, required:false)
 
     transaction = Transaction.create!(
         embed: self,
@@ -258,7 +260,9 @@ class Embed < ActiveRecord::Base
         offer: offer
     )
     transaction.update_data_field(:memo, memo)  #todo, clean up handling of json attrs
-    transaction.update_data_field(:chosen_offer_uuid, chosen_offer_uuid)  # save raw uuid just in case relation lookup failed
+    transaction.update_data_field(:offer_uuid, offer_uuid)  if offer_uuid # save raw uuid just in case relation lookup failed
+    transaction.update_data_field(:return_url, return_url)  if return_url # where to return to at end of payment flow
+    transaction.update_data_field(:correlation_id, correlation_id)  if correlation_id # where to return to at end of payment flow
     transaction
   end
 
