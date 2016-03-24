@@ -1,14 +1,16 @@
 <html>
 <header></header>
-<body onload="populateCampaignStatus();">
+<body onload="onLoad();">
 <h2>Reference Campaign Site</h2>
 
+<div id="thanks"></div>
+
 Campaign Status:
-<div id="campaignStatus"></div><br><br>
+<div id="campaignStatus"></div><br>
 
 
 Reward Choices:
-<div id="rewards"></div><br><br>
+<div id="rewards"></div><br>
 
 <form id="campaignForm" onsubmit="return handleCampaignForm()">
     Amount: <input type="text" name="amount"><br>
@@ -30,18 +32,21 @@ Reward Choices:
     FairPayApi.setApiKey('hvaw');
     FairPayApi.setEmbedUuid('lrUpervTpRU');
 
-
-    function populateCampaignStatus() {
+    function onLoad() {
+        if (FairPayApi.getParameterByName('mode') == 'thanks') {
+            h = '<h3>Thanks for your Support!</h3>';
+            $('#thanks').html(h);
+        }
         FairPayApi.campaignStatus({}, handleCampaignStatus);
     }
 
     function handleCampaignStatus(data) {
         if (data.result) {
-//            $('#rawStatus').html('Raw Status: ' + JSON.stringify(data.result));
+            $('#rawStatus').html('Raw Campaign Data: ' + JSON.stringify(data.result));
             campaign = data.result.campaign;
             var h = 'Total Supporters: ' + campaign.supporter_total + '<br>' +
                     'Raised: $' + campaign.financial_total + ' of $' + campaign.financial_goal + ' goal,<br>' +
-                    campaign.financial_pcnt + '% funded<br>';
+                    campaign.financial_pcnt + '% funded<br><br>';
             $('#campaignStatus').html(h);
 
             offers = data.result.offers;
@@ -50,7 +55,13 @@ Reward Choices:
                 offer = offers[i];
                 h += (offer.label + ' - id: ' + offer.uuid + '<br>');
             }
+            h += '<br>';
             $('#rewards').html(h);
+            if (offers.length > 0) {
+                var defaultOffer = offers[0];
+                $('input[name=amount]').val(defaultOffer.minimum_contribution);
+                $('input[name=offer_uuid]').val(defaultOffer.uuid);
+            }
 
         } else if (data.error) {
 //      $('#error').html('error: ' + JSON.stringify(data.error));
@@ -63,7 +74,7 @@ Reward Choices:
     function handleCampaignForm() {
         var amount = $('input[name=amount]').val();
         var offer_uuid = $('input[name=offer_uuid]').val();
-        var return_url = window.location;
+        var return_url = window.location + '?mode=thanks';
         FairPayApi.launchPaymentFlow(amount, offer_uuid, return_url);
         return false;
     }
