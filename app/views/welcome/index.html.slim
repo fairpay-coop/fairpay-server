@@ -1,7 +1,7 @@
 h1.title Welcome to FairPay
 
 br
-b Payment Form Examples
+b 'Ugly' Reference Payment Flows
 table
   - for item in @embeds
     tr
@@ -9,12 +9,14 @@ table
         = link_to item.display_name, "/pay/#{item.uuid}"
 br
 br
-b IFrame Embed Examples
-table
-  - for item in @embeds
-    tr
-      td
-        = link_to item.display_name, "/iframe/#{item.uuid}?amount=50"
+b Note, embedable widget coming soon
+/
+  b IFrame Embed Examples
+  table
+    - for item in @embeds
+      tr
+        td
+          = link_to item.display_name, "/iframe/#{item.uuid}?amount=50"
 
 
 / todo: example of customizable form integration using fairpayapi.js
