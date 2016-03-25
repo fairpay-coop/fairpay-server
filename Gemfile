@@ -14,7 +14,6 @@ gem 'sprockets-rails'
 gem 'sprockets', '>= 3.0.0'
 gem 'sprockets-es6'
 
-
 gem 'uglifier', '>= 1.3.0'
 
 # See https://github.com/rails/execjs#readme for more supported runtimes
@@ -69,6 +68,10 @@ gem 'sendgrid-ruby'
 gem 'gibbon'
 gem 'sucker_punch', '~> 2.0'
 
+gem 'doorkeeper'
+gem 'wine_bouncer', '~> 0.5.1'
+gem 'rack-cors', :require => 'rack/cors'
+gem 'kramdown'
 
 # payment processors
 gem 'activemerchant'

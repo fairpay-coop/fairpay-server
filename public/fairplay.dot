@@ -1,0 +1,103 @@
+<div id="fairpay-widget">
+    <ul class="fpTabs">
+        <li class="fpTab" id="fpTab_0" data-pane="0">
+            <span>Amount</span>
+        </li>
+        <li class="fpTab" id="fpTab_1" data-pane="1">
+            <span>Identity</span>
+        </li>
+
+        <li class="fpTab" id="fpTab_2" data-pane="2">
+            <span>Payment</span>
+        </li>
+
+        <li class="fpTab" id="fpTab_3" data-pane="3">
+            <span>Finished</span>
+        </li>
+    </ul>
+
+    <div class="panes">
+        <div class="fpPane">
+            <div class="fpPaneContent">
+                <div>
+                    <label class="fpLabel" for="fpEmail">Your Email:</label>
+                    <input id="fpEmail" class="fpInput fpMax-input" type="email" placeholder="Please enter a valid email" required/>
+                </div>
+                <div class="fpAmount">
+                    <span class="fpLabel">
+                        Donation amount:
+                    </span>
+                    {{? it.amounts.length == 1 }}
+                    {{? it.amounts[0] == -1}}
+
+                    <input class="fpInput fpCustom-amount" type="text" placeholder="Custom Amount"/>
+                    {{??}}
+                    <span>{{= it.localizedAmounts[0]}}</span>
+                    {{?}}
+                    {{??}}
+                    {{~it.amounts :val:idx}}
+                    {{? val == -1}}
+                    <input type="radio" id="fp_other" name="fpAmount" class="fpButton" value="other"/>
+                    <label for="fp_other" class="fpButton">Other</label>
+                    <input class="fpInput fpCustom-amount" type="text" placeholder="Custom Amount"/>
+                    {{??}}
+                    <input type="radio" id="fp_{{=val}}" name="fpAmount" class="fpButton" value="{{=val}}"/>
+                    <label for="fp_{{=val}}" class="fpButton">{{=it.localizedAmounts[idx]}}</label>
+                    {{?}}
+                    {{~}}
+                    {{?}}
+                </div>
+                <div class="fpBottom">
+                    <button id="fpContinueAmountPane" class="fpButton fpContinue">continue</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="fpPane">
+            <h1>Pane 2</h1>
+            <div>email</div>
+            <div>address</div>
+            <div>phone</div>
+            <div>city</div>
+            <div>state</div>
+            <div>continue</div>
+        </div>
+
+        <div class="fpPane">
+            <div class="fpPayment-types">
+                <span class="fpLabel">Pay with:</span>
+                {{~it.payment_types :val:idx}}
+                <input type="radio" id="fp_paymentType_{{=val}}" name="fpPaymentType" value="{{=val}}" class="fpButton"/>
+                <label for="fp_paymentType_{{=val}}" class="fpButton">{{=val}}</label>
+            {{~}}
+            </div>
+            <div id="fees_container">
+                <span class="fpLabel">Fees:</span>
+                <span id="fees">$0</span>
+            </div>
+            <div class="fpPayment-panes">
+                <div id="fpPayment-pane-braintree" class="fpPayment-pane">
+                    <h1>braintree</h1>
+                </div>
+                <div id="fpPayment-pane-dwolla" class="fpPayment-pane">
+                    <h1>dwolla</h1>
+                    <div id="fpDowlla-pane-authorize" class="fpDwolla-pane">
+                        <button id="fpDowlla-authorize" class="fpButton">Authorize with Dwolla</button>
+                    </div>
+                    <div id="fpDowlla-pane-pay" class="fpDwolla-pane">
+                        <button id="fpDowlla-pay" class="fpButton">Pay with Dwolla</button>
+                    </div>
+                </div>
+                <div id="fpPayment-pane-paypal" class="fpPayment-pane">
+                    <h1>paypal</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="fpPane">
+            <h1>Pane 4</h1>
+            <div>recap</div>
+            <div>create account</div>
+        </div>
+    </div>
+</div>

@@ -20,12 +20,15 @@ class Embeds < Grape::API
       end
 
       #todo
-      get :widget_data do
+      get :config do
         embed = Embed.resolve(params[:embed_uuid])
         wrap_result( {
             uuid: embed.uuid,
             payee: embed.profile&.name,
-            payment_types: embed.get_data_field(:payment_types)
+            payment_types: embed.get_data_field(:payment_types),
+            payment_fees: embed.get_data_field(:payment_types).each_with_object({}) {|type, res| res[type] = "$0.%02d" % rand(25)},
+            amounts: [5, 10, 50, -1],
+            amount_format: '${0}'
         } )
       end
 
@@ -130,7 +133,7 @@ class Embeds < Grape::API
       #   end
       # end
 
-      get :submit_step1 do
+      post :submit_step1 do
         puts "step1 - params: #{params.inspect}"
         embed = Embed.resolve(params[:embed_uuid])
 

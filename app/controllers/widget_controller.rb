@@ -1,6 +1,6 @@
 class WidgetController < ApplicationController
   before_filter :allow_iframe_requests, except: :widget_js
-  skip_before_action :verify_authenticity_token, only: :widget_js
+  skip_before_action :verify_authenticity_token, only: [:widget_js, :ping]
 
   def widget_js
     @iframe_src =  url_for :controller => 'widget', :action => 'capture_id', uuid: params[:uuid], amount: params[:amount]
@@ -53,6 +53,15 @@ class WidgetController < ApplicationController
   def auth_complete
 
   end
+
+  def ping
+    render plain: params.to_json
+  end
+
+
+  def iframe
+  end
+
 
   private
   def allow_iframe_requests
