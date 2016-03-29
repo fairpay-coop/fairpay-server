@@ -73,4 +73,13 @@ class Offer < ActiveRecord::Base
     self.update!(allocated: allocated)
   end
 
+
+  def entity
+    Entity.new(self)
+  end
+
+  class Entity < Grape::Entity
+    expose :uuid, :name, :label, :minimum_contribution, :remaining, :limit, :kind
+  end
+
 end

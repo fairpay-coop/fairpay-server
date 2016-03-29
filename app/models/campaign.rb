@@ -58,4 +58,14 @@ class Campaign < ActiveRecord::Base
     self.update!(financial_total: new_financial_total, supporter_total: new_supporter_total)
   end
 
+
+  def entity
+    Entity.new(self)
+  end
+
+  class Entity < Grape::Entity
+    expose :name, :financial_total, :supporter_total, :financial_goal, :financial_pcnt
+    expose :offers, using: Offer::Entity
+  end
+
 end

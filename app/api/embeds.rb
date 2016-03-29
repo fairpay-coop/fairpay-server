@@ -35,28 +35,35 @@ class Embeds < Grape::API
         campaign = embed&.campaign
         raise "campaign now found for embed uuid: #{params[:embed_uuid]}"  unless campaign
 
-        offers_data = campaign.offers.map do |offer|
-          {
-              uuid: offer.uuid,
-              name: offer.name,
-              label: offer.label,
-              minimum_contribution: offer.minimum_contribution,
-              remaining: offer.remaining,
-              limit: offer.limit,
-              kind: offer.kind
-          }
+        # result = present campaign
+        result = Campaign::Entity.represent(campaign)
+        wrap_result( result )
+      end
+
+      #todo: merge into renamed widget_data once branches unified
+      get :embed_data do
+        puts "embed_data - params: #{params.inspect}"
+        embed = Embed.resolve(params[:embed_uuid])
+
+        session_email = cookies[:email]
+
+        # payment_types =
+
+        result = {
+            session_email: session_email,
+            suggested_amounts: embed.suggested_amounts,
+            payment_types: embed.get_data_field(:payment_types),
+            description: embed.get_data_field(:description),
+            campaign: Campaign::Entity.represent(embed.campaign),
+        }
+        if embed.recurrence_enabled
+          result[:recurrence_options] = embed.recurrence_options
+              # option[:value], option[:label]
         end
 
-        wrap_result( {
-            campaign: {
-                financial_total: campaign.financial_total,
-                supporter_total: campaign.supporter_total,
-                financial_goal: campaign.financial_goal,
-                financial_pcnt: campaign.financial_pcnt
-            },
-            offers: offers_data
-        } )
+          wrap_result( result )
       end
+
 
       # # beware: not currently used
       # def step1
@@ -92,6 +99,8 @@ class Embeds < Grape::API
         end
 
         data = params.slice(:amount, :email, :name, :recurrence, :mailing_list, :description, :memo, :offer_uuid, :return_url, :correlation_id)
+
+        cookies[:email] = data[:email]
 
         puts("data: #{data.inspect}")
 
