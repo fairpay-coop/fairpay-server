@@ -60,6 +60,7 @@ class WidgetController < ApplicationController
 
 
   def iframe
+    render layout: false
   end
 
 

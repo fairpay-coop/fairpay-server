@@ -339,11 +339,12 @@
 
                 let continueButton = $('#fpContinueAmountPane');
 
-                // setup and validate email
+                // setup email
                 let emailInput = $('#fpEmail');
 
                 if (store.localData.email) {
                     emailInput.value = store.localData.email;
+                    enable(continueButton);
                 }
                 emailInput.addEventListener('input', (evt) => {
                     if (evt.target.checkValidity()) {

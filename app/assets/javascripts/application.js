@@ -16,3 +16,4 @@
 //= require turbolinks
 //= require_tree
 //= stub fairpay.js
+//= stub xdLocalStoragePostMessageApi.js
