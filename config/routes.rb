@@ -21,8 +21,7 @@ Rails.application.routes.draw do
   # Landing page
   root 'welcome#index'
 
-  get  'embed/:uuid' => 'pay#embed'
-  get  'iframe/:uuid' => 'pay#iframe'
+  get  'widget/:uuid' => 'pay#widget'
 
   get   '/api/v1/embed/:uuid' => 'embed#widget_data'
   get   '/api/v1/embed/:uuid/estimate_fee' => 'embed#estimate_fee'

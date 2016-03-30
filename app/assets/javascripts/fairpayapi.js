@@ -1,4 +1,3 @@
-
 // beware: copy of the old seedapi.js, not yet migrated, and will probably want to completely rework to use an iframe
 
 
@@ -28,39 +27,51 @@ var FairPayApiSinglton = (function() {
             //invoke(uri, data, successHandler);
         }
 
+        function embedData(data, successHandler) {
+            var embedUuid = data.embed_uuid ? data.embed_uuid : getEmbedUuid();
+            var uri = base_uri + embedUuid + '/embed_data';
+            invoke(uri, 'GET', data, successHandler);
+        }
+
+        function step2Data(data, successHandler) {
+            var embedUuid = data.embed_uuid ? data.embed_uuid : getEmbedUuid();
+            var uri = base_uri + embedUuid + '/step2_data';
+            invoke(uri, 'GET', data, successHandler);
+        }
+
         function campaignStatus(data, successHandler) {
             var embedUuid = data.embed_uuid ? data.embed_uuid : getEmbedUuid();
             var uri = base_uri + embedUuid + '/campaign_status';
-            invoke(uri, data, successHandler);
+            invoke(uri, 'GET', data, successHandler);
         }
 
         function submitStep1(data, successHandler) {
             var embedUuid = data.embed_uuid ? data.embed_uuid : getEmbedUuid();
             var uri = base_uri + embedUuid + '/submit_step1';
-            invoke(uri, data, successHandler);
+            invoke(uri, 'POST', data, successHandler);
         }
 
         function submitPayment(data, successHandler) {
             var uri = base_uri + data.embed_uuid + '/submit_payment';
-            invoke(uri, data, successHandler);
+            invoke(uri, 'POST', data, successHandler);
         }
 
         // todo: consider using a generate update_transaction
         function updateFeeAllocation(data, successHandler) {
             var uri = base_uri + data.embed_uuid + '/update_fee_allocation';
-            invoke(uri, data, successHandler);
+            invoke(uri, 'POST',  data, successHandler);
         }
 
         function sendDwollaInfo(data, successHandler) {
             var uri = base_uri + data.embed_uuid + '/send_dwolla_info';
-            invoke(uri, data, successHandler);
+            invoke(uri, 'POST', data, successHandler);
         }
 
         function estimateFee(data, successHandler) {
             var embedUuid = data.embed_uuid ? data.embed_uuid : getEmbedUuid();
             delete data.embed_uuid;
             var uri = base_uri + embedUuid + '/estimate_fee';
-            invoke(uri, data, successHandler);
+            invoke(uri, 'GET', data, successHandler);
         }
 
         //function joinMailingList(data, successHandler) {
@@ -86,11 +97,12 @@ var FairPayApiSinglton = (function() {
         //}
 
 
-        function invoke(uri, data, successHandler) {
+        function invoke(uri, type, data, successHandler) {
             var url = endpoint + uri + ".jsonp";
             data.apiKey = apiKey;
             $.ajax({
                 url: url
+                , type: type
                 , dataType: 'jsonp'
                 , data: data
                 , success: successHandler
@@ -143,6 +155,8 @@ var FairPayApiSinglton = (function() {
 
         return {
             launchPaymentFlow: launchPaymentFlow,
+            embedData: embedData,
+            step2Data: step2Data,
             campaignStatus: campaignStatus,
             submitStep1: submitStep1,
             submitPayment: submitPayment,

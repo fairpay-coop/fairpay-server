@@ -9,24 +9,11 @@ table
         = link_to item.display_name, "/pay/#{item.uuid}"
 br
 br
-b Note, embedable widget coming soon
-/
-  b IFrame Embed Examples
-  table
-    - for item in @embeds
-      tr
-        td
-          = link_to item.display_name, "/iframe/#{item.uuid}?amount=50"
-
-
-/ todo: example of customizable form integration using fairpayapi.js
-/br
-/br
-/b Embed Flow Test
-/table
-/  - for item in @embeds
-/    tr
-/      td
-/        =link_to item.uuid, "/embed/#{item.uuid}"
+b Embeded Widget Flow Examples
+table
+  - for item in @embeds
+    tr
+      td
+        = link_to item.display_name, "/widget/#{item.uuid}?amount=50"
 
 

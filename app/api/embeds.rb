@@ -169,7 +169,7 @@ class Embeds < Grape::API
 
 
 
-      get :submit_payment do
+      post :submit_payment do
         puts "submit card - params: #{params.inspect}"
         embed = Embed.resolve(params[:embed_uuid])
 
@@ -198,7 +198,7 @@ class Embeds < Grape::API
       end
 
 
-      get :update_fee_allocation do
+      post :update_fee_allocation do
         puts "update fee allocation - params: #{params.inspect}"
         params do
           requires :transaction_uuid, type: String
@@ -212,7 +212,7 @@ class Embeds < Grape::API
         wrap_result result
       end
 
-      get :send_dwolla_info do
+      post :send_dwolla_info do
         puts "send_dwolla_info - params: #{params.inspect}"
         params do
           requires :transaction_uuid, type: String
