@@ -181,7 +181,7 @@ class DwollaService  < BasePaymentService
 
 
   def list_funding_sources(dwolla_token, amount = 0.0)
-    nil  unless dwolla_token
+    return nil  unless dwolla_token
     token = dwolla_token.token(self)
     raw = token.get "/accounts/#{token.account_id}/funding-sources"
     puts "raw: #{raw.to_json}"

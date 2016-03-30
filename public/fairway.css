@@ -185,7 +185,7 @@ label:hover.fpButton {
 
 .fpPayment-types label.fpButton {
     text-align: center;
-    width:60px;
+    width:auto;
 }
 
 

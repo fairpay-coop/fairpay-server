@@ -73,8 +73,7 @@ Rails.application.routes.draw do
   post '/widget/:uuid/updatePayment/:transaction_uuid'    => 'widget#update_payment'
   get  '/widget/:uuid/paymentComplete/:transaction_uuid'  => 'widget#payment_complete'
   get  '/widget/:uuid/authComplete/:transaction_uuid'     => 'widget#auth_complete'
-  get  '/widget/iframe'                                   => 'widget#iframe'
-
+  get  '/iframe'                                          => 'widget#iframe'
   post '/ping'                                            => 'widget#ping'
 
 

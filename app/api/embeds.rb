@@ -59,6 +59,7 @@ class Embeds < Grape::API
         result = {
             session_email: session_email,
             suggested_amounts: embed.suggested_amounts,
+            currency_format: embed.currency_format,
             payment_configs: payment_configs,
             description: embed.get_data_field(:description),
             campaign: Campaign::Entity.represent(embed.campaign),

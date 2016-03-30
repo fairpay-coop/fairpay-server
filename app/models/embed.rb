@@ -157,6 +157,10 @@ class Embed < ActiveRecord::Base
     get_data_field(:suggested_amounts)
   end
 
+  def currency_format
+    '${0}'
+  end
+
   FEE_ALLOCATION_VALUES = [:payee, :split, :payor]
 
   def fee_allocations

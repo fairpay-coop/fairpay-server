@@ -27,15 +27,15 @@
                     <span class="fpLabel">
                         Donation amount:
                     </span>
-                    {{? it.amounts.length == 1 }}
-                    {{? it.amounts[0] == -1}}
+                    {{? it.suggested_amounts.length == 1 }}
+                    {{? it.suggested_amounts[0] == -1}}
 
                     <input class="fpInput fpCustom-amount" type="text" placeholder="Custom Amount"/>
                     {{??}}
                     <span>{{= it.localizedAmounts[0]}}</span>
                     {{?}}
                     {{??}}
-                    {{~it.amounts :val:idx}}
+                    {{~it.suggested_amounts :val:idx}}
                     {{? val == -1}}
                     <input type="radio" id="fp_other" name="fpAmount" class="fpButton" value="other"/>
                     <label for="fp_other" class="fpButton">Other</label>
@@ -66,9 +66,9 @@
         <div class="fpPane">
             <div class="fpPayment-types">
                 <span class="fpLabel">Pay with:</span>
-                {{~it.payment_types :val:idx}}
-                <input type="radio" id="fp_paymentType_{{=val}}" name="fpPaymentType" value="{{=val}}" class="fpButton"/>
-                <label for="fp_paymentType_{{=val}}" class="fpButton">{{=val}}</label>
+                {{~it.payment_configs :val:idx}}
+                <input type="radio" id="fp_paymentType_{{=val.kind}}" name="fpPaymentType" value="{{=val.kind}}" class="fpButton"/>
+                <label for="fp_paymentType_{{=val.kind}}" class="fpButton">{{=val.label}}</label>
             {{~}}
             </div>
             <div id="fees_container">

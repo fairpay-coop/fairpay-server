@@ -235,7 +235,7 @@
         return new Promise((resolve, reject) => {
             xdLocalStorage.init(
                 {
-                    iframeUrl: `${params['host']}/widget/iframe`,
+                    iframeUrl: `${params['host']}/iframe`,
                     initCallback: () => {
                         console.log('Got iframe ready');
                         resolve();
@@ -257,7 +257,7 @@
 
         let config = {};
         let localData = {};
-        get(`${params['host']}/api/v1/embeds/${params['uuid']}/config`)
+        get(`${params['host']}/api/v1/embeds/${params['uuid']}/embed_data`)
             .then(data => config = JSON.parse(data).result)
             .then(() => getLocalData())
             .then((data) => {
@@ -270,17 +270,17 @@
 
 
                 if ( params.amount ) {
-                    config = Object.assign(config, {amounts: [params.amount]})
+                    config = Object.assign(config, {suggested_amounts: [params.amount]})
                 }
 
 
                 // format the amounts
                 Object.assign(config, {
-                    localizedAmounts: config.amounts.map((amount) => {
+                    localizedAmounts: config.suggested_amounts.map((amount) => {
                         if (-1 == amount) {
                             return -1;
                         } else {
-                            return config.amount_format.replace('{0}', amount);
+                            return config.currency_format.replace('{0}', amount);
                         }
                     })
                 });
@@ -357,8 +357,8 @@
                 // handle continue
                 continueButton.addEventListener('click', (evt) => {
                     let amount = 0;
-                    if ( store.config.amounts.length == 1 ) {
-                        amount = store.config.amounts[0];
+                    if ( store.config.suggested_amounts.length == 1 ) {
+                        amount = store.config.suggested_amounts[0];
                     } else {
                         amount = $('input[name=fpAmount]:checked').value;
                         if ( amount === "other" ) {
