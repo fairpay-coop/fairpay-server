@@ -12,6 +12,12 @@ class API < Grape::API
       { result: result }
     end
 
+    # for now lives in BasePaymentService
+    # def resolve_current_user(session_data)
+    #   email = session_data[:email]
+    #   Profile.find_by_email(email)  if email
+    # end
+
     include ApplicationHelper
 
   end

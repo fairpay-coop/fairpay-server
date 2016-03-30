@@ -28,5 +28,11 @@ module ApplicationHelper
     "%.#{decimals}f" % amount
   end
 
+  def resolve_current_user(session_data)
+    email = session_data[:email]
+    User.find_by_email(email)  if email
+  end
+
+
 
 end

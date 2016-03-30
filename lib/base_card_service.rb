@@ -9,7 +9,8 @@ class BaseCardService < BasePaymentService
   end
 
   def payment_type_display
-    'Card'
+    #'Card'
+    "Debit/Credit Card"
   end
 
   def payment_type
@@ -63,6 +64,24 @@ class BaseCardService < BasePaymentService
     # [charge_amount, estimated_fee]
   end
 
+  def widget_data(transaction, session_data)
+    # result = {
+    #     label: 'Debit/Credit Card', # (#{merchant_config.kind_name})'
+    #     card_fee_str: card_fee_str(transaction),
+    #     fee_update_enabled: fee_service.fee_update_enabled,
+    #     supports_saved_payment_source: supports_saved_payment_source,
+    # }
+    result = super(transaction)
+    if transaction
+      payment_source = saved_payment_source(transaction, autocreate:false)
 
+      if payment_source
+        result[:saved_payment_source] = payment_source.represent #&.get_data_field(:description)
+      end
+    end
 
+    result
   end
+
+
+end

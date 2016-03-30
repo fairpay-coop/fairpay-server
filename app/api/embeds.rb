@@ -49,12 +49,20 @@ class Embeds < Grape::API
 
         # payment_types =
 
+        payment_configs = embed.payment_configs.map do |merchant_config|
+          merchant_config.widget_data(nil, nil)
+        end
+
         result = {
             session_email: session_email,
             suggested_amounts: embed.suggested_amounts,
-            payment_types: embed.get_data_field(:payment_types),
+            payment_configs: payment_configs,
             description: embed.get_data_field(:description),
             campaign: Campaign::Entity.represent(embed.campaign),
+            mailing_list_enabled: embed.mailing_list_enabled,
+            capture_memo: embed.capture_memo,
+            allocation_options: embed.fee_allocation_options(nil),
+            consider_this: embed.get_data_field(:consider_this),
         }
         if embed.recurrence_enabled
           result[:recurrence_options] = embed.recurrence_options
@@ -62,6 +70,47 @@ class Embeds < Grape::API
         end
 
           wrap_result( result )
+      end
+
+      get :step2_data do
+        puts "embed_data - params: #{params.inspect}"
+        session_data = params[:session_data] || {}
+        #todo: session data security
+
+        embed = Embed.resolve(params[:embed_uuid])
+        transaction = Transaction.by_uuid(params[:transaction_uuid])
+
+        raise "invalid transaction id: #{params[:transaction_uuid]}" unless transaction #todo confirm provisional status
+        raise "missing transaction amount"  unless transaction.base_amount && transaction.base_amount > 0
+
+        current_user = resolve_current_user(session_data)
+        if current_user && current_user.email == transaction.payor.email
+          puts "authenticated user session - stored payments available"
+          # profile_authenticated = true
+          authenticated_profile = current_user.profile
+        else
+          #todo: rip out once js session_data handling integrated
+          authenticated_profile = transaction.payor
+        end
+
+        # used to resume after login
+        # todo: think about this once devise auth integrated into widget
+        # cookies[:current_url] = transaction.step2_url
+
+        payment_configs = embed.payment_configs.map do |merchant_config|
+          merchant_config.payment_service.widget_data(transaction, session_data)
+        end
+
+        result = {
+            transaction: Transaction::Entity.represent(transaction),
+            # dwolla_authenticated: dwolla_authenticated,
+            authenticated_profile: Profile::Entity.represent(authenticated_profile),
+            payment_configs: payment_configs
+        }
+        # if profile_authenticated
+        #   result[:authenticated_profile] = current_user.profile
+        # end
+        wrap_result( result )
       end
 
 

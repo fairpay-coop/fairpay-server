@@ -181,6 +181,19 @@ class PaypalService < BasePaymentService
 
   end
 
+  # fairpay hosted url which redirects to dwolla auth flow
+  def local_auth_url(transaction)
+    "#{base_url}/paypal/checkout?t=#{transaction.uuid}"
+  end
+
+
+  def widget_data(transaction, session_data)
+    result = super(transaction)
+    result[:local_auth_url] = local_auth_url(transaction)  if transaction
+    result
+  end
+
+
   # def calculate_fee(amount, params = nil)
   #   Binbase.apply_fee_rate(amount, 0.30, 2.9)
   # end

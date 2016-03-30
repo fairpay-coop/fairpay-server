@@ -325,4 +325,15 @@ class Transaction < ActiveRecord::Base
     client = SendGrid::Client.new(api_key: sendgrid_api_key)
   end
 
+  def entity
+    Entity.new(self)
+  end
+
+  class Entity < Grape::Entity
+    expose :uuid, :kind, :status, :base_amount, :description, :fee_allocation, :offer_id, :recurrence
+    expose :payee, using: Profile::Entity
+  end
+
+
+
 end

@@ -1,7 +1,4 @@
 class DwollaService  < BasePaymentService
-  include ApplicationHelper
-  # not sure if we should still use a singleton here or not
-  # include Singleton
 
   SCOPE = "Send|Request|Funding|Balance"
 
@@ -24,6 +21,7 @@ class DwollaService  < BasePaymentService
 
 
   def initialize(merchant_config)
+    @merchant_config = merchant_config
     config = merchant_config&.indifferent_data
     unless config && config[:client_id]
       config = DEFAULT_CONFIG
@@ -98,6 +96,11 @@ class DwollaService  < BasePaymentService
     # puts "dwolla client id: #{ENV['DWOLLA_CLIENT_ID']}"
 
     auth.url + "&dwolla_landing=login"  #todo: figure clean api method
+  end
+
+  # fairpay hosted url which redirects to dwolla auth flow
+  def local_auth_url(transaction)
+    "#{base_url}/dwolla/auth?t=#{transaction.uuid}"
   end
 
   def exchange_code_for_token(code)
@@ -178,6 +181,7 @@ class DwollaService  < BasePaymentService
 
 
   def list_funding_sources(dwolla_token, amount = 0.0)
+    nil  unless dwolla_token
     token = dwolla_token.token(self)
     raw = token.get "/accounts/#{token.account_id}/funding-sources"
     puts "raw: #{raw.to_json}"
@@ -303,8 +307,49 @@ class DwollaService  < BasePaymentService
 
 
   def payment_type_display
-    'Dwolla'
+    #'Dwolla'
+    "Dwolla (e-check service)"
   end
+
+
+  def widget_data(transaction, session_data)
+    result = super(transaction)
+    if transaction
+      result[:has_dwolla_auth] = has_dwolla_auth(transaction)
+      result[:dwolla_flow] = @merchant_config.get_data_field(:flow)
+      result[:local_auth_url] = local_auth_url(transaction)
+
+      #todo: session data security
+      dwolla_session_authenticated = session_data[:dwolla_authenticated]  # make sure to allow just authenticated session
+
+      # currently duplicated with base widget data
+      current_user = resolve_current_user(session_data)
+      if current_user && current_user.email == @transaction.payor.email
+        puts "authenticated user session - stored payments available"
+        profile_authenticated = true
+      end
+
+      result[:dwolla_authenticated] = dwolla_session_authenticated || profile_authenticated
+
+      #todo: restrict funding sources options unless properly authenticiated
+      if true || dwolla_authenticated
+        funding_sources = funding_sources(transaction)
+        if funding_sources
+          options = funding_sources.map do |option|
+            { #todo: best way to factor this pattern?
+              id: option[:id],
+              name: option[:name],
+              default: option[:selected]
+            }
+          end
+          result[:funding_sources] = options
+        end
+      end
+    end
+
+    result
+  end
+
 
 
 

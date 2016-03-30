@@ -12,5 +12,21 @@ class PaymentSource < ActiveRecord::Base
 
   belongs_to :profile
 
+  def entity
+    Entity.new(self)
+  end
+
+  class Entity < Grape::Entity
+    expose :data, :kind
+  end
+
+  def represent
+    # todo: clean this up once data_field refactored to expose natural getters
+    {
+        description: get_data_field(:description),
+        bin: get_data_field(:bin)
+    }
+    # Entity.represent(self)
+  end
 
 end
