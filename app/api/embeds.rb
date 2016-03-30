@@ -86,33 +86,35 @@ class Embeds < Grape::API
         raise "invalid transaction id: #{params[:transaction_uuid]}" unless transaction #todo confirm provisional status
         raise "missing transaction amount"  unless transaction.base_amount && transaction.base_amount > 0
 
-        current_user = resolve_current_user(session_data)
-        if current_user && current_user.email == transaction.payor.email
-          puts "authenticated user session - stored payments available"
-          # profile_authenticated = true
-          authenticated_profile = current_user.profile
-        else
-          #todo: rip out once js session_data handling integrated
-          authenticated_profile = transaction.payor
-        end
-
-        # used to resume after login
-        # todo: think about this once devise auth integrated into widget
-        # cookies[:current_url] = transaction.step2_url
-
-        payment_configs = embed.payment_configs.map do |merchant_config|
-          merchant_config.payment_service.widget_data(transaction, session_data)
-        end
-
-        result = {
-            transaction: Transaction::Entity.represent(transaction),
-            # dwolla_authenticated: dwolla_authenticated,
-            authenticated_profile: Profile::Entity.represent(authenticated_profile),
-            payment_configs: payment_configs
-        }
-        # if profile_authenticated
-        #   result[:authenticated_profile] = current_user.profile
+        # current_user = resolve_current_user(session_data)
+        # if current_user && current_user.email == transaction.payor.email
+        #   puts "authenticated user session - stored payments available"
+        #   # profile_authenticated = true
+        #   authenticated_profile = current_user.profile
+        # else
+        #   #todo: rip out once js session_data handling integrated
+        #   authenticated_profile = transaction.payor
         # end
+        #
+        # # used to resume after login
+        # # todo: think about this once devise auth integrated into widget
+        # # cookies[:current_url] = transaction.step2_url
+        #
+        # payment_configs = embed.payment_configs.map do |merchant_config|
+        #   merchant_config.payment_service.widget_data(transaction, session_data)
+        # end
+        #
+        # result = {
+        #     transaction: Transaction::Entity.represent(transaction),
+        #     # dwolla_authenticated: dwolla_authenticated,
+        #     authenticated_profile: Profile::Entity.represent(authenticated_profile),
+        #     payment_configs: payment_configs
+        # }
+        # # if profile_authenticated
+        # #   result[:authenticated_profile] = current_user.profile
+        # # end
+
+        result = transaction.step2_data(session_data)
         wrap_result( result )
       end
 
@@ -159,12 +161,17 @@ class Embeds < Grape::API
         transaction = embed.step1(data)
         puts("tran: #{transaction.inspect}")
 
-        wrap_result( {
-            status: transaction.status,
-            transaction_uuid: transaction.uuid,
-            redirect_url: transaction.step2_url,
-            transaction: transaction
-        } )
+        # wrap_result( {
+        #     status: transaction.status,
+        #     transaction_uuid: transaction.uuid,
+        #     redirect_url: transaction.step2_url,
+        #     transaction: transaction
+        # } )
+        session_data = params[:session_data] || {}
+        result = transaction.step2_data(session_data)
+        result[:redirect_url] = transaction.step2_url  # used by simple test flow
+        puts "step1 post result: #{result}"
+        wrap_result( result )
       end
 
 

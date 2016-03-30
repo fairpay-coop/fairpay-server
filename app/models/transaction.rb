@@ -325,6 +325,42 @@ class Transaction < ActiveRecord::Base
     client = SendGrid::Client.new(api_key: sendgrid_api_key)
   end
 
+
+  def step2_data(session_data={})
+
+    raise "missing transaction amount"  unless base_amount && base_amount > 0
+
+    current_user = resolve_current_user(session_data)
+    if current_user && current_user.email == payor.email
+      puts "authenticated user session - stored payments available"
+      # profile_authenticated = true
+      authenticated_profile = current_user.profile
+    else
+      #todo: rip out once js session_data handling integrated
+      authenticated_profile = payor
+    end
+
+    # used to resume after login
+    # todo: think about this once devise auth integrated into widget
+    # cookies[:current_url] = transaction.step2_url
+
+    payment_configs = embed.payment_configs.map do |merchant_config|
+      merchant_config.payment_service.widget_data(self, session_data)
+    end
+
+    result = {
+        transaction: Transaction::Entity.represent(self),
+        # dwolla_authenticated: dwolla_authenticated,
+        authenticated_profile: Profile::Entity.represent(authenticated_profile),
+        payment_configs: payment_configs
+    }
+    # if profile_authenticated
+    #   result[:authenticated_profile] = current_user.profile
+    # end
+
+  end
+
+
   def entity
     Entity.new(self)
   end
