@@ -1,6 +1,7 @@
 class Embed < ActiveRecord::Base
   include DataFieldable
   include UuidAssignable
+  include ApplicationHelper
 
   # create_table :embeds do |t|
   #   t.string :uuid, index: true
@@ -326,5 +327,51 @@ class Embed < ActiveRecord::Base
     expose :offers, using: Offer::Entity
   end
 
+
+  def embed_data(params = {})
+    payment_datas = payment_configs.map do |merchant_config|
+      merchant_config.widget_data(nil, nil)
+    end
+
+    authenticated_profile = resolve_current_profile(params[:session_data])
+
+    amount = amount_param(params, :amount) || get_data_field(:amount)
+    description = params[:description] || get_data_field(:description)
+    return_url = params[:return_url] || get_data_field(:return_url)
+    correlation_id = params[:correlation_id]
+
+    offer_uuid = params[:offer]
+    if offer_uuid
+      puts "passed in offer uuid: #{offer_uuid}"
+      assigned_offer = Offer.resolve(offer_uuid, required:false)
+    end
+
+    email = params[:email]
+
+    result = {
+        # session_email: session_email,
+        uuid: uuid,
+        name: name,
+        suggested_amounts: suggested_amounts,
+        currency_format: currency_format,
+        payment_configs: payment_datas,
+        description: get_data_field(:description),
+        campaign: Campaign::Entity.represent(campaign),
+        mailing_list_enabled: mailing_list_enabled,
+        capture_memo: capture_memo,
+        allocation_options: fee_allocation_options(nil),
+        consider_this: get_data_field(:consider_this),
+        authenticated_profile: Profile::Entity.represent(authenticated_profile),
+        amount: amount,
+        description: description,
+        return_url: return_url,
+        correlation_id: correlation_id
+    }
+    if recurrence_enabled
+      result[:recurrence_options] = recurrence_options
+      # option[:value], option[:label]
+    end
+    result
+  end
 
 end

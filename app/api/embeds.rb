@@ -48,30 +48,32 @@ class Embeds < Grape::API
         puts "embed_data - params: #{params.inspect}"
         embed = Embed.resolve(params[:embed_uuid])
 
-        session_email = cookies[:email]
+        # session_email = cookies[:email]
 
+        result = embed.embed_data
+        result[:session_email] = cookies[:email]
         # payment_types =
 
-        payment_configs = embed.payment_configs.map do |merchant_config|
-          merchant_config.widget_data(nil, nil)
-        end
-
-        result = {
-            session_email: session_email,
-            suggested_amounts: embed.suggested_amounts,
-            currency_format: embed.currency_format,
-            payment_configs: payment_configs,
-            description: embed.get_data_field(:description),
-            campaign: Campaign::Entity.represent(embed.campaign),
-            mailing_list_enabled: embed.mailing_list_enabled,
-            capture_memo: embed.capture_memo,
-            allocation_options: embed.fee_allocation_options(nil),
-            consider_this: embed.get_data_field(:consider_this),
-        }
-        if embed.recurrence_enabled
-          result[:recurrence_options] = embed.recurrence_options
-              # option[:value], option[:label]
-        end
+        # payment_configs = embed.payment_configs.map do |merchant_config|
+        #   merchant_config.widget_data(nil, nil)
+        # end
+        #
+        # result = {
+        #     session_email: session_email,
+        #     suggested_amounts: embed.suggested_amounts,
+        #     currency_format: embed.currency_format,
+        #     payment_configs: payment_configs,
+        #     description: embed.get_data_field(:description),
+        #     campaign: Campaign::Entity.represent(embed.campaign),
+        #     mailing_list_enabled: embed.mailing_list_enabled,
+        #     capture_memo: embed.capture_memo,
+        #     allocation_options: embed.fee_allocation_options(nil),
+        #     consider_this: embed.get_data_field(:consider_this),
+        # }
+        # if embed.recurrence_enabled
+        #   result[:recurrence_options] = embed.recurrence_options
+        #       # option[:value], option[:label]
+        # end
 
           wrap_result( result )
       end

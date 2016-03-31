@@ -1,22 +1,11 @@
 
-h1.title = @embed.name
+h1.title = @data[:name]
 
 br
 
-
-- if @embed.campaign
-  = render 'pay/campaign_progress', campaign: @embed.campaign
-  /- campaign = @embed.campaign
-  /b Campaign Progress:
-  /br
-  /|$#{format_amount(campaign.financial_total,0)} of $#{format_amount(campaign.financial_goal,0)} goal
-  /br
-  /|#{campaign.financial_pcnt}% funded
-  /br
-  /|Total supporters: #{campaign.supporter_total}
-  /br
-  /br
-
+- campaign = @data[:campaign]
+- if campaign.present?
+  = render 'pay/campaign_progress', campaign: campaign
 
 div id="errorMessage" style="display: none;"
 
@@ -24,45 +13,37 @@ div id="errorMessage" style="display: none;"
 form id="step1_form" onsubmit="return handleStep1()"
 
   = hidden_field_tag :authenticity_token, form_authenticity_token
-  = hidden_field_tag :embed_uuid, @embed.uuid
+  = hidden_field_tag :embed_uuid, @data[:uuid]
 
-  - if user_signed_in? && current_user.profile  #todo: autocreate a profile user directly created
-    - profile = current_user.profile
+  - profile = @data[:authenticated_profile] || {}
+  /- if profile
   => "Name:"
-  input type="text" name="name" value="#{profile&.name}"
+  input type="text" name="name" value="#{profile[:name]}"
   br
   => "Email:"
-  input type="text" id="email" name="email" value="#{profile&.email}" autocapitalize="off"
+  input type="text" id="email" name="email" value="#{profile[:email]}" autocapitalize="off"
   br
 
-  /- else
-  /  => "Name:"
-  /  input type="text" name="name" value=""
-  /  br
-  /  => "Email:"
-  /  input type="text" id="email" name="email" value="" autocapitalize="off"
-  /  br
+  - if @data[:return_url].present?
+    = hidden_field_tag :return_url, @data[:return_url]
 
-  - if @return_url.present?
-    = hidden_field_tag :return_url, @return_url
+  - if @data[:correlation_id].present?
+    = hidden_field_tag :correlation_id, @data[:correlation_id]
 
-  - if @correlation_id.present?
-    = hidden_field_tag :correlation_id, @correlation_id
-
-  - if @description.present?
-    = hidden_field_tag :description, @description
-    => "Description: #{@description}"
+  - if @data[:description].present?
+    = hidden_field_tag :description, @data[:description]
+    => "Description: #{@data[:description]}"
     br
 
-  - if @amount
-    = hidden_field_tag :assigned_amount, @amount
-    => "Amount: $#{format_amount(@amount)}"
+  - if @data[:amount]
+    = hidden_field_tag :assigned_amount, @data[:amount]
+    => "Amount: $#{format_amount(@data[:amount])}"
     br
 
   - else
     - include_amount_field = false
-    - if @embed.suggested_amounts.present?
-      - for amount in @embed.suggested_amounts
+    - if @data[:suggested_amounts].present?
+      - for amount in @data[:suggested_amounts]
         - if amount > 0
           = radio_button_tag :chosen_amount, amount
           =<> amount
@@ -79,37 +60,38 @@ form id="step1_form" onsubmit="return handleStep1()"
       input id="step1Amount" type="text" name="entered_amount" value=""
       br
 
-  - if @embed.recurrence_enabled
-    - for option in @embed.recurrence_options
+  - if @data[:recurrence_options].present?
+    - for option in @data[:recurrence_options]
       = radio_button_tag :recurrence, option[:value].to_s, option[:checked]
       =<> option[:label]
       |&nbsp;
       = " "
     br
 
-  - if @embed.mailing_list_enabled
+  - if @data[:mailing_list_enabled]
     => "Join Mailing List:"
     input type="checkbox" name="mailing_list" value="join"
     br
 
-  - if @embed.capture_memo
+  - if @data[:capture_memo]
     => "Memo:"
     input type="text" name="memo"
     br
 
-  - if @assigned_offer.present?
+  - assigned_offer = @data[:assigned_offer]
+  - if assigned_offer.present?
     / when offer is passed in as a param
-    = hidden_field_tag :assigned_offer_uuid, @assigned_offer.uuid
-    |Reward: #{@assigned_offer.label}
+    = hidden_field_tag :assigned_offer_uuid, assigned_offer[:uuid]
+    |Reward: #{assigned_offer[:label]}
     br
 
   - else
-    - if @embed.present_offers
+    - if campaign[:offers].present?
       |Choose a reward:
       br
-      - for offer in @embed.offers
-        = radio_button_tag :chosen_offer_uuid, offer.uuid
-        =<> offer.label
+      - for offer in campaign[:offers]
+        = radio_button_tag :chosen_offer_uuid, offer[:uuid]
+        =<> offer[:label]
         /|&nbsp;
         /= " "
         br

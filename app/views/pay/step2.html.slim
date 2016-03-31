@@ -12,6 +12,7 @@ br
   |Recurring:
   b
     =< @transaction.recurrence_display
+  br
 - offer = @transaction.resolve_offer
 - if offer
   |Reward: #{offer.name}

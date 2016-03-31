@@ -89,6 +89,7 @@ gem 'simple_form'
 # not compatible w/ rails 4
 # gem 'merchant_samples', :git => "https://github.com/paypal/merchant-sdk-ruby.git", :group => :development
 
+gem 'rest-client'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -104,6 +105,7 @@ group :development do
   gem 'web-console', '~> 2.0'
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+  #todo: shouldn't we rip this out?  I think spring is just pure evil
   gem 'spring'
 
   gem "better_errors"

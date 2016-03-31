@@ -16,18 +16,37 @@ class PayController < ApplicationController
 
   def step1
     embed_uuid = params[:uuid]
-    @embed = Embed.resolve(embed_uuid)
+    puts "current user: #{current_user}"
 
-    @amount = amount_param(:amount) || @embed.get_data_field(:amount)
-    @description = params[:description] || @embed.get_data_field(:description)
-    @return_url = params[:return_url] || @embed.get_data_field(:return_url)
-    @correlation_id = params[:correlation_id]
+    session_data = {
+        email: session[:email],
+        authenticated_user: current_user
+    }
+    embed_params = params.permit(:amount, :description, :return_url, :correlation_id, :assigned_offer, :uuid)
+    embed_params[:session_data] = session_data
 
-    offer_uuid = params[:offer]
-    if offer_uuid
-      puts "passed in offer uuid: #{offer_uuid}"
-      @assigned_offer = Offer.resolve(offer_uuid, required:false)
+    embed = Embed.resolve(embed_uuid)
+    @data = hashify( embed.embed_data(embed_params) )
+    puts "embed data: #{@data}"
+
+    if params[:json]
+      render json: @data
+    else
+      @data
     end
+
+    #
+    #
+    # @amount = amount_param(:amount) || @embed.get_data_field(:amount)
+    # @description = params[:description] || @embed.get_data_field(:description)
+    # @return_url = params[:return_url] || @embed.get_data_field(:return_url)
+    # @correlation_id = params[:correlation_id]
+    #
+    # offer_uuid = params[:offer]
+    # if offer_uuid
+    #   puts "passed in offer uuid: #{offer_uuid}"
+    #   @assigned_offer = Offer.resolve(offer_uuid, required:false)
+    # end
   end
 
   # def step1_post
@@ -135,5 +154,16 @@ class PayController < ApplicationController
     @embed = Embed.by_uuid(params[:uuid])
     @transaction = Transaction.by_uuid(params[:transaction_uuid])
   end
+
+  # note, this won't work in a single proc dev environment
+  # private
+  # def fetch_widget_data(embed_uuid, params)
+  #   url = "#{base_url}/api/v1/embeds/#{embed_uuid}/widget_data"
+  #   response = RestClient.get url, params: params
+  #   puts "response: #{response}"
+  #   JSON.parse(response)
+  # end
+
+
 
 end

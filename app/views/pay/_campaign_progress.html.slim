@@ -1,10 +1,10 @@
 /- campaign = @embed.campaign
 b Campaign Progress:
 br
-|$#{format_amount(campaign.financial_total,0)} of $#{format_amount(campaign.financial_goal,0)} goal
+|$#{format_amount(campaign[:financial_total],0)} of $#{format_amount(campaign[:financial_goal],0)} goal
 br
-|#{campaign.financial_pcnt}% funded
+|#{campaign[:financial_pcnt]}% funded
 br
-|Total supporters: #{campaign.supporter_total}
+|Total supporters: #{campaign[:supporter_total]}
 br
 br

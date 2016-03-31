@@ -8,7 +8,7 @@ module ApplicationHelper
 
 
 
-  def amount_param(attr)
+  def amount_param(params, attr)
     puts "amount param - params: #{params.inspect}"
     raw = params[attr]
     if raw.present?
@@ -29,10 +29,25 @@ module ApplicationHelper
   end
 
   def resolve_current_user(session_data)
-    email = session_data[:email]
-    User.find_by_email(email)  if email
+    if session_data
+      if session_data[:authenticated_user]
+        return session_data[:authenticated_user]
+      else
+        email = session_data[:email]  #todo: widget auth'd cookie support
+        return User.find_by_email(email)  if email
+      end
+    end
+    nil
   end
 
+  def resolve_current_profile(session_data)
+    user = resolve_current_user(session_data)
+    user.profile  if user
+  end
 
+  #force all object representations into hashes.  todo: does this utility already exist?
+  def hashify(obj)
+    JSON.parse(obj.to_json).with_indifferent_access
+  end
 
 end
