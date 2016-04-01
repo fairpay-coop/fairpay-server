@@ -381,19 +381,19 @@ class Embed < ActiveRecord::Base
         correlation_id: correlation_id,
         assigned_offer: Offer::Entity.represent(assigned_offer),
 
-        # #todo: remove duplicate embed fields below once widget usage migrated
-        # # session_email: session_email,
-        # campaign: Campaign::Entity.represent(campaign),
-        # payment_configs: payment_datas,
-        # uuid: uuid,
-        # name: name,
-        # suggested_amounts: suggested_amounts,
-        # currency_format: currency_format,
-        # mailing_list_enabled: mailing_list_enabled,
-        # capture_memo: capture_memo,
-        # consider_this: consider_this,
-        # allocation_options: fee_allocation_options(nil),
-        # recurrence_options: recurrence_options
+        #todo: remove duplicate embed fields below once widget usage migrated
+        # session_email: session_email,
+        campaign: Campaign::Entity.represent(campaign),
+        payment_configs: payment_datas,
+        uuid: uuid,
+        name: name,
+        suggested_amounts: suggested_amounts,
+        currency_format: currency_format,
+        mailing_list_enabled: mailing_list_enabled,
+        capture_memo: capture_memo,
+        consider_this: consider_this,
+        allocation_options: fee_allocation_options(nil),
+        recurrence_options: recurrence_options
     }
     result
   end
