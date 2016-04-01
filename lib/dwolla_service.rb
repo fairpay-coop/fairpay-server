@@ -324,7 +324,7 @@ class DwollaService  < BasePaymentService
 
       # currently duplicated with base widget data
       current_user = resolve_current_user(session_data)
-      if current_user && current_user.email == @transaction.payor.email
+      if current_user && current_user.email == transaction.payor.email
         puts "authenticated user session - stored payments available"
         profile_authenticated = true
       end

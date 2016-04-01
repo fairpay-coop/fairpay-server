@@ -1,15 +1,18 @@
 b Dwolla (e-check service)
 br
-- dwolla_service = merchant_config.payment_service
+- embed = @data[:embed]
+- transaction = @data[:transaction]
+- profile_authenticated = @data[:authenticated_profile].present?
+/- dwolla_service = merchant_config.payment_service
 
 | Transaction Fee: $0.00
 br
-- unless dwolla_service.has_dwolla_auth(@transaction)
-  - if merchant_config.get_data_field(:flow) == 'prompt_existing'
+- unless payment_config[:has_dwolla_auth]
+  - if payment_config[:dwolla_flow] == 'prompt_existing'
     form id="dwolla_user_form"
       = hidden_field_tag :authenticity_token, form_authenticity_token
-      = hidden_field_tag :embed_uuid, @embed.uuid
-      = hidden_field_tag :transaction_uuid, @transaction.uuid
+      = hidden_field_tag :embed_uuid, embed[:uuid]
+      = hidden_field_tag :transaction_uuid, transaction[:uuid]
       /div#dwolla_prompt_existing
       |Are you an existing Dwolla user?
       br
@@ -20,31 +23,31 @@ br
       = " No"
       br
       div id="dwolla_auth" style="display: none;"
-        = link_to "Provide Dwolla Authorization", "/dwolla/auth?t=#{@transaction.uuid}"
+        = link_to "Provide Dwolla Authorization", "/dwolla/auth?t=#{transaction[:uuid]}"
         br
       div id="dwolla_send_more_info" style="display: none;"
         input type="checkbox" name="send_dwolla_info" value="true"
         =< "Send me more information by email about the Dwolla e-check service which can be used to avoid credit card fees in the future."
         br
   - else
-    = link_to "authorize", "/dwolla/auth?t=#{@transaction.uuid}"
+    = link_to "authorize", "/dwolla/auth?t=#{transaction[:uuid]}"
     br
 
 - else
-    - if @profile_authenticated || @dwolla_authenticated
+    - if profile_authenticated || payment_config[:dwolla_authenticated]
       /= link_to "confirm payment w/ default funding source", "/pay/#{@embed.uuid}/pay_via_dwolla/#{@transaction.uuid}"
-      form id="dwolla_form" method="post" action="/pay/#{@embed.uuid}/step2" onsubmit="return validateDwollaForm()"
+      form id="dwolla_form" method="post" action="/pay/#{embed[:uuid]}/step2" onsubmit="return validateDwollaForm()"
         = hidden_field_tag :authenticity_token, form_authenticity_token
-        = hidden_field_tag :embed_uuid, @embed.uuid
-        = hidden_field_tag :transaction_uuid, @transaction.uuid
+        = hidden_field_tag :embed_uuid, embed[:uuid]
+        = hidden_field_tag :transaction_uuid, transaction[:uuid]
         = hidden_field_tag :payment_type, 'dwolla'
-        = hidden_field_tag :amount, @transaction.base_amount
+        = hidden_field_tag :amount, transaction[:base_amount]
         |Dwolla Funding Source:
         br
-        - funding_sources = dwolla_service.funding_sources(@transaction)
+        /- funding_sources = dwolla_service.funding_sources(@transaction)
         /  ##in @transaction.payor.dwolla_token.funding_sources(@transaction.base_amount)
-        - for option in funding_sources
-          = radio_button_tag :funding_source_id, option[:id], option[:selected]
+        - for option in payment_config[:funding_sources]
+          = radio_button_tag :funding_source_id, option[:id], option[:default]
           = " " + option[:name]
           br
         input type="submit" value="Pay with Dwolla"

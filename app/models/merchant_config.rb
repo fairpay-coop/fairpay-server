@@ -100,6 +100,8 @@ class MerchantConfig < ActiveRecord::Base
   def widget_data(transaction, session_data)
     result = payment_service.widget_data(transaction, session_data)
     result[:kind] = kind
+    result[:kind_name] = kind_name
+    result[:form_name] = form_name
     result[:internal_name] = internal_name
     result
   end

@@ -1,9 +1,10 @@
+- embed = @data[:embed]
 
-h1.title = @data[:name]
+h1.title = embed[:name]
 
 br
 
-- campaign = @data[:campaign]
+- campaign = embed[:campaign]
 - if campaign.present?
   = render 'pay/campaign_progress', campaign: campaign
 
@@ -13,7 +14,7 @@ div id="errorMessage" style="display: none;"
 form id="step1_form" onsubmit="return handleStep1()"
 
   = hidden_field_tag :authenticity_token, form_authenticity_token
-  = hidden_field_tag :embed_uuid, @data[:uuid]
+  = hidden_field_tag :embed_uuid, embed[:uuid]
 
   - profile = @data[:authenticated_profile] || {}
   /- if profile
@@ -42,8 +43,8 @@ form id="step1_form" onsubmit="return handleStep1()"
 
   - else
     - include_amount_field = false
-    - if @data[:suggested_amounts].present?
-      - for amount in @data[:suggested_amounts]
+    - if embed[:suggested_amounts].present?
+      - for amount in embed[:suggested_amounts]
         - if amount > 0
           = radio_button_tag :chosen_amount, amount
           =<> amount
@@ -60,20 +61,20 @@ form id="step1_form" onsubmit="return handleStep1()"
       input id="step1Amount" type="text" name="entered_amount" value=""
       br
 
-  - if @data[:recurrence_options].present?
-    - for option in @data[:recurrence_options]
+  - if embed[:recurrence_options].present?
+    - for option in embed[:recurrence_options]
       = radio_button_tag :recurrence, option[:value].to_s, option[:checked]
       =<> option[:label]
       |&nbsp;
       = " "
     br
 
-  - if @data[:mailing_list_enabled]
+  - if embed[:mailing_list_enabled]
     => "Join Mailing List:"
     input type="checkbox" name="mailing_list" value="join"
     br
 
-  - if @data[:capture_memo]
+  - if embed[:capture_memo]
     => "Memo:"
     input type="text" name="memo"
     br

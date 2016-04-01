@@ -63,6 +63,12 @@ class Transaction < ActiveRecord::Base
   #   payment_source = payor.payment_source_for_type(payment_type, autocreate: true)
   # end
 
+  #todo: automatically expose attributes via concern
+  def memo
+    get_data_field(:memo)
+  end
+
+
   def amount
     paid_amount || base_amount
   end
@@ -105,7 +111,7 @@ class Transaction < ActiveRecord::Base
   end
 
   def payment_type_display
-    payment_service_for_type(payment_type).payment_type_display
+    payment_service_for_type(payment_type).payment_type_display  if payment_type
   end
 
   def perform_payment(params = {})
@@ -203,6 +209,10 @@ class Transaction < ActiveRecord::Base
 
   def fee_allocation_label_merchant
     embed.fee_allocation_label_merchant(fee_allocation, self)
+  end
+
+  def fee_allocation_options
+    embed.fee_allocation_options(self)
   end
 
   def async_completion
@@ -344,30 +354,50 @@ class Transaction < ActiveRecord::Base
     # todo: think about this once devise auth integrated into widget
     # cookies[:current_url] = transaction.step2_url
 
-    payment_configs = embed.payment_configs.map do |merchant_config|
-      merchant_config.payment_service.widget_data(self, session_data)
-    end
+    # payment_configs = embed.payment_configs.map do |merchant_config|
+    #   merchant_config.payment_service.widget_data(self, session_data)
+    # end
 
     result = {
         transaction: Transaction::Entity.represent(self),
-        # dwolla_authenticated: dwolla_authenticated,
+        embed: Embed::Entity.represent(embed),  # note, not strictly needed by widget, but convenient for simple form flow
         authenticated_profile: Profile::Entity.represent(authenticated_profile),
-        payment_configs: payment_configs
+        payment_configs: embed.payment_configs_data(self, session_data),
     }
-    # if profile_authenticated
-    #   result[:authenticated_profile] = current_user.profile
-    # end
 
   end
-
 
   def entity
     Entity.new(self)
   end
 
   class Entity < Grape::Entity
-    expose :uuid, :kind, :status, :base_amount, :description, :fee_allocation, :offer_id, :recurrence
+    expose :uuid, :kind, :status, :base_amount, :paid_amount, :description, :offer_id, :recurrence, :recurrence_display
+    expose :fee_allocation, :fee_allocation_label
+    expose :fee_allocation_options
     expose :payee, using: Profile::Entity
+    expose :payor, using: Profile::Entity
+    expose :resolve_offer, using: Offer::Entity, as: :offer
+    # used by 'thanks' view
+    expose :payment_type_display
+    expose :memo, :estimated_fee
+    expose :resolve_return_url, as: :return_url
+    expose :recurring_payment, using: RecurringPayment::Entity
+
+    #todo: figure out better way to automatically represent decimal values as json numbers
+    def base_amount
+      object.base_amount.to_f
+    end
+    def paid_amount
+      object.paid_amount.to_f
+    end
+    def estimated_fee
+      object.estimated_fee.to_f
+    end
+    # def paid_amount
+    #   object.paid_amount.to_f
+    # end
+
   end
 
 

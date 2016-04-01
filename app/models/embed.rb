@@ -13,7 +13,7 @@ class Embed < ActiveRecord::Base
   #   t.string :internal_namae
   # add_column :embeds, :disabled, :boolean, default: false, null: false  #todo: replace this with a 'status'?
 
-  belongs_to :profile
+  belongs_to :profile   # perhaps rename this to payee
   belongs_to :campaign
 
   after_initialize :assign_uuid
@@ -154,8 +154,18 @@ class Embed < ActiveRecord::Base
     end
   end
 
+  #todo: automatically expose attributes via concern
+
   def suggested_amounts
     get_data_field(:suggested_amounts)
+  end
+
+  def consider_this
+    get_data_field(:consider_this)
+  end
+
+  def payee
+    profile
   end
 
   def currency_format
@@ -322,18 +332,28 @@ class Embed < ActiveRecord::Base
     Entity.new(self)
   end
 
+  #todo: refactor most of the embed data into the entity mapping and nest an 'embed' instance into the embed_data api result
   class Entity < Grape::Entity
-    expose :name, :financial_total, :supporter_total, :financial_goal, :financial_pcnt
-    expose :offers, using: Offer::Entity
+    expose :uuid, :name, :suggested_amounts, :currency_format, :mailing_list_enabled, :capture_memo, :consider_this, :recurrence_options, :fee_allocation_options
+    # expose :payment_configs_data, as: :payment_configs
+    expose :campaign, using: Campaign::Entity
+    expose :payee, using: Profile::Entity
+
+    # expose :offers, using: Offer::Entity
   end
 
+  def payment_configs_data(transaction = nil, session_data = nil)
+    payment_configs.map do |merchant_config|
+      merchant_config.widget_data(transaction, session_data)
+    end
+  end
 
   def embed_data(params = {})
-    payment_datas = payment_configs.map do |merchant_config|
-      merchant_config.widget_data(nil, nil)
-    end
-
-    authenticated_profile = resolve_current_profile(params[:session_data])
+    # payment_datas = payment_configs.map do |merchant_config|
+    #   merchant_config.widget_data(nil, nil)
+    # end
+    session_data = params[:session_data]
+    authenticated_profile = resolve_current_profile(session_data)
 
     amount = amount_param(params, :amount) || get_data_field(:amount)
     description = params[:description] || get_data_field(:description)
@@ -341,36 +361,40 @@ class Embed < ActiveRecord::Base
     correlation_id = params[:correlation_id]
 
     offer_uuid = params[:offer]
+    puts "offer_uuid: #{offer_uuid}"
     if offer_uuid
       puts "passed in offer uuid: #{offer_uuid}"
       assigned_offer = Offer.resolve(offer_uuid, required:false)
+    else
+      assigned_offer = nil
     end
 
     email = params[:email]
 
     result = {
-        # session_email: session_email,
-        uuid: uuid,
-        name: name,
-        suggested_amounts: suggested_amounts,
-        currency_format: currency_format,
-        payment_configs: payment_datas,
-        description: get_data_field(:description),
-        campaign: Campaign::Entity.represent(campaign),
-        mailing_list_enabled: mailing_list_enabled,
-        capture_memo: capture_memo,
-        allocation_options: fee_allocation_options(nil),
-        consider_this: get_data_field(:consider_this),
+        embed: Embed::Entity.represent(self),
         authenticated_profile: Profile::Entity.represent(authenticated_profile),
+        payment_configs: payment_configs_data(nil, session_data),
         amount: amount,
         description: description,
         return_url: return_url,
-        correlation_id: correlation_id
+        correlation_id: correlation_id,
+        assigned_offer: Offer::Entity.represent(assigned_offer),
+
+        # #todo: remove duplicate embed fields below once widget usage migrated
+        # # session_email: session_email,
+        # campaign: Campaign::Entity.represent(campaign),
+        # payment_configs: payment_datas,
+        # uuid: uuid,
+        # name: name,
+        # suggested_amounts: suggested_amounts,
+        # currency_format: currency_format,
+        # mailing_list_enabled: mailing_list_enabled,
+        # capture_memo: capture_memo,
+        # consider_this: consider_this,
+        # allocation_options: fee_allocation_options(nil),
+        # recurrence_options: recurrence_options
     }
-    if recurrence_enabled
-      result[:recurrence_options] = recurrence_options
-      # option[:value], option[:label]
-    end
     result
   end
 

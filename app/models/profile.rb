@@ -90,13 +90,16 @@ class Profile < ActiveRecord::Base
     words.last
   end
 
+  def has_user
+    user.present?
+  end
 
   def entity
     Entity.new(self)
   end
 
   class Entity < Grape::Entity
-    expose :name, :email, :phone
+    expose :name, :email, :phone, :has_user
   end
 
 end

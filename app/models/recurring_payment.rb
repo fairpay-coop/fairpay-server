@@ -136,4 +136,25 @@ class RecurringPayment < ActiveRecord::Base
     RecurringPayment.where("status = 'active' and next_date <= ?", Date.today)
   end
 
+
+  def entity
+    Entity.new(self)
+  end
+
+
+  #   t.string :uuid, index: true
+  #   t.string :status
+  #   t.references :master_transaction
+  #   t.integer :interval_count
+  #   t.string :interval_units
+  #   t.date :expires_date
+  #   t.date :next_date
+  #   t.json :data
+  #   t.timestamps null: false
+
+  class Entity < Grape::Entity
+    expose :uuid, :status, :interval_count, :interval_units, :interval_display
+    expose :next_date
+    expose :status_url
+  end
 end

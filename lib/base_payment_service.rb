@@ -68,15 +68,15 @@ class BasePaymentService
   end
 
 
-    def widget_data(transaction)
-      result = {
-          # kind: kind,
-          label: payment_type_display,
-          fee_update_enabled: fee_service.fee_update_enabled,
-          supports_saved_payment_source: supports_saved_payment_source,
-      }
-      result[:card_fee_str] = card_fee_str(transaction)  if transaction
-      result
+  def widget_data(transaction)
+    result = {
+        # kind: kind,
+        label: payment_type_display,
+        fee_update_enabled: fee_service.fee_update_enabled,
+        supports_saved_payment_source: supports_saved_payment_source,
+    }
+    result[:card_fee_str] = card_fee_str(transaction)  if transaction
+    result
   end
 
 

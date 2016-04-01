@@ -1,9 +1,14 @@
 script src="http://code.jquery.com/jquery-1.11.3.min.js"
+- embed = @data[:embed]
+- transaction = @data[:transaction]
+- profile_authenticated = @data[:authenticated_profile].present?
+- saved_payment_source = payment_config[:saved_payment_source]
 
-b Debit/Credit Card (#{merchant_config.kind_name})
+b Debit/Credit Card (#{payment_config[:kind_name]})
 br
-- payment_service = merchant_config.payment_service
-- card_fee_str = payment_service.card_fee_str(@transaction)
+/- payment_service = merchant_config.payment_service
+/- card_fee_str = payment_service.card_fee_str(@transaction)
+- card_fee_str = payment_config[:card_fee_str]
 | Transaction Fee:
 div id="fee_info"
   | #{card_fee_str}
@@ -13,20 +18,20 @@ div id="errorMessage"
 form id="card_form"
   /method="post" action="/pay/#{@embed.uuid}/step2"
   = hidden_field_tag :authenticity_token, form_authenticity_token
-  = hidden_field_tag :embed_uuid, @embed.uuid
-  = hidden_field_tag :transaction_uuid, @transaction.uuid
+  = hidden_field_tag :embed_uuid, embed[:uuid]
+  = hidden_field_tag :transaction_uuid, transaction[:uuid]
   /= hidden_field_tag :merchant_config_id, merchant_config.id
-  = hidden_field_tag :payment_type, merchant_config.kind
+  = hidden_field_tag :payment_type, payment_config[:kind]
   /= hidden_field_tag :amount, @transaction.amount
-  input type="hidden" id="amount" name="amount" value="#{@transaction.base_amount}"
+  input type="hidden" id="amount" name="amount" value="#{transaction[:base_amount]}"
   /todo: better way to pass server rendered values into js logic?
   input type="hidden" id="default_fee_info" value="#{card_fee_str}"
-  input type="hidden" id="fee_update_enabled" value="#{merchant_config.fee_update_enabled}"
+  input type="hidden" id="fee_update_enabled" value="#{payment_config[:fee_update_enabled]}"
 
-  - payment_source = payment_service.saved_payment_source(@transaction, autocreate:false)
-  - if payment_source&.get_data_field(:description)
-    - if @profile_authenticated
-      | Use saved payment info? #{payment_source.get_data_field(:description)}
+  /- payment_source = payment_service.saved_payment_source(@transaction, autocreate:false)
+  - if saved_payment_source
+    - if profile_authenticated
+      | Use saved payment info? #{saved_payment_source[:description]}
       = " "
       /input type="checkbox" name="payment_source" value="#{payment_source.id}" checked="true"
       input type="checkbox" id="use_payment_source_checkbox" name="use_payment_source" value="true" checked="true"
@@ -52,7 +57,7 @@ form id="card_form"
     |Billing Zip:
     input type="text" name="billing_zip" value=""
     br
-    - if payment_service.supports_saved_payment_source
+    - if payment_config[:supports_saved_payment_source]
       input type="checkbox" name="save_payment_info" value="true"
       =< "Securely save payment infomation for fast future payments."
       br

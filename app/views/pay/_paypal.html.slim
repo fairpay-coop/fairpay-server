@@ -1,6 +1,9 @@
 b PayPal
 br
-| Transaction Fee: #{merchant_config.card_fee_str(@transaction)}
+- embed = @data[:embed]
+- transaction = @data[:transaction]
+
+| Transaction Fee: #{payment_config[:card_fee_str]}
 br
-= link_to "Pay via PayPal", "/paypal/checkout?t=#{@transaction.uuid}"
+= link_to "Pay via PayPal", "/paypal/checkout?t=#{transaction[:uuid]}"
 

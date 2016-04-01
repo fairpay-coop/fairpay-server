@@ -1,27 +1,29 @@
+- transaction = @data[:transaction]
+- embed = @data[:embed]
 
-h1.title = @embed.name
+h1.title = embed[:name]
 / - Step 2"
 
-= render 'payor_payee', transaction: @transaction
+= render 'payor_payee', transaction: transaction
 /|Payee: #{@transaction.payee.name}
 /br
 
-|Amount: #{@transaction.base_amount}
+|Amount: #{transaction[:base_amount]}
 br
-- if @transaction.recurrence
+- if transaction[:recurrence]
   |Recurring:
   b
-    =< @transaction.recurrence_display
+    =< transaction[:recurrence_display]
   br
-- offer = @transaction.resolve_offer
+- offer = transaction[:offer]
 - if offer
-  |Reward: #{offer.name}
+  |Reward: #{offer[:name]}
   br
 
 br
 |Fees paid by:
 br
-- allocation_options = @embed.fee_allocation_options(@transaction)
+- allocation_options = transaction[:fee_allocation_options]
 - if allocation_options.size == 1
     = allocation_options.first[:label]
     br
@@ -29,8 +31,8 @@ br
   form id="fee_allocation_form"
     /note: auth token not currently used
     = hidden_field_tag :authenticity_token, form_authenticity_token
-    = hidden_field_tag :embed_uuid, @embed.uuid
-    = hidden_field_tag :transaction_uuid, @transaction.uuid
+    = hidden_field_tag :embed_uuid, embed[:uuid]
+    = hidden_field_tag :transaction_uuid, transaction[:uuid]
 
     - for option in allocation_options
       |&nbsp;
@@ -41,15 +43,15 @@ br
     /|&nbsp;
     /= " "
 
-- consider_this = @embed.get_data_field(:consider_this)
+- consider_this = embed[:consider_this]
 - if consider_this
   | Consider this: #{consider_this}
   br
 
 hr
 
-- for merchant_config in @embed.payment_configs
-  = render merchant_config.form_name, merchant_config: merchant_config
+- for payment_config in @data[:payment_configs]
+  = render payment_config[:form_name], payment_config: payment_config, data: @data
   hr
 
 
