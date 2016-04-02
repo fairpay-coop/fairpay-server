@@ -47,6 +47,12 @@ class Transaction < ActiveRecord::Base
   belongs_to :parent, class_name: 'Transaction'
 
 
+  attr_data_field :memo
+  attr_data_field :offer_uuid
+  attr_data_field :return_url
+  attr_data_field :correlation_id
+
+
   after_initialize :assign_uuid
 
   # todo: factor to ActiveRecord::Base
@@ -64,9 +70,9 @@ class Transaction < ActiveRecord::Base
   # end
 
   #todo: automatically expose attributes via concern
-  def memo
-    get_data_field(:memo)
-  end
+  # def memo
+  #   get_data_field(:memo)
+  # end
 
 
   def amount
@@ -173,25 +179,26 @@ class Transaction < ActiveRecord::Base
   end
 
   def resolve_offer
-    offer_uuid = get_data_field(:offer_uuid)
-    if offer_uuid.present?
-      puts "selected offer: #{offer_uuid}"
-      Offer.resolve(offer_uuid)
+    # offer_uuid = get_data_field(:offer_uuid)
+    offer_uuid_val = offer_uuid
+    if offer_uuid_val.present?
+      puts "selected offer: #{offer_uuid_val}"
+      Offer.resolve(offer_uuid_val)
     else
       nil
     end
   end
 
   def resolve_return_url
-    result = get_data_field(:return_url) || embed.get_data_field(:return_url)
-    correlation_id = get_data_field(:correlation_id)
-    if result.present? && correlation_id.present?
+    result = return_url || embed.return_url
+    correlation_id_val = correlation_id
+    if result.present? && correlation_id_val.present?
       if result.include?('?')
         result += "&"
       else
         result += "?"
       end
-      result += "correlation_id=#{correlation_id}"
+      result += "correlation_id=#{correlation_id_val}"
     end
     result
   end

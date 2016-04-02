@@ -16,6 +16,19 @@ class Embed < ActiveRecord::Base
   belongs_to :profile   # perhaps rename this to payee
   belongs_to :campaign
 
+  attr_data_field :payment_types
+  attr_data_field :mailing_list
+  attr_data_field :recurrence #todo: rename to recurrences
+  attr_data_field :suggested_amounts
+  attr_data_field :fee_allocations
+  attr_data_field :capture_memo
+  attr_data_field :consider_this
+  attr_data_field :amount
+  attr_data_field :description
+  attr_data_field :return_url
+
+
+
   after_initialize :assign_uuid
 
 
@@ -23,12 +36,13 @@ class Embed < ActiveRecord::Base
     name || ("#{profile&.display_name} (#{uuid})")
   end
 
+  # note, removing the default to all available merchant types. want to force that to be explicit
   # returns list of names of merchant config type to display for the embed
   # either honor a specific embed param, or default to all available merchant configs
-  def payment_types
-    get_data_field(:payment_types) || all_payment_configs.map(&:kind)
-    # todo: add validation that merchant configs exist when specific list given
-  end
+  # def payment_types
+  #   get_data_field(:payment_types) || all_payment_configs.map(&:kind)
+  #   # todo: add validation that merchant configs exist when specific list given
+  # end
 
   def all_merchant_configs
     profile.merchant_configs
@@ -117,7 +131,7 @@ class Embed < ActiveRecord::Base
     #   nil
     # end
 
-    mailing_list_data = get_data_field(:mailing_list)
+    mailing_list_data = mailing_list
     if mailing_list_data.is_a?(Hash)
       identifier = mailing_list_data['type']
     else
@@ -140,14 +154,14 @@ class Embed < ActiveRecord::Base
 
   def recurrence_enabled
     #todo: rename this field to 'recurrences' since it's a list?
-    get_data_field(:recurrence).present?
+    recurrence.present?
   end
 
   RECURRENCE_LABELS = {none: "One Time", month: "Monthly", year: "Yearly"}
 
   def recurrence_options
     [[:none, "One Time"], [:month, "Monthly"], [:year, "Yearly"]]
-    values = get_data_field(:recurrence)
+    values = recurrence
     values.map do |value|
       checked = (value.to_sym == :none)  #todo: make this configurable?
       { value: value, label: RECURRENCE_LABELS[value.to_sym], checked: checked }
@@ -156,13 +170,13 @@ class Embed < ActiveRecord::Base
 
   #todo: automatically expose attributes via concern
 
-  def suggested_amounts
-    get_data_field(:suggested_amounts)
-  end
-
-  def consider_this
-    get_data_field(:consider_this)
-  end
+  # def suggested_amounts
+  #   get_data_field(:suggested_amounts)
+  # end
+  #
+  # def consider_this
+  #   get_data_field(:consider_this)
+  # end
 
   def payee
     profile
@@ -174,14 +188,14 @@ class Embed < ActiveRecord::Base
 
   FEE_ALLOCATION_VALUES = [:payee, :split, :payor]
 
-  def fee_allocations
-    result = get_data_field(:fee_allocations)
+  def resolve_fee_allocations
+    result = fee_allocations
     result = [:payee]  unless result.present?
     result
   end
 
   def fee_allocation_options(transaction = nil)
-    values = fee_allocations
+    values = resolve_fee_allocations
     selected = transaction ? transaction.fee_allocation : values.first
     values.map do |value|
       checked = (value == selected)
@@ -228,9 +242,9 @@ class Embed < ActiveRecord::Base
     end
   end
 
-  def capture_memo
-    get_data_field(:capture_memo)  #todo better handling of json attrs
-  end
+  # def capture_memo
+  #   get_data_field(:capture_memo)  #todo better handling of json attrs
+  # end
 
   #todo: data driven recurrence choices
 
@@ -258,7 +272,7 @@ class Embed < ActiveRecord::Base
       name = email  unless name.present?  # don't require 'name' as the api level, default to email
       payor = Profile.create!(email: email, name: name)
     end
-    fee_allocation = fee_allocations.first
+    fee_allocation = resolve_fee_allocations.first
 
     offer = Offer.resolve(offer_uuid, required:false)
 
@@ -384,7 +398,6 @@ class Embed < ActiveRecord::Base
         #todo: remove duplicate embed fields below once widget usage migrated
         # session_email: session_email,
         campaign: Campaign::Entity.represent(campaign),
-        payment_configs: payment_datas,
         uuid: uuid,
         name: name,
         suggested_amounts: suggested_amounts,

@@ -5,6 +5,28 @@ module DataFieldable
   extend ActiveSupport::Concern
 
 
+  module ClassMethods
+
+    #
+    # define convenience methods for assigning and fetching the named attribute
+    #
+    # equivalent to:
+    #
+    # def foo
+    #   get_translation('foo')
+    # end
+    #
+    # def foo=(text)
+    #   set_translation('foo', text)
+    # end
+
+    def attr_data_field(attribute) #todo: options, perhaps data type coercion?
+      define_method(attribute) { get_data_field(attribute) }
+      define_method("#{attribute}=") { |text| set_data_field(attribute, text) }
+    end
+  end
+
+
   def ensured_data
     self.data ||= {}
     self.data #.with_indifferent_access - this was breaking persistence
@@ -16,7 +38,7 @@ module DataFieldable
 
 
   def get_data_field(name)
-    ensured_data.with_indifferent_access[name]
+    ensured_data.with_indifferent_access[name]   # todo: make this more efficient, memoize the indifferent access hash?
   end
 
   def set_data_field(name, value)
