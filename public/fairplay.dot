@@ -65,22 +65,37 @@
 
         <div class="fpPane">
             <div class="fpPayment-types">
-                <span class="fpLabel">Pay with:</span>
-                {{~it.payment_configs :val:idx}}
-                <input type="radio" id="fp_paymentType_{{=val.kind}}" name="fpPaymentType" value="{{=val.kind}}" class="fpButton"/>
-                <label for="fp_paymentType_{{=val.kind}}" class="fpButton">{{=val.label}}</label>
-            {{~}}
+                <!--<div class="fpPayment-types-list">-->
+                    {{~it.payment_configs :val:idx}}
+                    <div class="fpPayment-type">
+                        <input type="radio" id="fp_paymentType_{{=val.kind}}" name="fpPaymentType" value="{{=val.kind}}" class="fpButton"/>
+                        <label for="fp_paymentType_{{=val.kind}}" class="fpButton">{{=val.label}}</label>
+                        <span class="fpPayment-fees" id="fp_paymentFees_{{=val.kind}}">sfsdfdsfsd</span>
+                    </div>
+
+                    {{~}}
+                <!--</div>-->
             </div>
-            <div id="fees_container">
-                <span class="fpLabel">Fees:</span>
-                <span id="fees">$0</span>
-            </div>
+
             <div class="fpPayment-panes">
-                <div id="fpPayment-pane-braintree" class="fpPayment-pane">
-                    <h1>braintree</h1>
+                <div id="fpPayment-pane-authorizenet" class="fpPayment-pane">
+                    <label class="fpLabel" for="fpCardNumber">Card Number</label>
+                    <input id="fpCardNumber" class="fpInput fpMax-input fpAuthorizenet" placeholder="Card Number" pattern="[0-9]{13,16}" required value="1111111111111111"/>
+
+                    <label class="fpLabel" for="fpCardExp">Card Exp (mmyy)</label>
+                    <input id="fpCardExp" class="fpInput fpMax-input fpAuthorizenet" placeholder="Expiration" pattern="[0-9]{4}" required value="1111"/>
+
+                    <label class="fpLabel" for="fpCardCVV">Card CVV</label>
+                    <input id="fpCardCVV" class="fpInput fpMax-input fpAuthorizenet" placeholder="CVV"  pattern="[0-9]{3,4}" required value="111"/>
+
+                    <label class="fpLabel" for="fpCardZip">Billing Zip</label>
+                    <input id="fpCardZip" class="fpInput fpMax-input fpAuthorizenet" placeholder="Billing Zip"  pattern="[0-9]{5}" required value="1111"/>
+
+                    <div class="fpBottom">
+                        <button id="fpPayWithAuthorizenet" class="fpButton fpContinue">Pay</button>
+                    </div>
                 </div>
                 <div id="fpPayment-pane-dwolla" class="fpPayment-pane">
-                    <h1>dwolla</h1>
                     <div id="fpDowlla-pane-authorize" class="fpDwolla-pane">
                         <button id="fpDowlla-authorize" class="fpButton">Authorize with Dwolla</button>
                     </div>

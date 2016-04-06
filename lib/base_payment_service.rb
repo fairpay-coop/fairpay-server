@@ -1,4 +1,3 @@
-
 class BasePaymentService
   include ApplicationHelper
 
@@ -43,7 +42,7 @@ class BasePaymentService
       card = params[:card_number]
       bin = (card && card.length >= 6) ? card[0..5] : nil
     else
-      saved = saved_payment_source(transaction, autocreate:false)
+      saved = saved_payment_source(transaction, autocreate: false)
       if saved
         bin = saved.get_data_field(:bin)
       end
@@ -70,12 +69,12 @@ class BasePaymentService
 
   def widget_data(transaction)
     result = {
-        # kind: kind,
+        kind: payment_type,
         label: payment_type_display,
         fee_update_enabled: fee_service.fee_update_enabled,
         supports_saved_payment_source: supports_saved_payment_source,
     }
-    result[:card_fee_str] = card_fee_str(transaction)  if transaction
+    result[:card_fee_str] = card_fee_str(transaction) if transaction
     result
   end
 

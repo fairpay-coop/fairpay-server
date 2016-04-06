@@ -79,6 +79,9 @@ class PaypalService < BasePaymentService
     'PayPal'
   end
 
+  def payment_type
+    :paypal
+  end
 
 
   def handle_payment(transaction, params)

@@ -167,8 +167,12 @@ label.fpButton {
     width:40px;
     height:17px;
     position:relative;
+}
+
+.fpAmount label.fpButton {
     display: inline-block;
 }
+
 
 label:hover.fpButton {
     background: grey;
@@ -180,15 +184,31 @@ label:hover.fpButton {
 */
 
 .fpPayment-types {
+    margin: 15px;
     background-color: beige;
 }
 
 .fpPayment-types label.fpButton {
-    text-align: center;
-    width:auto;
+    text-align: left;
+    width: auto;
+    display: inline-block;
 }
 
+.fpPayment-fees {
+    display: inline-block;
+    width: auto;
+}
 
 .fpDwolla-pane{
     text-align: center;
+}
+
+.fpPayment-panes {
+    margin: 15px;
+    background-color: aliceblue;
+}
+
+
+#fees_container {
+    background-color: #555555;
 }

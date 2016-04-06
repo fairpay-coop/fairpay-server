@@ -305,6 +305,9 @@ class DwollaService  < BasePaymentService
   #   0.0
   # end
 
+  def payment_type
+    :dwolla
+  end
 
   def payment_type_display
     #'Dwolla'

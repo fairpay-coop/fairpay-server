@@ -378,9 +378,12 @@
                             const state = JSON.parse(data).result;
                             store = Object.assign(store, {state});
                             tabsStatus['fpTab_2'] = 'enabled';
+                            updateCurrentPayment(store);
+                            updateFees(store);
+                            updateDwolla(store);
                             togglePane(tabs, panes, 2);
-                        })
-                        .catch((error) => console.log(`error:${error}`));
+                        });
+                        // .catch((error) => console.log(`error:${error}`));
                 });
 
 
@@ -394,27 +397,55 @@
                 paymentTypeButtons[0].checked = true;
                 paymentTypeButtons.forEach((button) => {
                     button.addEventListener('click', (evt) => {
-                        updateCurrentPayment(store.config);
+                        updateCurrentPayment(store);
                     })
                 });
-                updateCurrentPayment(store.config);
-
 
                 // Dwolla
                 setupDwolla(store);
-                updateDwolla(store.state);
-
-
+                // updateDwolla(store);
 
                 // Paypal
-                //BrainTree
+
+                // Authorize.net
+
+                // form validation
+                let authorizenetPayButton = $('#fpPayWithAuthorizenet');
+                $$('input.fpAuthorizenet').forEach(input => {
+                    input.addEventListener('input', evt => {
+                        if (evt.target.checkValidity()) {
+                            enable(authorizenetPayButton);
+                        } else {
+                            disable(authorizenetPayButton);
+                        }
+
+                        if (evt.target.id === "fpCardNumber") {
+                            const bin = evt.target.value.slice(0,6);
+                            const amount = store.state.transaction.base_amount;
+                            debugger;
+
+                            get(`${store.params['host']}/api/v1/embeds/${store.params['uuid']}/estimate_fee?bin=${bin}&amount=${amount}`)
+                                .then((data)  => {
+                                    const result = JSON.parse(data).result;
+                                    const paymentConfig = getPaymentConfig(store, 'authorizenet');
+                                    paymentConfig.card_fee_str = result.fee_str === "unknown" ? result.estimated_fee : result.fee_str;
+                                    updateFees(store);
+                                });
+                            // .catch((error) => console.log(`error:${error}`));
+                        }
+
+                    });
+                });
 
 
 
 
 
-            })
-            .catch(error => console.log(`Error in init:${error}`));
+
+
+
+            });
+            // .catch(error => console.log(`Error in init:${error}`));
     }
 
     function setupDwolla(store) {
@@ -430,22 +461,30 @@
         })
     }
 
+    function updateFees(store) {
+        store.state.payment_configs.forEach(p => {
+            $(`#fp_paymentFees_${p.kind}`).textContent = `Fees: ${p.card_fee_str}`;
+        });
+    }
 
 
-    function updateDwolla(state) {
+    function updateDwolla(store) {
         $$('.fpDwolla-pane').forEach( el => hide(el));
-
-        const dwolla_authorized = true; // SHOULD COME FROM state.transaction.something
-        if ( dwolla_authorized ) {
+        if ( getPaymentConfig(store, 'dwolla').dwolla_authenticated ) {
             show($('#fpDowlla-pane-pay'))
         } else {
             show($('#fpDowlla-pane-authorize'))
         }
     }
 
-    function updateCurrentPayment(config) {
+    function getPaymentConfig(store, paymentKind) {
+        return store.state.payment_configs
+            ? store.state.payment_configs.find(p => p.kind === paymentKind)
+            : null;
+    }
+
+    function updateCurrentPayment(store) {
         let paymentType = $('input[name=fpPaymentType]:checked').value;
-        $("#fees").textContent = config.payment_fees[paymentType];
         $$(".fpPayment-pane").forEach( el => hide(el) );
         show($(`#fpPayment-pane-${paymentType}`));
     }
