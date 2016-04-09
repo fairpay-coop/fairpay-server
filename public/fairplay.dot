@@ -80,21 +80,22 @@
             <div class="fpPayment-panes">
                 <div id="fpPayment-pane-authorizenet" class="fpPayment-pane">
                     <label class="fpLabel" for="fpCardNumber">Card Number</label>
-                    <input id="fpCardNumber" class="fpInput fpMax-input fpAuthorizenet" placeholder="Card Number" pattern="[0-9]{13,16}" required value="1111111111111111"/>
+                    <input id="fpCardNumber" class="fpInput fpMax-input fpAuthorizenet" placeholder="Card Number" pattern="[0-9]{13,16}" required value="4400668635107057"/>
 
                     <label class="fpLabel" for="fpCardExp">Card Exp (mmyy)</label>
-                    <input id="fpCardExp" class="fpInput fpMax-input fpAuthorizenet" placeholder="Expiration" pattern="[0-9]{4}" required value="1111"/>
+                    <input id="fpCardExp" class="fpInput fpMax-input fpAuthorizenet" placeholder="Expiration" pattern="[0-9]{4}" required value="0318"/>
 
                     <label class="fpLabel" for="fpCardCVV">Card CVV</label>
-                    <input id="fpCardCVV" class="fpInput fpMax-input fpAuthorizenet" placeholder="CVV"  pattern="[0-9]{3,4}" required value="111"/>
+                    <input id="fpCardCVV" class="fpInput fpMax-input fpAuthorizenet" placeholder="CVV"  pattern="[0-9]{3,4}" required value="610"/>
 
                     <label class="fpLabel" for="fpCardZip">Billing Zip</label>
-                    <input id="fpCardZip" class="fpInput fpMax-input fpAuthorizenet" placeholder="Billing Zip"  pattern="[0-9]{5}" required value="1111"/>
+                    <input id="fpCardZip" class="fpInput fpMax-input fpAuthorizenet" placeholder="Billing Zip"  pattern="[0-9]{5}" required value="94703"/>
 
                     <div class="fpBottom">
                         <button id="fpPayWithAuthorizenet" class="fpButton fpContinue">Pay</button>
                     </div>
                 </div>
+
                 <div id="fpPayment-pane-dwolla" class="fpPayment-pane">
                     <div id="fpDowlla-pane-authorize" class="fpDwolla-pane">
                         <button id="fpDowlla-authorize" class="fpButton">Authorize with Dwolla</button>

@@ -3,17 +3,18 @@
 
     var panes = [];
     var tabs = [];
-    var config;
+    var store;
+
 
     //
     // Extensions
     //
 
-    Array.prototype.last = function(){
+    Array.prototype.last = function () {
         return this[this.length - 1];
     };
 
-    Array.prototype.first = function(){
+    Array.prototype.first = function () {
         return this[0];
     };
 
@@ -61,7 +62,7 @@
         });
     }
 
-      //
+    //
     // Network op helpers
     //
 
@@ -118,27 +119,27 @@
     //
 
     function hide(el) {
-        if ( el ) el.style.display = 'none';
+        if (el) el.style.display = 'none';
     }
 
     function show(el) {
-        if ( el ) el.style.display = '';
+        if (el) el.style.display = '';
     }
 
     function addClass(el, className) {
-        if ( el ) el.classList.add(className);
+        if (el) el.classList.add(className);
     }
 
     function removeClass(el, className) {
-        if ( el ) el.classList.remove(className);
+        if (el) el.classList.remove(className);
     }
 
     function enable(el) {
-        if ( el ) el.disabled = false;
+        if (el) el.disabled = false;
     }
 
     function disable(el) {
-        if ( el ) el.disabled = true;
+        if (el) el.disabled = true;
     }
 
     //
@@ -246,11 +247,11 @@
     }
 
 
-     function getLocalData() {
-            return new Promise((resolve, reject) => {
-                xdLocalStorage.getItem('email', data => resolve({email: data.value}) );
-            });
-        }
+    function getLocalData() {
+        return new Promise((resolve, reject) => {
+            xdLocalStorage.getItem('email', data => resolve({email: data.value}));
+        });
+    }
 
 
     function init(me, params) {
@@ -269,7 +270,7 @@
                 console.log(JSON.stringify(config));
 
 
-                if ( params.amount ) {
+                if (params.amount) {
                     config = Object.assign(config, {suggested_amounts: [params.amount]})
                 }
 
@@ -285,7 +286,7 @@
                     })
                 });
 
-                let store = Object.assign({}, {config, params, localData});
+                store = Object.assign({}, {config, params, localData});
 
                 // render the template and insert it after the script tag
                 let html = render(template, store.config);
@@ -303,7 +304,7 @@
                             togglePane(tabs, panes, tab.dataset.pane);
                         }
                     });
-                    tabsStatus[tab.id] = 'disabled'; 
+                    tabsStatus[tab.id] = 'disabled';
                 });
                 tabsStatus['fpTab_0'] = 'enabled';
                 togglePane(tabs, panes, 0);
@@ -324,7 +325,7 @@
 
                 // handle amount changes
                 let amountButtons = $$('input[name=fpAmount]');
-                if (amountButtons.length > 0 ) {
+                if (amountButtons.length > 0) {
                     amountButtons[0].checked = true;
                     amountButtons.forEach((button) => {
                         button.addEventListener('click', (evt) => {
@@ -357,11 +358,11 @@
                 // handle continue
                 continueButton.addEventListener('click', (evt) => {
                     let amount = 0;
-                    if ( store.config.suggested_amounts.length == 1 ) {
+                    if (store.config.suggested_amounts.length == 1) {
                         amount = store.config.suggested_amounts[0];
                     } else {
                         amount = $('input[name=fpAmount]:checked').value;
-                        if ( amount === "other" ) {
+                        if (amount === "other") {
                             amount = $('.fpCustom-amount').value
                         }
                     }
@@ -369,21 +370,23 @@
                     let email = $('#fpEmail').value;
 
                     // store email in local storage
-                    xdLocalStorage.setItem('email', email, (data) => { console.log('email saved') });
+                    xdLocalStorage.setItem('email', email, (data) => {
+                        console.log('email saved')
+                    });
 
 
                     post(`${store.params['host']}/api/v1/embeds/${store.params['uuid']}/submit_step1`, {email, amount})
-                        .then((data)  => {
+                        .then((data) => {
                             console.log(data);
                             const state = JSON.parse(data).result;
                             store = Object.assign(store, {state});
                             tabsStatus['fpTab_2'] = 'enabled';
                             updateCurrentPayment(store);
-                            updateFees(store);
-                            updateDwolla(store);
+                            updateFees();
+                            updateDwolla();
                             togglePane(tabs, panes, 2);
                         });
-                        // .catch((error) => console.log(`error:${error}`));
+                    // .catch((error) => console.log(`error:${error}`));
                 });
 
 
@@ -397,95 +400,125 @@
                 paymentTypeButtons[0].checked = true;
                 paymentTypeButtons.forEach((button) => {
                     button.addEventListener('click', (evt) => {
-                        updateCurrentPayment(store);
+                        updateCurrentPayment();
                     })
                 });
 
                 // Dwolla
-                setupDwolla(store);
-                // updateDwolla(store);
+                setupDwolla();
+                // updateDwolla();
 
                 // Paypal
 
                 // Authorize.net
-
-                // form validation
-                let authorizenetPayButton = $('#fpPayWithAuthorizenet');
-                $$('input.fpAuthorizenet').forEach(input => {
-                    input.addEventListener('input', evt => {
-                        if (evt.target.checkValidity()) {
-                            enable(authorizenetPayButton);
-                        } else {
-                            disable(authorizenetPayButton);
-                        }
-
-                        if (evt.target.id === "fpCardNumber") {
-                            const bin = evt.target.value.slice(0,6);
-                            const amount = store.state.transaction.base_amount;
-                            debugger;
-
-                            get(`${store.params['host']}/api/v1/embeds/${store.params['uuid']}/estimate_fee?bin=${bin}&amount=${amount}`)
-                                .then((data)  => {
-                                    const result = JSON.parse(data).result;
-                                    const paymentConfig = getPaymentConfig(store, 'authorizenet');
-                                    paymentConfig.card_fee_str = result.fee_str === "unknown" ? result.estimated_fee : result.fee_str;
-                                    updateFees(store);
-                                });
-                            // .catch((error) => console.log(`error:${error}`));
-                        }
-
-                    });
-                });
-
-
-
-
-
-
-
+                setupAuthorizenet();
 
             });
-            // .catch(error => console.log(`Error in init:${error}`));
+        // .catch(error => console.log(`Error in init:${error}`));
     }
 
-    function setupDwolla(store) {
+
+    function validateForm(inputs, button) {
+        inputs.forEach( input => {
+            if (input.checkValidity()) {
+                enable(button);
+            } else {
+                disable(button);
+            }
+        })
+    }
+
+
+
+    function setupAuthorizenet() {
+        // form validation
+        const authorizenetPayButton = $('#fpPayWithAuthorizenet');
+        $$('input.fpAuthorizenet').forEach(input => {
+            input.addEventListener('input', evt => {
+                validateForm([evt.target], authorizenetPayButton);
+
+                if (evt.target.id === "fpCardNumber") {
+                    const bin = evt.target.value.slice(0, 6);
+                    const amount = store.state.transaction.base_amount;
+
+                    get(`${store.params['host']}/api/v1/embeds/${store.params['uuid']}/estimate_fee?bin=${bin}&amount=${amount}`)
+                        .then((data) => {
+                            const result = JSON.parse(data).result;
+                            const paymentConfig = getPaymentConfig(store, 'authorizenet');
+                            paymentConfig.card_fee_str = result.fee_str === "unknown" ? result.estimated_fee : result.fee_str;
+                            updateFees();
+                        });
+                    // .catch((error) => console.log(`error:${error}`));
+                }
+
+            });
+        });
+        validateForm($$('input.fpAuthorizenet'), authorizenetPayButton);
+
+
+        // pay button
+        authorizenetPayButton.addEventListener('click', (evt) => {
+            const url = `${store.params['host']}/api/v1/embeds/${store.params['uuid']}/submit_payment`;
+            const data = {
+                transaction_uuid: store.state.transaction.uuid,
+                payment_type: 'authorizenet',
+                card_number: $('#fpCardNumber').value,
+                card_mmyy: $('#fpCardExp').value,
+                card_cvv: $('#fpCardCVV').value,
+                billing_zip: $('#fpCardZip').value
+            };
+            post(url, data)
+                .then(data => {
+                    console.log(data);
+                    const paymentState = JSON.parse(data).result;
+                    store = Object.assign(store, {paymentState});
+                    togglePane(tabs, panes, 3);
+                });
+                // .catch((error) => console.log(`error:${error}`));
+        });
+
+
+
+    }
+
+    function setupDwolla() {
         $('#fpDowlla-authorize').addEventListener('click', (evt) => {
             let url = `${store.params['host']}/dwolla/auth?t=${store.state.transaction.uuid}`;
             let authorizeWindow = window.open(url, "_blank", "width=500, height=550");
             let interval = window.setInterval(() => {
-                    if (authorizeWindow == null || authorizeWindow.closed) {
-                        window.clearInterval(interval);
-                        alert("window closed");
-                    }
+                if (authorizeWindow == null || authorizeWindow.closed) {
+                    window.clearInterval(interval);
+                    alert("window closed");
+                }
             }, 1000);
         })
     }
 
-    function updateFees(store) {
+    function updateFees() {
         store.state.payment_configs.forEach(p => {
             $(`#fp_paymentFees_${p.kind}`).textContent = `Fees: ${p.card_fee_str}`;
         });
     }
 
 
-    function updateDwolla(store) {
-        $$('.fpDwolla-pane').forEach( el => hide(el));
-        if ( getPaymentConfig(store, 'dwolla').dwolla_authenticated ) {
+    function updateDwolla() {
+        $$('.fpDwolla-pane').forEach(el => hide(el));
+        if (getPaymentConfig('dwolla').dwolla_authenticated) {
             show($('#fpDowlla-pane-pay'))
         } else {
             show($('#fpDowlla-pane-authorize'))
         }
     }
 
-    function getPaymentConfig(store, paymentKind) {
+    function getPaymentConfig(paymentKind) {
         return store.state.payment_configs
             ? store.state.payment_configs.find(p => p.kind === paymentKind)
             : null;
     }
 
-    function updateCurrentPayment(store) {
+    function updateCurrentPayment() {
         let paymentType = $('input[name=fpPaymentType]:checked').value;
-        $$(".fpPayment-pane").forEach( el => hide(el) );
+        $$(".fpPayment-pane").forEach(el => hide(el));
         show($(`#fpPayment-pane-${paymentType}`));
     }
 
@@ -501,7 +534,7 @@
         // `${params['host']}/microlib-tabs.js`,
         `${params['host']}/doT.js`])
         .then(() => loadCss(`${params['host']}/fairway.css`))
-        .then( () => initLocalStorage(params))
+        .then(() => initLocalStorage(params))
         .then((template) => init(me, params))
         // .then(() => post(`${params['host']}/ping`, {}))
         // .then((result) => console.log(result))
