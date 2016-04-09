@@ -146,11 +146,52 @@ class Embeds < Grape::API
         # } )
         session_data = params[:session_data] || {}
         result = transaction.step2_data(session_data)
-        result[:redirect_url] = transaction.step2_url  # used by simple test flow
+        result[:redirect_url] = transaction.next_step_url  # used by simple test flow
+        result[:next_step_url] = transaction.next_step_url  # used by simple test flow
         puts "step1 post result: #{result}"
         wrap_result( result )
       end
 
+
+      post :submit_address do
+        puts "submit address (new) - params: #{params.inspect}"
+        embed = Embed.resolve(params[:embed_uuid])
+
+        params do
+          required :transaction_uuid
+          required :first_name, type: String
+          required :last_name, type: String
+          optional :organization_name, type: String
+          required :street_address, type: String
+          required :extended_address, type: String
+          required :locality, type: String
+          required :region, type: String
+          required :postal_code, type: String
+          required :kind, type: String
+          optional :label, type: String
+        end
+
+        transaction_uuid = params[:transaction_uuid]
+
+        # todo: understand why 'permit' didn't work here, returned nil
+        # address_data = params.permit(:first_name, :last_name, :organization_name, :street_address, :extended_address, :locality, :region, :postal_code, :kind, :label)
+        # puts "permitted: #{address_data.inspect}"
+
+        sliced = params.slice(:first_name, :last_name, :organization_name, :street_address, :extended_address, :locality, :region, :postal_code, :country_code, :kind, :label)
+        address_data = ActiveSupport::HashWithIndifferentAccess.new(sliced)
+        transaction = embed.submit_address(transaction_uuid, address_data)
+
+        #todo: should perhaps return the full transaction data here
+        result = {
+            status: transaction.status,
+            paid_amount: transaction.paid_amount,
+            estimated_fee: transaction.estimated_fee,
+            redirect_url: transaction.finished_url,
+            next_step_url: transaction.next_step_url
+        }
+        puts "submit addr - result: #{result}"
+        wrap_result result
+      end
 
 
       post :submit_payment do
@@ -158,11 +199,13 @@ class Embeds < Grape::API
         embed = Embed.resolve(params[:embed_uuid])
 
         transaction = embed.step2(params)
+        #todo: should perhaps return the full transaction data here
         result = {
             status: transaction.status,
             paid_amount: transaction.paid_amount,
             estimated_fee: transaction.estimated_fee,
-            redirect_url: transaction.finished_url
+            redirect_url: transaction.finished_url,
+            next_step_url: transaction.next_step_url
         }
         puts "step2 - result: #{result}"
         wrap_result result

@@ -59,6 +59,25 @@ class PayController < ApplicationController
 
   end
 
+  def address
+    embed = Embed.by_uuid(params[:uuid])
+    transaction = Transaction.by_uuid(params[:transaction_uuid])
+
+    raise "invalid transaction id: #{params[:transaction_uuid]}" unless transaction #todo confirm provisional status
+
+    session[:current_url] = transaction.step2_url
+
+    @data = hashify( transaction.step2_data(session_data) )
+
+    if params[:json]
+      render json: @data
+    else
+      @data
+    end
+
+  end
+
+
   def step2_post
     embed = Embed.by_uuid(params[:uuid])
     transaction = embed.step2(params)

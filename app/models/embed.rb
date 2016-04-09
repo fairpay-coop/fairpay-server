@@ -26,6 +26,7 @@ class Embed < ActiveRecord::Base
   attr_data_field :amount
   attr_data_field :description
   attr_data_field :return_url
+  attr_data_field :capture_address   # list of address type: mailing, billing, shipping.  if present, then capture specified full addresses for payor
 
 
 
@@ -306,14 +307,19 @@ class Embed < ActiveRecord::Base
     transaction.fee_allocation
   end
 
+  def submit_address(transaction_uuid, address_data)
+    puts "transaction uuid: #{transaction_uuid}"
+    transaction = Transaction.by_uuid(transaction_uuid)
+    puts "fetched tran: #{transaction}"
+    transaction.submit_address(address_data)
+    transaction
+  end
 
   #todo: rename this to 'submit_payment'
   def step2(params)
     transaction_uuid = params[:transaction_uuid]
     transaction = Transaction.by_uuid(transaction_uuid)
-
     transaction.perform_payment(params)
-
     transaction
   end
 
@@ -348,7 +354,8 @@ class Embed < ActiveRecord::Base
 
   #todo: refactor most of the embed data into the entity mapping and nest an 'embed' instance into the embed_data api result
   class Entity < Grape::Entity
-    expose :uuid, :name, :suggested_amounts, :currency_format, :mailing_list_enabled, :capture_memo, :consider_this, :recurrence_options, :fee_allocation_options
+    expose :uuid, :name, :suggested_amounts, :currency_format, :mailing_list_enabled, :capture_memo, :consider_this, :recurrence_options,
+           :fee_allocation_options, :capture_address
     # expose :payment_configs_data, as: :payment_configs
     expose :campaign, using: Campaign::Entity
     expose :payee, using: Profile::Entity

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160323150603) do
+ActiveRecord::Schema.define(version: 20160405182544) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,6 +30,30 @@ ActiveRecord::Schema.define(version: 20160323150603) do
   add_index "active_admin_comments", ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id", using: :btree
   add_index "active_admin_comments", ["namespace"], name: "index_active_admin_comments_on_namespace", using: :btree
   add_index "active_admin_comments", ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id", using: :btree
+
+  create_table "addresses", force: :cascade do |t|
+    t.string   "uuid"
+    t.string   "kind"
+    t.string   "label"
+    t.integer  "profile_id",        null: false
+    t.integer  "organization_id"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "organization_name"
+    t.string   "street_address"
+    t.string   "extended_address"
+    t.string   "locality"
+    t.string   "region"
+    t.string   "postal_code"
+    t.string   "country_code"
+    t.json     "data"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
+
+  add_index "addresses", ["organization_id"], name: "index_addresses_on_organization_id", using: :btree
+  add_index "addresses", ["profile_id"], name: "index_addresses_on_profile_id", using: :btree
+  add_index "addresses", ["uuid"], name: "index_addresses_on_uuid", using: :btree
 
   create_table "admin_users", force: :cascade do |t|
     t.string   "email",                  default: "", null: false
@@ -263,6 +287,8 @@ ActiveRecord::Schema.define(version: 20160323150603) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
+  add_foreign_key "addresses", "profiles"
+  add_foreign_key "addresses", "profiles", column: "organization_id"
   add_foreign_key "campaigns", "profiles"
   add_foreign_key "embeds", "campaigns"
   add_foreign_key "embeds", "profiles"

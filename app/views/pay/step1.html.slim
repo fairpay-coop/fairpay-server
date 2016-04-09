@@ -124,8 +124,8 @@ javascript:
     if (data.result) {
       //var status = data.result.status;
       //$('#errorMessage').html('');      //var linkUrl = data.result.statusLink;
-      if (data.result.redirect_url) {
-        window.location = data.result.redirect_url;
+      if (data.result.next_step_url) {
+        window.location = data.result.next_step_url;
       }
     } else if (data.error) {
       showError(data.error.message);

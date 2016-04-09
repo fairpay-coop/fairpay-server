@@ -14,6 +14,7 @@ class Profile < ActiveRecord::Base
   has_many :merchant_configs
   has_many :embeds
   has_many :payment_sources
+  has_many :addresses
   # belongs_to :dwolla_token
 
 
@@ -56,6 +57,18 @@ class Profile < ActiveRecord::Base
     end
   end
 
+
+  def submit_address(address_data)
+    puts "profile.submit_address: #{address_data.inspect}"
+    #future: support labels, for now assumes one address per type
+    # existing = addresses.where(kind: address_data[:kind])
+    existing = addresses.first #where(kind: address_data[:kind])
+    if existing.present?
+      existing.update!(address_data)
+    else
+      addresses.create!(address_data)
+    end
+  end
 
 
   # def has_dwolla_auth
@@ -100,6 +113,7 @@ class Profile < ActiveRecord::Base
 
   class Entity < Grape::Entity
     expose :name, :email, :phone, :has_user
+    # expose :address, using: Address::Entity
   end
 
 end

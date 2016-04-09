@@ -1,0 +1,131 @@
+- transaction = @data[:transaction]
+- embed = @data[:embed]
+- address = @data[:address]
+
+h1.title = embed[:name]
+
+br
+
+b Mailing Address:
+br
+
+div id="errorMessage" style="display: none;"
+
+form id="address_form" onsubmit="return handleAddress()"
+
+  = hidden_field_tag :authenticity_token, form_authenticity_token
+  = hidden_field_tag :embed_uuid, embed[:uuid]
+  = hidden_field_tag :transaction_uuid, transaction[:uuid]
+
+  - profile = @data[:authenticated_profile] || {}
+  => "First Name:"
+  input type="text" name="first_name" value="#{address[:first_name]}"
+  br
+  => "Last Name:"
+  input type="text" name="last_name" value="#{address[:last_name]}"
+  br
+  => "Organization:"
+  input type="text" name="organization_name" value="#{address[:organization_name]}"
+  br
+  => "Street Address:"
+  input type="text" name="street_address" value="#{address[:street_address]}"
+  br
+  input type="text" name="extended_address" value="#{address[:extended_address]}"
+  br
+  => "City:"
+  input type="text" name="locality" value="#{address[:locality]}"
+  br
+  => "State:"
+  input type="text" name="region" value="#{address[:region]}"
+  br
+  => "Zip Code:"
+  input type="text" name="postal_code" value="#{address[:postal_code]}"
+  br
+  => "Country:"
+  input type="text" name="country_code" value="#{address[:country_code]}"
+  br
+
+  input id="addressSubmit" type="submit" value="Next"
+
+
+javascript:
+
+  function handleAddress() {
+    var data = {};
+    var form = document.getElementById("address_form");
+    FairPayApi.copyFormValues(data, form, ['embed_uuid', 'transaction_uuid', 'first_name', 'last_name', 'organization_name',
+      'street_address', 'extended_address', 'locality', 'region', 'postal_code', 'country_code']);
+
+    console.log("data: " + JSON.stringify(data));
+    console.log("valid: " + validateAddressData(data));
+    if (validateAddressData(data)) {
+      FairPayApi.submitAddress(data, handleAddressResponse);
+    }
+    return false;
+  }
+
+  function handleAddressResponse(data) {
+    //alert('address response: ' + JSON.stringify(data));
+    if (data.result) {
+      //var status = data.result.status;
+      //$('#errorMessage').html('');      //var linkUrl = data.result.statusLink;
+      if (data.result.next_step_url) {
+        window.location = data.result.next_step_url;
+      }
+    } else if (data.error) {
+      showError(data.error.message);
+    }
+  }
+
+  function showError(message) {
+    $('#errorMessage').show();
+    $('#errorMessage').html(message);
+    //$('#errorStack').html('<pre>' + data.error.stack + '</pre>');
+  }
+
+  function hideError(message) {
+    $('#errorMessage').hide();
+    $('#errorMessage').html('');
+  }
+
+  function validateAddressData(data) {
+    if (!validatePresent(data['first_name'], 'First Name')) {
+      return false;
+    }
+    if (!validatePresent(data['last_name'], 'Last Name')) {
+      return false;
+    }
+    if (!validatePresent(data['street_address'], 'Street Address')) {
+      return false;
+    }
+    if (!validatePresent(data['locality'], 'City')) {
+      return false;
+    }
+    if (!validatePresent(data['region'], 'State')) {
+      return false;
+    }
+    if (!validatePresent(data['postal_code'], 'Zip Code')) {
+      return false;
+    }
+    return true;
+  }
+
+  //todo: factor this over to fairpayapi.js
+  function validatePresent(value, field_description) {
+    //console.log('validatePresent - value: ' + value + ', desc: ' + field_description);
+    if (value == undefined || value == null || value.length == 0) {
+      showError("Please enter " + field_description);
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  function field_val(name, default_value) {
+    var field_spec = 'input[name="' + name + '"]';
+    var raw = $(field_spec).val(); // confirm if this statement is always safe
+    //alert(name + " raw val: " + raw);
+    var val = raw ? raw : default_value;
+    //alert(name + " val: " + val);
+    return val;
+  }

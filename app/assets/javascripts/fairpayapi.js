@@ -1,6 +1,3 @@
-// beware: copy of the old seedapi.js, not yet migrated, and will probably want to completely rework to use an iframe
-
-
 var FairPayApiSinglton = (function() {
 
     var instance;
@@ -48,6 +45,12 @@ var FairPayApiSinglton = (function() {
         function submitStep1(data, successHandler) {
             var embedUuid = data.embed_uuid ? data.embed_uuid : getEmbedUuid();
             var uri = base_uri + embedUuid + '/submit_step1';
+            invoke(uri, 'POST', data, successHandler);
+        }
+
+        function submitAddress(data, successHandler) {
+            console.log('app/assets/javascripts/fairpayapi - submit addr data: ' + JSON.stringify(data));
+            var uri = base_uri + data.embed_uuid + '/submit_address';
             invoke(uri, 'POST', data, successHandler);
         }
 
@@ -106,6 +109,7 @@ var FairPayApiSinglton = (function() {
                 , dataType: 'jsonp'
                 , data: data
                 , success: successHandler
+                //, error: successHandler
                 , error: function (xhr, status, error) {
                     alert(status)
                 }
@@ -159,6 +163,7 @@ var FairPayApiSinglton = (function() {
             step2Data: step2Data,
             campaignStatus: campaignStatus,
             submitStep1: submitStep1,
+            submitAddress: submitAddress,
             submitPayment: submitPayment,
             updateFeeAllocation: updateFeeAllocation,
             sendDwollaInfo: sendDwollaInfo,

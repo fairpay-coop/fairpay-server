@@ -1,3 +1,5 @@
+// beware, this is currently a copy of the app/assets/javascripts/fairpayapi.js for use by external sites
+// todo: figure how to best share the single api source
 
 var FairPayApiSinglton = (function() {
 
@@ -37,6 +39,12 @@ var FairPayApiSinglton = (function() {
         function submitStep1(data, successHandler) {
             var embedUuid = data.embed_uuid ? data.embed_uuid : getEmbedUuid();
             var uri = base_uri + embedUuid + '/submit_step1';
+            invoke(uri, data, successHandler);
+        }
+
+        function submitAddress(data, successHandler) {
+            console.log('public/js/fairpayapi - submit addr data: ' + JSON.stringify(data));
+            var uri = base_uri + data.embed_uuid + '/submit_address';
             invoke(uri, data, successHandler);
         }
 
@@ -145,6 +153,7 @@ var FairPayApiSinglton = (function() {
             launchPaymentFlow: launchPaymentFlow,
             campaignStatus: campaignStatus,
             submitStep1: submitStep1,
+            submitAddress: submitAddress,
             submitPayment: submitPayment,
             updateFeeAllocation: updateFeeAllocation,
             sendDwollaInfo: sendDwollaInfo,

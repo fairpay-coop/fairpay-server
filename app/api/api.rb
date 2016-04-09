@@ -28,7 +28,8 @@ class API < Grape::API
   rescue_from :all do |e|
     Rails.logger.error("\n\n#{e.class.name} - #{e.message}:\n   " +
                            Rails.backtrace_cleaner.clean(e.backtrace).join("\n   "))
-    error!( {error: {code: 100, message: e.message} }, 500 )
+    # note, using a 200 response code so that formatted error message is passed through to ajax 'success' handler instead of 'error' handler
+    error!( {error: {code: 100, message: e.message} }, 200 )
   end
 
   mount Users

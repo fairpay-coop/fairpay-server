@@ -51,6 +51,7 @@ class Transaction < ActiveRecord::Base
   attr_data_field :offer_uuid
   attr_data_field :return_url
   attr_data_field :correlation_id
+  attr_data_field :address_captured  # boolean
 
 
   after_initialize :assign_uuid
@@ -97,6 +98,10 @@ class Transaction < ActiveRecord::Base
     "#{base_url}/pay/#{embed.uuid}/step2/#{uuid}"
   end
 
+  def address_url
+    "#{base_url}/pay/#{embed.uuid}/address/#{uuid}"
+  end
+
 
   def card_fee_range
     embed.card_payment_service.calculate_fee(self)
@@ -120,8 +125,12 @@ class Transaction < ActiveRecord::Base
     payment_service_for_type(payment_type).payment_type_display  if payment_type
   end
 
+  def completed
+    status == 'completed'
+  end
+
   def perform_payment(params = {})
-    if status == 'completed'
+    if completed
       puts "warning, duplicate payment attempted for transaction: #{self.inspect}"
       raise "payment already complete (#{self.uuid})"
     end
@@ -166,6 +175,16 @@ class Transaction < ActiveRecord::Base
     update_campaign
     TransactionAsyncCompletionJob.perform_async(self.id)
   end
+
+  def submit_address(address_data)
+    payor.submit_address(address_data)
+    self.update!(address_captured: true)
+  end
+
+  def needs_address
+    embed.capture_address.present?  && ! self.address_captured
+  end
+
 
   def update_campaign
     if embed.campaign
@@ -344,6 +363,7 @@ class Transaction < ActiveRecord::Base
 
 
   def step2_data(session_data={})
+    puts "step2_data: session_data:#{session_data}"
 
     raise "missing transaction amount"  unless base_amount && base_amount > 0
 
@@ -352,10 +372,12 @@ class Transaction < ActiveRecord::Base
       puts "authenticated user session - stored payments available"
       # profile_authenticated = true
       authenticated_profile = current_user.profile
+      address = authenticated_profile&.addresses&.first
     else
       #todo: rip out once js session_data handling integrated
       authenticated_profile = payor
     end
+    address ||= Address.new
 
     # used to resume after login
     # todo: think about this once devise auth integrated into widget
@@ -369,9 +391,36 @@ class Transaction < ActiveRecord::Base
         transaction: Transaction::Entity.represent(self),
         embed: Embed::Entity.represent(embed),  # note, not strictly needed by widget, but convenient for simple form flow
         authenticated_profile: Profile::Entity.represent(authenticated_profile),
+        address: Address::Entity.represent(address),
         payment_configs: embed.payment_configs_data(self, session_data),
     }
 
+    result[:redirect_url] = self.step2_url  # used by simple test flow
+    result
+
+  end
+
+  def next_step_url
+    case next_step
+      when :address
+        self.address_url
+      when :payment
+        self.step2_url
+      when :finished
+        self.finished_url
+    end
+  end
+
+  def next_step
+    if completed
+      :finished
+    else
+      if needs_address
+        :address
+      else
+        :payment
+      end
+    end
   end
 
   def entity
@@ -385,6 +434,8 @@ class Transaction < ActiveRecord::Base
     expose :payee, using: Profile::Entity
     expose :payor, using: Profile::Entity
     expose :resolve_offer, using: Offer::Entity, as: :offer
+    expose :needs_address
+    expose :next_step
     # used by 'thanks' view
     expose :payment_type_display
     expose :memo, :estimated_fee
