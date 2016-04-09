@@ -1,10 +1,7 @@
 (function (global) {
 
 
-    var panes = [];
-    var tabs = [];
-    var store;
-    var templates;
+
 
 
     //
@@ -189,53 +186,13 @@
         return doT.template(template)(data);
     }
 
-
-    function togglePane(tabList, paneList, paneIdx) {
-        console.log(`toggling pane:${paneIdx} of ${paneList}`)
-        paneList.forEach((pane, index) => {
-            if (index == paneIdx) {
-                show(paneList[index]);
-                addClass(tabList[index], 'selected')
-            } else {
-                hide(paneList[index]);
-                removeClass(tabList[index], 'selected')
-            }
-        });
-    }
-
     function $(selector) {
-        let result = Array.from(document.querySelectorAll(selector));
-        //
-        switch (result.length) {
-            case 0:
-                return null;
-            default:
-                return result[0];
-        }
-        //     case 1:
-        //         return new Proxy(result[0], {
-        //             apply: function(target, thisArg, argumentsList) {
-        //             }
-        //         });
-        //     default:
-        //         return result;
-        // }
+        const result = $$(selector);
+        return result.length == 0 ? null : result[0];
     }
 
     function $$(selector) {
         return Array.from(document.querySelectorAll(selector));
-        //
-        // switch (result.length) {
-        //     case 0:
-        //         return null;
-        //     case 1:
-        //         return new Proxy(result[0], {
-        //             apply: function(target, thisArg, argumentsList) {
-        //             }
-        //         });
-        //     default:
-        //         return result;
-        // }
     }
 
     function initLocalStorage(params) {
@@ -259,305 +216,336 @@
         });
     }
 
+    class FairpayWidget {
 
-    function init(me, params) {
-
-        let config = {};
-        let localData = {};
-        get(`${params['host']}/api/v1/embeds/${params['uuid']}/embed_data`)
-            .then(data => config = JSON.parse(data).result)
-            .then(() => getLocalData())
-            .then((data) => {
-                localData = data;
-                return loadFiles([`${params['host']}/fairplay.dot`, `${params['host']}/recap.dot`]);
-            })
-            .then((result) => {
-                
-                templates = result;
-                if (params.amount) {
-                    config = Object.assign(config, {suggested_amounts: [params.amount]})
-                }
+        constructor(me, params) {
+            this.panes = [];
+            this.tabs = [];
+            this.store = {};
+            this.templates = [];
+            this.init(me, params);
+        }
 
 
-                // format the amounts
-                Object.assign(config, {
-                    localizedAmounts: config.suggested_amounts.map((amount) => {
-                        if (-1 == amount) {
-                            return -1;
-                        } else {
-                            return config.currency_format.replace('{0}', amount);
-                        }
-                    })
-                });
+        init(me, params) {
 
-                store = Object.assign({}, {config, params, localData});
+            let config = {};
+            let localData = {};
+            get(`${params['host']}/api/v1/embeds/${params['uuid']}/embed_data`)
+                .then(data => {
+                    console.log(data);
+                    config = JSON.parse(data).result
+                })
+                .then(() => getLocalData())
+                .then((data) => {
+                    localData = data;
+                    return loadFiles([`${params['host']}/fairplay.dot`,
+                        `${params['host']}/recap.dot`,
+                        `${params['host']}/dwolla.dot`]);
+                })
+                .then((result) => {
 
-                // render the template and insert it after the script tag
-                let html = render(templates[0], store.config);
-                me.insertAdjacentHTML('afterend', html);
-
-                // panes
-                panes = $$('.fpPane'); // get all the panes
-
-                // tabs
-                let tabsStatus = {};
-                tabs = $$('.fpTab'); // get all the tabs
-                tabs.forEach((tab) => {
-                    tab.addEventListener('click', (evt) => {
-                        if (tabsStatus[tab.id] === 'enabled') {
-                            togglePane(tabs, panes, tab.dataset.pane);
-                        }
-                    });
-                    tabsStatus[tab.id] = 'disabled';
-                });
-                tabsStatus['fpTab_0'] = 'enabled';
-                togglePane(tabs, panes, 0);
-                // togglePane(tabs, panes, 2);
-
-                // disable all the 'continue' buttons
-                $$('.fpContinue').forEach(el => disable(el));
+                    this.templates = result;
+                    if (params.amount) {
+                        config = Object.assign(config, {suggested_amounts: [params.amount]})
+                    }
 
 
-                //
-                // Pane 1: amount + email
-                //
-
-                // hide custom amount
-                let customAmountInput = $('.fpCustom-amount');
-                hide(customAmountInput);
-
-
-                // handle amount changes
-                let amountButtons = $$('input[name=fpAmount]');
-                if (amountButtons.length > 0) {
-                    amountButtons[0].checked = true;
-                    amountButtons.forEach((button) => {
-                        button.addEventListener('click', (evt) => {
-                            if (evt.target.id === 'fp_other') {
-                                show(customAmountInput);
+                    // format the amounts
+                    Object.assign(config, {
+                        localizedAmounts: config.suggested_amounts.map((amount) => {
+                            if (-1 == amount) {
+                                return -1;
                             } else {
-                                hide(customAmountInput);
+                                return config.currency_format.replace('{0}', amount);
                             }
                         })
                     });
-                }
 
-                let continueButton = $('#fpContinueAmountPane');
+                    this.store = Object.assign({}, {config, params, localData});
 
-                // setup email
-                let emailInput = $('#fpEmail');
+                    // render the template and insert it after the script tag
+                    let html = render(this.templates[0], this.store.config);
+                    me.insertAdjacentHTML('afterend', html);
 
-                if (store.localData.email) {
-                    emailInput.value = store.localData.email;
-                    enable(continueButton);
-                }
-                emailInput.addEventListener('input', (evt) => {
-                    if (evt.target.checkValidity()) {
+                    // panes
+                    this.panes = $$('.fpPane'); // get all the panes
+
+                    // tabs
+                    let tabsStatus = {};
+                    this.tabs = $$('.fpTab'); // get all the tabs
+                    this.tabs.forEach((tab) => {
+                        tab.addEventListener('click', (evt) => {
+                            if (tabsStatus[tab.id] === 'enabled') {
+                                this.togglePane(this.tabs, this.panes, tab.dataset.pane);
+                            }
+                        });
+                        tabsStatus[tab.id] = 'disabled';
+                    });
+                    tabsStatus['fpTab_0'] = 'enabled';
+                    this.togglePane(this.tabs, this.panes, 0);
+                    // togglePane(tabs, panes, 2);
+
+                    // disable all the 'continue' buttons
+                    $$('.fpContinue').forEach(el => disable(el));
+
+
+                    //
+                    // Pane 1: amount + email
+                    //
+
+                    // hide custom amount
+                    let customAmountInput = $('.fpCustom-amount');
+                    hide(customAmountInput);
+
+
+                    // handle amount changes
+                    let amountButtons = $$('input[name=fpAmount]');
+                    if (amountButtons.length > 0) {
+                        amountButtons[0].checked = true;
+                        amountButtons.forEach((button) => {
+                            button.addEventListener('click', (evt) => {
+                                if (evt.target.id === 'fp_other') {
+                                    show(customAmountInput);
+                                } else {
+                                    hide(customAmountInput);
+                                }
+                            })
+                        });
+                    }
+
+                    let continueButton = $('#fpContinueAmountPane');
+
+                    // setup email
+                    let emailInput = $('#fpEmail');
+
+                    if (this.store.localData.email) {
+                        emailInput.value = this.store.localData.email;
                         enable(continueButton);
-                    } else {
-                        disable(continueButton);
                     }
-                });
-
-                // handle continue
-                continueButton.addEventListener('click', (evt) => {
-                    let amount = 0;
-                    if (store.config.suggested_amounts.length == 1) {
-                        amount = store.config.suggested_amounts[0];
-                    } else {
-                        amount = $('input[name=fpAmount]:checked').value;
-                        if (amount === "other") {
-                            amount = $('.fpCustom-amount').value
+                    emailInput.addEventListener('input', (evt) => {
+                        if (evt.target.checkValidity()) {
+                            enable(continueButton);
+                        } else {
+                            disable(continueButton);
                         }
-                    }
+                    });
 
-                    let email = $('#fpEmail').value;
+                    // handle continue
+                    continueButton.addEventListener('click', (evt) => {
+                        let amount = 0;
+                        if (this.store.config.suggested_amounts.length == 1) {
+                            amount = this.store.config.suggested_amounts[0];
+                        } else {
+                            amount = $('input[name=fpAmount]:checked').value;
+                            if (amount === "other") {
+                                amount = $('.fpCustom-amount').value
+                            }
+                        }
 
-                    // store email in local storage
-                    xdLocalStorage.setItem('email', email, (data) => {
-                        console.log('email saved')
+                        let email = $('#fpEmail').value;
+
+                        // store email in local storage
+                        xdLocalStorage.setItem('email', email, (data) => {
+                            console.log('email saved')
+                        });
+
+
+                        post(`${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/submit_step1`, {
+                            email,
+                            amount
+                        })
+                            .then((data) => {
+                                console.log(data);
+                                const state = JSON.parse(data).result;
+                                this.store = Object.assign(this.store, {state});
+                                tabsStatus['fpTab_2'] = 'enabled';
+                                this.updateCurrentPayment();
+                                this.updateFees();
+                                this.updateDwolla();
+                                this.togglePane(this.tabs, this.panes, 2);
+                            });
+                        // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
                     });
 
 
-                    post(`${store.params['host']}/api/v1/embeds/${store.params['uuid']}/submit_step1`, {email, amount})
-                        .then((data) => {
-                            console.log(data);
-                            const state = JSON.parse(data).result;
-                            store = Object.assign(store, {state});
-                            tabsStatus['fpTab_2'] = 'enabled';
-                            updateCurrentPayment(store);
-                            updateFees();
-                            updateDwolla();
-                            togglePane(tabs, panes, 2);
-                        });
-                    // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
+                    // Pane 2: identity
+
+
+                    // Pane 3: Payment
+
+                    // handle payment type changes
+                    let paymentTypeButtons = $$('input[name=fpPaymentType]');
+                    paymentTypeButtons[0].checked = true;
+                    paymentTypeButtons.forEach((button) => {
+                        button.addEventListener('click', (evt) => {
+                            this.updateCurrentPayment();
+                        })
+                    });
+
+                    // Dwolla
+                    this.setupDwolla();
+
+                    // Paypal
+
+                    // Authorize.net
+                    this.setupAuthorizenet();
+
                 });
-
-
-                // Pane 2: identity
-
-
-                // Pane 3: Payment
-
-                // handle payment type changes
-                let paymentTypeButtons = $$('input[name=fpPaymentType]');
-                paymentTypeButtons[0].checked = true;
-                paymentTypeButtons.forEach((button) => {
-                    button.addEventListener('click', (evt) => {
-                        updateCurrentPayment();
-                    })
-                });
-
-                // Dwolla
-                setupDwolla();
-
-                // Paypal
-
-                // Authorize.net
-                setupAuthorizenet();
-
-            });
-        // .catch(error => console.log(`Error in init:${error}`)); TODO: uncomment and handle better
-    }
-
-
-    function validateForm(inputs, button) {
-        inputs.forEach( input => {
-            if (input.checkValidity()) {
-                enable(button);
-            } else {
-                disable(button);
-            }
-        })
-    }
-
-
-
-    function setupAuthorizenet() {
-        // form validation
-        const authorizenetPayButton = $('#fpPayWithAuthorizenet');
-        $$('input.fpAuthorizenet').forEach(input => {
-            input.addEventListener('input', evt => {
-                validateForm([evt.target], authorizenetPayButton);
-
-                if (evt.target.id === "fpCardNumber") {
-                    const bin = evt.target.value.slice(0, 6);
-                    const amount = store.state.transaction.base_amount;
-
-                    get(`${store.params['host']}/api/v1/embeds/${store.params['uuid']}/estimate_fee?bin=${bin}&amount=${amount}`)
-                        .then((data) => {
-                            const result = JSON.parse(data).result;
-                            const paymentConfig = getPaymentConfig(store, 'authorizenet');
-                            paymentConfig.card_fee_str = result.fee_str === "unknown" ? result.estimated_fee : result.fee_str;
-                            updateFees();
-                        });
-                    // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
-                }
-
-            });
-        });
-        validateForm($$('input.fpAuthorizenet'), authorizenetPayButton);
-
-
-        // pay button
-        authorizenetPayButton.addEventListener('click', (evt) => {
-            const url = `${store.params['host']}/api/v1/embeds/${store.params['uuid']}/submit_payment`;
-            const data = {
-                transaction_uuid: store.state.transaction.uuid,
-                payment_type: 'authorizenet',
-                card_number: $('#fpCardNumber').value,
-                card_mmyy: $('#fpCardExp').value,
-                card_cvv: $('#fpCardCVV').value,
-                billing_zip: $('#fpCardZip').value
-            };
-            post(url, data)
-                .then(data => {
-                    console.log(data);
-                    const paymentState = JSON.parse(data).result;
-                    store = Object.assign(store, {paymentState});
-                    renderRecap();
-                    togglePane(tabs, panes, 3);
-                });
-                // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
-        });
-
-
-
-    }
-
-    function setupDwolla() {
-        $('#fpDowlla-authorize').addEventListener('click', (evt) => {
-            let url = `${store.params['host']}/dwolla/auth?t=${store.state.transaction.uuid}&o=widget`;
-            let authorizeWindow = window.open(url, "_blank", "width=500, height=550");
-            let interval = window.setInterval(() => {
-                if (authorizeWindow == null || authorizeWindow.closed) {
-                    window.clearInterval(interval);
-                    get(`${store.params['host']}/api/v1/embeds/${store.params['uuid']}/step2_data?transaction_uuid=${store.state.transaction.uuid}`)
-                        .then((data) => {
-                            console.log(data);
-                            const state = JSON.parse(data).result;
-                            store = Object.assign(store, {state});
-                            updateDwolla();
-                        });
-                    
-                }
-            }, 1000);
-        });
-
-
-        $('#fpDowlla-pay').addEventListener('click', (evt) => {
-            const url = `${store.params['host']}/api/v1/embeds/${store.params['uuid']}/send_dwolla_info`
-            const data = {
-                transaction_uuid: store.state.transaction.uuid,
-            };
-            post(url, data)
-                .then(data => {
-                    console.log(data);
-                    const paymentState = JSON.parse(data).result;
-                    store = Object.assign(store, {paymentState});
-                    renderRecap();
-                    togglePane(tabs, panes, 3);
-                });
-            // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
-
-
-        })
-        
-    }
-
-    function renderRecap() {
-        $("#fpRecapPane").innerHTML = render(templates[1], store);
-    }
-    
-    
-    function updateFees() {
-        store.state.payment_configs.forEach(p => {
-            $(`#fp_paymentFees_${p.kind}`).textContent = `Fees: ${p.card_fee_str}`;
-        });
-    }
-
-
-    function updateDwolla() {
-        $$('.fpDwolla-pane').forEach(el => hide(el));
-        if (getPaymentConfig('dwolla').has_dwolla_auth) {
-            show($('#fpDowlla-pane-pay'))
-        } else {
-            show($('#fpDowlla-pane-authorize'))
+            // .catch(error => console.log(`Error in init:${error}`)); TODO: uncomment and handle better
         }
-    }
 
-    function getPaymentConfig(paymentKind) {
-        return store.state.payment_configs
-            ? store.state.payment_configs.find(p => p.kind === paymentKind)
-            : null;
-    }
+        togglePane(tabList, paneList, paneIdx) {
+            console.log(`toggling pane:${paneIdx} of ${paneList}`)
+            paneList.forEach((pane, index) => {
+                if (index == paneIdx) {
+                    show(paneList[index]);
+                    addClass(tabList[index], 'selected')
+                } else {
+                    hide(paneList[index]);
+                    removeClass(tabList[index], 'selected')
+                }
+            });
+        }
 
-    function updateCurrentPayment() {
-        let paymentType = $('input[name=fpPaymentType]:checked').value;
-        $$(".fpPayment-pane").forEach(el => hide(el));
-        show($(`#fpPayment-pane-${paymentType}`));
-    }
 
+        validateForm(inputs, button) {
+            inputs.forEach(input => {
+                if (input.checkValidity()) {
+                    enable(button);
+                } else {
+                    disable(button);
+                }
+            })
+        }
+
+
+        setupAuthorizenet() {
+            // form validation
+            const authorizenetPayButton = $('#fpPayWithAuthorizenet');
+            $$('input.fpAuthorizenet').forEach(input => {
+                input.addEventListener('input', evt => {
+                    this.validateForm([evt.target], authorizenetPayButton);
+
+                    if (evt.target.id === "fpCardNumber") {
+                        const bin = evt.target.value.slice(0, 6);
+                        const amount = this.store.state.transaction.base_amount;
+
+                        get(`${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/estimate_fee?bin=${bin}&amount=${amount}`)
+                            .then((data) => {
+                                const result = JSON.parse(data).result;
+                                const paymentConfig = getPaymentConfig(this.store, 'authorizenet');
+                                paymentConfig.card_fee_str = result.fee_str === "unknown" ? result.estimated_fee : result.fee_str;
+                                this.updateFees();
+                            });
+                        // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
+                    }
+
+                });
+            });
+            this.validateForm($$('input.fpAuthorizenet'), authorizenetPayButton);
+
+
+            // pay button
+            authorizenetPayButton.addEventListener('click', (evt) => {
+                const url = `${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/submit_payment`;
+                const data = {
+                    transaction_uuid: this.store.state.transaction.uuid,
+                    payment_type: 'authorizenet',
+                    card_number: $('#fpCardNumber').value,
+                    card_mmyy: $('#fpCardExp').value,
+                    card_cvv: $('#fpCardCVV').value,
+                    billing_zip: $('#fpCardZip').value
+                };
+                post(url, data)
+                    .then(data => {
+                        console.log(data);
+                        const paymentState = JSON.parse(data).result;
+                        this.store = Object.assign(this.store, {paymentState});
+                        this.renderRecap();
+                        this.togglePane(this.tabs, this.panes, 3);
+                    });
+                // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
+            });
+
+
+        }
+
+        setupDwolla() {
+
+            $("#fpPayment-pane-dwolla").innerHTML = render(this.templates[2], this.store);
+
+            $('#fpDowlla-authorize').addEventListener('click', (evt) => {
+                let url = `${this.store.params['host']}/dwolla/auth?t=${this.store.state.transaction.uuid}&o=widget`;
+                let authorizeWindow = window.open(url, "_blank", "width=500, height=550");
+                let interval = window.setInterval(() => {
+                    if (authorizeWindow == null || authorizeWindow.closed) {
+                        window.clearInterval(interval);
+                        get(`${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/step2_data?transaction_uuid=${this.store.state.transaction.uuid}`)
+                            .then((data) => {
+                                console.log(data);
+                                const state = JSON.parse(data).result;
+                                this.store = Object.assign(this.store, {state});
+                                this.updateDwolla();
+                            });
+
+                    }
+                }, 1000);
+            });
+
+
+            $('#fpDowlla-pay').addEventListener('click', (evt) => {
+                const url = `${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/send_dwolla_info`
+                const data = {
+                    transaction_uuid: this.store.state.transaction.uuid,
+                };
+                post(url, data)
+                    .then(data => {
+                        console.log(data);
+                        const paymentState = JSON.parse(data).result;
+                        this.store = Object.assign(this.store, {paymentState});
+                        this.renderRecap();
+                        this.togglePane(this.tabs, this.panes, 3);
+                    });
+                // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
+
+
+            })
+
+        }
+
+        renderRecap() {
+            $("#fpRecapPane").innerHTML = render(this.templates[1], this.store);
+        }
+
+        updateFees() {
+            this.store.state.payment_configs.forEach(p => {
+                $(`#fp_paymentFees_${p.kind}`).textContent = `Fees: ${p.card_fee_str}`;
+            });
+        }
+
+        updateDwolla() {
+            $$('.fpDwolla-pane').forEach(el => hide(el));
+            if (this.getPaymentConfig('dwolla').has_dwolla_auth) {
+                show($('#fpDowlla-pane-pay'))
+            } else {
+                show($('#fpDowlla-pane-authorize'))
+            }
+        }
+
+        getPaymentConfig(paymentKind) {
+            return this.store.state.payment_configs
+                ? this.store.state.payment_configs.find(p => p.kind === paymentKind)
+                : null;
+        }
+
+        updateCurrentPayment() {
+            let paymentType = $('input[name=fpPaymentType]:checked').value;
+            $$(".fpPayment-pane").forEach(el => hide(el));
+            show($(`#fpPayment-pane-${paymentType}`));
+        }
+
+    }
     console.log("Widget loader loaded");
 
     var me = myself();
@@ -571,7 +559,9 @@
         `${params['host']}/doT.js`])
         .then(() => loadCss(`${params['host']}/fairway.css`))
         .then(() => initLocalStorage(params))
-        .then(() => init(me, params));
-        // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
+        .then(() => {
+            const widget = new FairpayWidget(me, params)
+        });
+    // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
 
 })(window);

@@ -1,0 +1,6 @@
+<div id="fpDowlla-pane-authorize" class="fpDwolla-pane">
+    <button id="fpDowlla-authorize" class="fpButton">Authorize with Dwolla</button>
+</div>
+<div id="fpDowlla-pane-pay" class="fpDwolla-pane">
+       <button id="fpDowlla-pay" class="fpButton">Pay with Dwolla</button>
+</div>

@@ -97,13 +97,9 @@
                 </div>
 
                 <div id="fpPayment-pane-dwolla" class="fpPayment-pane">
-                    <div id="fpDowlla-pane-authorize" class="fpDwolla-pane">
-                        <button id="fpDowlla-authorize" class="fpButton">Authorize with Dwolla</button>
-                    </div>
-                    <div id="fpDowlla-pane-pay" class="fpDwolla-pane">
-                        <button id="fpDowlla-pay" class="fpButton">Pay with Dwolla</button>
-                    </div>
+                    <!--dwolla.dot-->
                 </div>
+
                 <div id="fpPayment-pane-paypal" class="fpPayment-pane">
                     <h1>paypal</h1>
                 </div>
