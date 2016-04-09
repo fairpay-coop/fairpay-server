@@ -1,0 +1,4 @@
+<div class="fpPaymentRecap">
+    <p>Your payment of {{=it.state.transaction.base_amount}} has been completed.</p>
+    <p>A confirmation email has been sent to {{=it.state.transaction.payor.email}}.</p>
+</div>

@@ -110,8 +110,7 @@
             </div>
         </div>
 
-        <div class="fpPane">
-            <h1>Pane 4</h1>
+        <div class="fpPane" id="fpRecapPane">
             <div>recap</div>
             <div>create account</div>
         </div>

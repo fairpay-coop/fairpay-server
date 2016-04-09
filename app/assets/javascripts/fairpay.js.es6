@@ -4,6 +4,7 @@
     var panes = [];
     var tabs = [];
     var store;
+    var templates;
 
 
     //
@@ -60,6 +61,11 @@
             (document.getElementsByTagName("head")[0] || document.documentElement).appendChild(link_tag);
             resolve();
         });
+    }
+
+
+    function loadFiles(urls) {
+        return Promise.all(urls.map(url => get(url)));
     }
 
     //
@@ -263,13 +269,11 @@
             .then(() => getLocalData())
             .then((data) => {
                 localData = data;
-                return get(`${params['host']}/fairplay.dot`)
+                return loadFiles([`${params['host']}/fairplay.dot`, `${params['host']}/recap.dot`]);
             })
-            .then((template) => {
-
-                console.log(JSON.stringify(config));
-
-
+            .then((result) => {
+                
+                templates = result;
                 if (params.amount) {
                     config = Object.assign(config, {suggested_amounts: [params.amount]})
                 }
@@ -289,7 +293,7 @@
                 store = Object.assign({}, {config, params, localData});
 
                 // render the template and insert it after the script tag
-                let html = render(template, store.config);
+                let html = render(templates[0], store.config);
                 me.insertAdjacentHTML('afterend', html);
 
                 // panes
@@ -386,7 +390,7 @@
                             updateDwolla();
                             togglePane(tabs, panes, 2);
                         });
-                    // .catch((error) => console.log(`error:${error}`));
+                    // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
                 });
 
 
@@ -413,7 +417,7 @@
                 setupAuthorizenet();
 
             });
-        // .catch(error => console.log(`Error in init:${error}`));
+        // .catch(error => console.log(`Error in init:${error}`)); TODO: uncomment and handle better
     }
 
 
@@ -447,7 +451,7 @@
                             paymentConfig.card_fee_str = result.fee_str === "unknown" ? result.estimated_fee : result.fee_str;
                             updateFees();
                         });
-                    // .catch((error) => console.log(`error:${error}`));
+                    // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
                 }
 
             });
@@ -471,9 +475,10 @@
                     console.log(data);
                     const paymentState = JSON.parse(data).result;
                     store = Object.assign(store, {paymentState});
+                    renderRecap();
                     togglePane(tabs, panes, 3);
                 });
-                // .catch((error) => console.log(`error:${error}`));
+                // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
         });
 
 
@@ -510,15 +515,21 @@
                     console.log(data);
                     const paymentState = JSON.parse(data).result;
                     store = Object.assign(store, {paymentState});
+                    renderRecap();
                     togglePane(tabs, panes, 3);
                 });
-            // .catch((error) => console.log(`error:${error}`));
+            // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
 
 
         })
         
     }
 
+    function renderRecap() {
+        $("#fpRecapPane").innerHTML = render(templates[1], store);
+    }
+    
+    
     function updateFees() {
         store.state.payment_configs.forEach(p => {
             $(`#fp_paymentFees_${p.kind}`).textContent = `Fees: ${p.card_fee_str}`;
@@ -560,9 +571,7 @@
         `${params['host']}/doT.js`])
         .then(() => loadCss(`${params['host']}/fairway.css`))
         .then(() => initLocalStorage(params))
-        .then((template) => init(me, params))
-        // .then(() => post(`${params['host']}/ping`, {}))
-        // .then((result) => console.log(result))
-        .catch((error) => console.log(`error:${error}`));
+        .then(() => init(me, params));
+        // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
 
 })(window);
