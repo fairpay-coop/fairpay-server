@@ -8,6 +8,67 @@ class Users < Grape::API
       present User.all
     end
 
+    post :signin do
+      puts "signin - params: #{params.inspect}"
+
+      params do
+        required :email, type: String
+        required :password, type: String
+      end
+      email = params[:email]
+      password = params[:password]
+
+      user = User.find_by_email(email)
+      raise "user not found for email"  unless user
+      raise "invalid password"  unless user.valid_password?(password)
+
+      result = user.auth_token
+      wrap_result( result )
+    end
+
+
+    post :signup do
+      puts "signup - params: #{params.inspect}"
+
+      params do
+        required :email, type: String
+        required :password, type: String
+      end
+      email = params[:email]
+      password = params[:password]
+
+      user = User.find_by_email(email)
+      raise "user already exists"  if user
+      user = User.create!({email: email, password: password, password_confirmation: password})
+
+      result = user.auth_token
+      wrap_result( result )
+    end
+
+    # tests if user exists for given email
+    get :exists do
+      puts "exists - params: #{params.inspect}"
+      params do
+        required :email, type: String
+      end
+      email = params[:email]
+      user = User.find_by_email(email)
+      result = user.present?
+      wrap_result( result )
+    end
+
+    get :profile do
+      params do
+        required :token, type: String
+      end
+      token = params[:token]
+      user = User.find_by(auth_token: token)
+      raise "user not found for token"  unless user
+      result = Profile::Entity.represent(user.profile)
+      wrap_result( result )
+    end
+
+
   end
 
 end

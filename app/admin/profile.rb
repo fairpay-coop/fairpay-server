@@ -25,6 +25,7 @@ ActiveAdmin.register Profile do
 
   form do |f|
     f.inputs do
+      # f.input :user, as: :select, collection: User.pluck(:email, :email)
       f.input :name
       f.input :first_name
       f.input :last_name

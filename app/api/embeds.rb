@@ -48,7 +48,7 @@ class Embeds < Grape::API
         puts "embed_data - params: #{params.inspect}"
         embed = Embed.resolve(params[:embed_uuid])
         result = embed.embed_data
-        result[:session_email] = cookies[:email]
+        # result[:session_email] = cookies[:email]
         wrap_result( result )
       end
 
@@ -127,9 +127,11 @@ class Embeds < Grape::API
           optional :offer_uuid, type: String
           optional :return_url, type: String
           optional :correlation_id, type: String
+          optional :auth_token, type: String
         end
 
-        data = params.slice(:amount, :email, :name, :recurrence, :mailing_list, :description, :memo, :offer_uuid, :return_url, :correlation_id)
+        auth_token = params[:auth_token]
+        data = params.slice(:amount, :email, :name, :recurrence, :mailing_list, :description, :memo, :offer_uuid, :return_url, :correlation_id, :auth_token)
 
         cookies[:email] = data[:email]
 
@@ -144,7 +146,8 @@ class Embeds < Grape::API
         #     redirect_url: transaction.step2_url,
         #     transaction: transaction
         # } )
-        session_data = params[:session_data] || {}
+        session_data = {} #params[:session_data] || {}  #todo: clean this up once auth/cookie interface settles
+        session_data[:auth_token] = auth_token
         result = transaction.step2_data(session_data)
         result[:redirect_url] = transaction.next_step_url  # used by simple test flow
         result[:next_step_url] = transaction.next_step_url  # used by simple test flow

@@ -13,6 +13,8 @@ ActiveAdmin.register User do
 #   permitted
 # end
 
+  permit_params :email, :password, :password_confirmation, :auth_token
+
 
   index do
     selectable_column
@@ -34,6 +36,7 @@ ActiveAdmin.register User do
       f.input :email
       f.input :password
       f.input :password_confirmation
+      f.input :auth_token
     end
     f.actions
   end

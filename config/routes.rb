@@ -51,7 +51,7 @@ Rails.application.routes.draw do
   # post 'pay/:uuid/step1' => 'pay#step1_post'
   get  'pay/:uuid/address/:transaction_uuid' => 'pay#address'
   get  'pay/:uuid/step2/:transaction_uuid' => 'pay#step2'
-  # post 'pay/:uuid/step2' => 'pay#step2_post'
+  post 'pay/:uuid/step2' => 'pay#step2_post'  #still used by dwolla payment. todo: migrate to api call
   get  'pay/:uuid/pay_via_dwolla/:transaction_uuid' => 'pay#pay_via_dwolla'
 
   get  'pay/:uuid/update_fee_allocation/:transaction_uuid' => 'pay#update_fee_allocation'

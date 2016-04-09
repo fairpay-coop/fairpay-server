@@ -28,6 +28,9 @@ class Embed < ActiveRecord::Base
   attr_data_field :return_url
   attr_data_field :capture_address   # list of address type: mailing, billing, shipping.  if present, then capture specified full addresses for payor
 
+  # if assigned present option on 'finished' view to provide preauthorization to automatically charge saved payment information once per specified interval.
+  # subfields: interval_count, interval_units, interval_description
+  attr_data_field :request_preauthorization
 
 
   after_initialize :assign_uuid
@@ -266,6 +269,7 @@ class Embed < ActiveRecord::Base
     offer_uuid = params[:offer_uuid]
     return_url = params[:return_url]
     correlation_id = params[:correlation_id]
+    auth_token = params[:auth_token]
 
     raise "email required" unless email.present?
     payor = Profile.find_by(email: email)

@@ -30,6 +30,12 @@ module ApplicationHelper
 
   def resolve_current_user(session_data)
     if session_data
+      if session_data[:auth_token].present?
+        user = User.find_by(auth_token: session_data[:auth_token])
+        puts "auth token user: #{user}"
+        return user
+      end
+
       if session_data[:authenticated_user]
         return session_data[:authenticated_user]
       else
@@ -43,6 +49,10 @@ module ApplicationHelper
   def resolve_current_profile(session_data)
     user = resolve_current_user(session_data)
     user.profile  if user
+  end
+
+  def session_auth_token
+    current_user&.auth_token
   end
 
   #force all object representations into hashes.  todo: does this utility already exist?

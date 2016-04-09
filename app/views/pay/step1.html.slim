@@ -1,4 +1,5 @@
 - embed = @data[:embed]
+- auth_token = session_auth_token
 
 h1.title = embed[:name]
 
@@ -19,10 +20,20 @@ form id="step1_form" onsubmit="return handleStep1()"
   - profile = @data[:authenticated_profile] || {}
   /- if profile
   => "Name:"
-  input type="text" name="name" value="#{profile[:name]}"
+  input type="text" id="name" name="name" value="#{profile[:name]}"
   br
   => "Email:"
   input type="text" id="email" name="email" value="#{profile[:email]}" autocapitalize="off"
+  br
+
+  - unless auth_token.present?
+    => "Password:"
+    input type="password" id="password" name="password" autocapitalize="off"
+    input id="signinSubmit" type="submit" value="Signin" onclick="handleSignin(); return false;"
+    br
+  /= hidden_field_tag :auth_token, 'dummy'
+  => "Token:"
+  input type="text" id="auth_token" name="auth_token" value="#{auth_token}"
   br
 
   - if @data[:return_url].present?
@@ -105,10 +116,43 @@ javascript:
 
   //$("#card_form").submit(handleCard);
 
+  function handleSignin() {
+    var data = {};
+    var form = document.getElementById("step1_form");
+    FairPayApi.copyFormValues(data, form, ['email', 'password']);
+    if (validateSigninData(data)) {
+      FairPayApi.signin(data, handleSigninResponse);
+    }
+    return false;
+  }
+
+  function handleSigninResponse(data) {
+    console.log('signin response: ' + JSON.stringify(data));
+    if (data.result) {
+      var token = data.result;
+      //document.getElementById('auth_token');
+      $("#auth_token").val(token);
+      $("");
+      FairPayApi.profile(token, handleProfileResponse);
+    } else if (data.error) {
+      showError(data.error.message);
+    }
+  }
+
+  function handleProfileResponse(data) {
+    console.log('profile response: ' + JSON.stringify(data));
+    if (data.result) {
+      console.log('name: ' + data.result.name);
+      $("#name").val(data.result.name);
+    } else if (data.error) {
+      showError(data.error.message);
+    }
+  }
+
   function handleStep1() {
     var data = {};
     var form = document.getElementById("step1_form");
-    FairPayApi.copyFormValues(data, form, ['embed_uuid', 'name', 'email', 'recurrence', 'mailing_list', 'description', 'memo', 'return_url', 'correlation_id']);
+    FairPayApi.copyFormValues(data, form, ['embed_uuid', 'name', 'email', 'recurrence', 'mailing_list', 'description', 'memo', 'return_url', 'correlation_id', 'auth_token']);
     data.amount = resolveAmount();
     data.offer_uuid = resolveOfferUuid();
     //alert('data: ' + JSON.stringify(data));
@@ -120,7 +164,7 @@ javascript:
   }
 
   function handleStep1Response(data) {
-    //alert('step1 response: ' + JSON.stringify(data));
+    console.log('step1 response: ' + JSON.stringify(data));
     if (data.result) {
       //var status = data.result.status;
       //$('#errorMessage').html('');      //var linkUrl = data.result.statusLink;
@@ -182,6 +226,15 @@ javascript:
     return true;
   }
 
+  function validateSigninData(data) {
+    if (!validatePresent(data['email'], 'an Email')) {
+      return false;
+    }
+    if (!validatePresent(data['password'], 'a Password')) {
+      return false;
+    }
+    return true;
+  }
   //todo: factor this over to fairpayapi.js
   function validatePresent(value, field_description) {
     if (value == undefined || value == null || value.length == 0) {

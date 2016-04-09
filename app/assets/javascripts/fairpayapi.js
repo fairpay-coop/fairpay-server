@@ -14,6 +14,7 @@ var FairPayApiSinglton = (function() {
         var apiKey = 'dummy';
         var embedUuid;  // the default embed to use
         var base_uri = '/api/v1/embeds/';
+        var root_uri = '/api/v1/';
 
 
         function launchPaymentFlow(amount, offer_uuid, return_url) {
@@ -76,6 +77,44 @@ var FairPayApiSinglton = (function() {
             var uri = base_uri + embedUuid + '/estimate_fee';
             invoke(uri, 'GET', data, successHandler);
         }
+
+        //function signup(email, password, successHandler) {
+        //    var uri = root_uri + 'users/signup';
+        //    data = {email: email, password: password};
+        //    invoke(uri, 'POST', data, successHandler);
+        //}
+        //function signin(email, password, successHandler) {
+        //    var uri = root_uri + 'users/signin';
+        //    data = {email: email, password: password};
+        //    invoke(uri, 'POST', data, successHandler);
+        //}
+        //function profile(token, successHandler) {
+        //    var uri = root_uri + 'users/profile';
+        //    data = {token: token};
+        //    invoke(uri, 'GET', data, successHandler);
+        //}
+
+        function signup(data, successHandler) {
+            var uri = root_uri + 'users/signup';
+            invoke(uri, 'POST', data, successHandler);
+        }
+
+        function signin(data, successHandler) {
+            var uri = root_uri + 'users/signin';
+            invoke(uri, 'POST', data, successHandler);
+        }
+
+        function profile(token, successHandler) {
+            var uri = root_uri + 'users/profile';
+            data = {token: token};
+            invoke(uri, 'GET', data, successHandler);
+        }
+        function exists(token, successHandler) {
+            var uri = root_uri + 'users/exists';
+            data = {token: token};
+            invoke(uri, 'GET', data, successHandler);
+        }
+
 
         //function joinMailingList(data, successHandler) {
         //    var campaignId = data.capaignId ? data.campaignId : getCampaignId();
@@ -168,6 +207,11 @@ var FairPayApiSinglton = (function() {
             updateFeeAllocation: updateFeeAllocation,
             sendDwollaInfo: sendDwollaInfo,
             estimateFee: estimateFee,
+
+            signup: signup,
+            signin: signin,
+            profile: profile,
+
             //joinMailingList: joinMailingList,
             //fetchContributionStatus: fetchContributionStatus,
             //endRecurringContribution: endRecurringContribution,
