@@ -87,7 +87,7 @@ form id="step1_form" onsubmit="return handleStep1()"
     br
 
   - else
-    - if campaign[:offers].present?
+    - if campaign && campaign[:offers].present?
       |Choose a reward:
       br
       - for offer in campaign[:offers]

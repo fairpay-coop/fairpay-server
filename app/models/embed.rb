@@ -163,7 +163,7 @@ class Embed < ActiveRecord::Base
   def recurrence_options
     [[:none, "One Time"], [:month, "Monthly"], [:year, "Yearly"]]
     values = recurrence
-    values.map do |value|
+    values&.map do |value|
       checked = (value.to_sym == :none)  #todo: make this configurable?
       { value: value, label: RECURRENCE_LABELS[value.to_sym], checked: checked }
     end
