@@ -84,18 +84,25 @@ class DwollaService  < BasePaymentService
     @client_id
   end
 
-  def auth
-    # @dwolla.auths.new(redirect_url: @redirect_url, scope: SCOPE)
-    puts "redirect url: #{@oauth_redirect_url}"
-    @dwolla.auths.new(redirect_uri: @oauth_redirect_url, scope: SCOPE)
+  def auth(transaction_uuid, origin)
+    # if transaction_uuid
+    redirect_uri = "#{@oauth_redirect_url}?t=#{transaction_uuid}&o=#{origin}"
+    # else
+    #   redirect_uri = @oauth_redirect_url
+    # end
+    puts "redirect uri: #{redirect_uri}"
+    @dwolla.auths.new(redirect_uri: redirect_uri, scope: SCOPE)
   end
 
-  def auth_url
-
+  def auth_url(transaction_uuid, origin)
     # puts "dwolla environment: #{ENV['DWOLLA_ENVIRONMENT']}"
     # puts "dwolla client id: #{ENV['DWOLLA_CLIENT_ID']}"
+    auth(transaction_uuid, origin).url + "&dwolla_landing=login"  #todo: figure clean api method
 
-    auth.url + "&dwolla_landing=login"  #todo: figure clean api method
+    # redirect_uri = "#{@oauth_redirect_url}?t=#{transaction_uuid}&o=#{origin}"
+    # puts "redirect uri: #{redirect_uri}"
+    # auth_obj = @dwolla.auths.new(redirect_uri: redirect_uri, scope: SCOPE)
+    # auth_obj.url + "&dwolla_landing=login"  #todo: figure clean api method
   end
 
   # fairpay hosted url which redirects to dwolla auth flow
@@ -103,8 +110,9 @@ class DwollaService  < BasePaymentService
     "#{base_url}/dwolla/auth?t=#{transaction.uuid}"
   end
 
-  def exchange_code_for_token(code)
-    token = auth.callback({code: code})
+  def exchange_code_for_token(code, transaction_uuid, origin)
+    #todo: cleanup two different uses of the 'auth' object
+    token = auth(transaction_uuid, origin).callback({code: code})
   end
 
   def refresh_raw_token(expired_token)
