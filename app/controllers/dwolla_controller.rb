@@ -13,6 +13,7 @@ class DwollaController < ApplicationController
     transaction_uuid = params[:t]
     puts "t uuid: #{transaction_uuid}"
     session[:transaction_uuid] = params[:t]
+    session[:origin] = params[:o]
 
     transaction = Transaction.find_by(uuid: transaction_uuid)
     raise "transaction not found for uuid: #{transaction_uuid}"  unless transaction
@@ -44,16 +45,24 @@ class DwollaController < ApplicationController
       # transaction_uuid = params[:t]
       # step2_uri = session[:step2_uri]
       session[:dwolla_authenticated] = true
-      step2_uri = session[:current_url]
-      if step2_uri
-        redirect_to step2_uri
+
+      if session[:origin] == 'widget'
+        render action: :autoclose, layout: false
       else
-        render json: {access_token: token.access_token, refresh_token: token.refresh_token, account_id: token.account_id}
+        step2_uri = session[:current_url]
+        if step2_uri
+          redirect_to step2_uri
+        else
+          render json: {access_token: token.access_token, refresh_token: token.refresh_token, account_id: token.account_id}
+        end
       end
 
     else
       render json: params
     end
+  end
+
+  def autoclose
   end
 
   def make_payment

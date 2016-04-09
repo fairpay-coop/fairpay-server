@@ -406,7 +406,6 @@
 
                 // Dwolla
                 setupDwolla();
-                // updateDwolla();
 
                 // Paypal
 
@@ -483,15 +482,41 @@
 
     function setupDwolla() {
         $('#fpDowlla-authorize').addEventListener('click', (evt) => {
-            let url = `${store.params['host']}/dwolla/auth?t=${store.state.transaction.uuid}`;
+            let url = `${store.params['host']}/dwolla/auth?t=${store.state.transaction.uuid}&o=widget`;
             let authorizeWindow = window.open(url, "_blank", "width=500, height=550");
             let interval = window.setInterval(() => {
                 if (authorizeWindow == null || authorizeWindow.closed) {
                     window.clearInterval(interval);
-                    alert("window closed");
+                    get(`${store.params['host']}/api/v1/embeds/${store.params['uuid']}/step2_data?transaction_uuid=${store.state.transaction.uuid}`)
+                        .then((data) => {
+                            console.log(data);
+                            const state = JSON.parse(data).result;
+                            store = Object.assign(store, {state});
+                            updateDwolla();
+                        });
+                    
                 }
             }, 1000);
+        });
+
+
+        $('#fpDowlla-pay').addEventListener('click', (evt) => {
+            const url = `${store.params['host']}/api/v1/embeds/${store.params['uuid']}/send_dwolla_info`
+            const data = {
+                transaction_uuid: store.state.transaction.uuid,
+            };
+            post(url, data)
+                .then(data => {
+                    console.log(data);
+                    const paymentState = JSON.parse(data).result;
+                    store = Object.assign(store, {paymentState});
+                    togglePane(tabs, panes, 3);
+                });
+            // .catch((error) => console.log(`error:${error}`));
+
+
         })
+        
     }
 
     function updateFees() {
@@ -503,7 +528,7 @@
 
     function updateDwolla() {
         $$('.fpDwolla-pane').forEach(el => hide(el));
-        if (getPaymentConfig('dwolla').dwolla_authenticated) {
+        if (getPaymentConfig('dwolla').has_dwolla_auth) {
             show($('#fpDowlla-pane-pay'))
         } else {
             show($('#fpDowlla-pane-authorize'))
