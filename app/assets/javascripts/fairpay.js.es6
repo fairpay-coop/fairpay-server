@@ -226,7 +226,6 @@
             this.init(me, params);
         }
 
-
         init(me, params) {
 
             let config = {};
@@ -362,7 +361,9 @@
                                 tabsStatus['fpTab_2'] = 'enabled';
                                 this.updateCurrentPayment();
                                 this.updateFees();
+                                this.setupDwolla();
                                 this.updateDwolla();
+                                this.setupAuthorizenet();
                                 this.togglePane(this.tabs, this.panes, 2);
                             });
                         // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
@@ -383,13 +384,7 @@
                         })
                     });
 
-                    // Dwolla
-                    this.setupDwolla();
 
-                    // Paypal
-
-                    // Authorize.net
-                    this.setupAuthorizenet();
 
                 });
             // .catch(error => console.log(`Error in init:${error}`)); TODO: uncomment and handle better
@@ -471,9 +466,14 @@
 
         }
 
-        setupDwolla() {
 
-            $("#fpPayment-pane-dwolla").innerHTML = render(this.templates[2], this.store);
+        dwollaFundingSources() {
+            const paymentConfig = this.getPaymentConfig('dwolla');
+            return paymentConfig ? paymentConfig.funding_sources : [];
+        }
+
+        setupDwolla() {
+            $("#fpPayment-pane-dwolla").innerHTML = render(this.templates[2], {widget: this});
 
             $('#fpDowlla-authorize').addEventListener('click', (evt) => {
                 let url = `${this.store.params['host']}/dwolla/auth?t=${this.store.state.transaction.uuid}&o=widget`;
@@ -495,9 +495,10 @@
 
 
             $('#fpDowlla-pay').addEventListener('click', (evt) => {
-                const url = `${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/send_dwolla_info`
+                const url = `${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/send_dwolla_info`;
                 const data = {
                     transaction_uuid: this.store.state.transaction.uuid,
+                    funding_source_id: $('input[name=fpDwollaFundingSource]:checked').value
                 };
                 post(url, data)
                     .then(data => {
@@ -534,9 +535,11 @@
         }
 
         getPaymentConfig(paymentKind) {
-            return this.store.state.payment_configs
-                ? this.store.state.payment_configs.find(p => p.kind === paymentKind)
-                : null;
+            if (this.store.state) {
+                return this.store.state.payment_configs
+                    ? this.store.state.payment_configs.find(p => p.kind === paymentKind)
+                    : null;
+            }
         }
 
         updateCurrentPayment() {

@@ -178,7 +178,6 @@ label:hover.fpButton {
     background: grey;
 }
 
-
 /*
  payment types
 */
@@ -211,4 +210,12 @@ label:hover.fpButton {
 
 #fees_container {
     background-color: #555555;
+}
+
+#fpDwolla-funding-sources {
+    background-color: palevioletred;
+}
+
+#fpDwolla-funding-sources label{
+    display: block;
 }

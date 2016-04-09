@@ -2,5 +2,16 @@
     <button id="fpDowlla-authorize" class="fpButton">Authorize with Dwolla</button>
 </div>
 <div id="fpDowlla-pane-pay" class="fpDwolla-pane">
-       <button id="fpDowlla-pay" class="fpButton">Pay with Dwolla</button>
+    <div id="fpDwolla-funding-sources">
+        <span>Select a funding source:</span>
+        <br>
+    {{~it.widget.dwollaFundingSources() :val:idx}}
+        <label for="fp_dwolla_funding_source_{{=val.id}}">
+            <input type="radio" id="fp_dwolla_funding_source_{{=val.id}}" name="fpDwollaFundingSource" value="{{=val.id}}" {{?val.default}}checked{{?}} />
+            {{=val.name}}
+        </label>
+    {{~}}
+    </div>
+
+    <button id="fpDowlla-pay" class="fpButton">Pay with Dwolla</button>
 </div>
