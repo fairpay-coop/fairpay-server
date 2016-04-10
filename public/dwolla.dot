@@ -2,7 +2,9 @@
     <span>Dwolla:</span>
 </div>
 <div id="fpDowlla-pane-authorize" class="fpDwolla-pane">
-    <button id="fpDowlla-authorize" class="fpButton">Authorize with Dwolla</button>
+    <div class="fpBottom">
+        <button id="fpDowlla-authorize" class="fpButton">Authorize with Dwolla</button>
+    </div>
 </div>
 <div id="fpDowlla-pane-pay" class="fpDwolla-pane fpForm">
     <div id="fpDwolla-funding-sources">
@@ -21,10 +23,9 @@
         </div>
         {{~}}
     </div>
+    <div class="fpBottom">
+        <button id="fpDowlla-pay" class="fpButton">Pay with Dwolla</button>
+    </div>
 </div>
 
-</div>
 
-<div class="fpBottom">
-    <button id="fpDowlla-pay" class="fpButton">Pay with Dwolla</button>
-</div>
