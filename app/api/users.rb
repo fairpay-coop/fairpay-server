@@ -14,6 +14,8 @@ class Users < Grape::API
       params do
         required :email, type: String
         required :password, type: String
+        #todo: think about a better way to slice this api
+        optional :transaction_uuid, type: String  # optionally indicated a transaction to updated as 'profile_authenticated'
       end
       email = params[:email]
       password = params[:password]

@@ -47,8 +47,13 @@ module ApplicationHelper
   # end
 
   def resolve_authenticated_profile(session_data)
-    if session_data && session_data[:auth_token].present?
-      user = User.find_by(auth_token: session_data[:auth_token])
+    auth_token = session_data ? session_data[:auth_token] : nil
+    resolve_profile_from_token(auth_token)
+  end
+
+  def resolve_profile_from_token(auth_token)
+    if auth_token.present?
+      user = User.find_by(auth_token: auth_token)
       puts "auth token user: #{user}"
       if user
         user.profile

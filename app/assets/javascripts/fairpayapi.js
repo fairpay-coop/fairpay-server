@@ -66,6 +66,11 @@ var FairPayApiSinglton = (function() {
             invoke(uri, 'POST',  data, successHandler);
         }
 
+        function updateAuthToken(data, successHandler) {
+            var uri = base_uri + data.embed_uuid + '/update_auth_token';
+            invoke(uri, 'POST',  data, successHandler);
+        }
+
         function sendDwollaInfo(data, successHandler) {
             var uri = base_uri + data.embed_uuid + '/send_dwolla_info';
             invoke(uri, 'POST', data, successHandler);
@@ -205,6 +210,7 @@ var FairPayApiSinglton = (function() {
             submitAddress: submitAddress,
             submitPayment: submitPayment,
             updateFeeAllocation: updateFeeAllocation,
+            updateAuthToken: updateAuthToken,
             sendDwollaInfo: sendDwollaInfo,
             estimateFee: estimateFee,
 

@@ -39,8 +39,8 @@ br
       /form id="dwolla_form" method="post" action="/pay/#{embed[:uuid]}/step2" onsubmit="return validateDwollaForm()"
       form id="dwolla_form"
         = hidden_field_tag :authenticity_token, form_authenticity_token
-        = hidden_field_tag :embed_uuid, embed[:uuid]
-        = hidden_field_tag :transaction_uuid, transaction[:uuid]
+        = hidden_field_tag :embed_uuid, embed[:uuid], id: "embed_uuid"
+        = hidden_field_tag :transaction_uuid, transaction[:uuid], id: "transaction_uuid"
         = hidden_field_tag :payment_type, 'dwolla'
         = hidden_field_tag :amount, transaction[:base_amount]
         |Dwolla Funding Source:
@@ -55,7 +55,13 @@ br
     - else
       b Please sign in to use your previously authenticated Dwolla token.
       br
-      = link_to('Sign In', new_user_session_path)
+      /= link_to('Sign In', new_user_session_path)
+      div id="password_block_dwolla"
+      = hidden_field_tag :email_dwolla, transaction[:payor][:email], id: 'email_dwolla'
+      => "Password:"
+      input type="password" id="password_dwolla" name="password" autocapitalize="off"
+      input id="signinSubmitDwolla" type="submit" value="Signin" onclick="handleSigninDwolla(); return false;"
+      br
 
 
 javascript:
@@ -153,5 +159,44 @@ javascript:
       return false;
     } else {
       return true;
+    }
+  }
+
+  function handleSigninDwolla() {
+    var email = $("#email_dwolla").val();
+    var password = $("#password_dwolla").val();
+    var data = {email: email, password: password};
+    console.log("handleSigninDwolla - data: " + JSON.stringify(data));
+    FairPayApi.signin(data, handleSigninResponseDwolla);
+    return false;
+  }
+
+  function handleSigninResponseDwolla(data) {
+    console.log('signin response: ' + JSON.stringify(data));
+    if (data.result) {
+      var embed_uuid = $("#embed_uuid").val();
+      var transaction_uuid = $("#transaction_uuid").val();
+      var auth_token = data.result;
+      var param_data = {embed_uuid: embed_uuid, transaction_uuid: transaction_uuid, auth_token: auth_token};
+      console.log("update auth token params: " + JSON.stringify(param_data));
+      //$("#password_block").hide();
+      FairPayApi.updateAuthToken(param_data, handleUpdateAuthTokenDwollaResponse);
+    } else if (data.error) {
+      //showError(data.error.message);
+      alert("error: " + data.error.message);
+    }
+  }
+
+  function handleUpdateAuthTokenDwollaResponse(data) {
+    console.log('handleUpdateAuthTokenDwollaResponse response: ' + JSON.stringify(data));
+    if (data.result) {
+
+      if (data.result.redirect_url) {
+        console.log("next step url: " + data.result.redirect_url);
+        window.location = data.result.redirect_url;
+      }
+    } else if (data.error) {
+      //showError(data.error.message);
+      alert("error: " + data.error.message);
     }
   }

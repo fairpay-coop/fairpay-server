@@ -320,6 +320,22 @@ class Embed < ActiveRecord::Base
     transaction.fee_allocation
   end
 
+  def update_auth_token(params)
+    transaction_uuid = params[:transaction_uuid]
+    transaction = Transaction.by_uuid(transaction_uuid)
+
+    auth_token = params[:auth_token]
+
+    payor = resolve_profile_from_token(auth_token)
+    if payee
+      transaction.update!(payor_id: payor.id, profile_authenticated: true)
+      transaction
+    else
+      raise "unable to resolve profile from token: #{auth_token}"
+    end
+  end
+
+
   def submit_address(transaction_uuid, address_data)
     puts "transaction uuid: #{transaction_uuid}"
     transaction = Transaction.by_uuid(transaction_uuid)

@@ -147,6 +147,21 @@ class Embeds < Grape::API
         wrap_result( result )
       end
 
+      # applies user auth token to the specified transaction, and re-renders the step2 data
+      post :update_auth_token do
+        puts "submit address (new) - params: #{params.inspect}"
+        embed = Embed.resolve(params[:embed_uuid])
+
+        params do
+          required :transaction_uuid, type: String
+          required :auth_token, type: String
+        end
+
+        transaction = embed.update_auth_token(params)
+        result = transaction.step2_data
+        puts "update_auth_token - result: #{result}"
+        wrap_result( result )
+      end
 
       post :submit_address do
         puts "submit address (new) - params: #{params.inspect}"
