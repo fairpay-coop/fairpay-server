@@ -60,10 +60,12 @@ input:focus.fpInput {
     color: #555555;
     width: 156px;
     display:inline-block;
+    float: left;
+    padding-top: 10px;
 }
 
 .fpMax-input {
-    width: 380px;
+    width: calc(100% - 156px - 10px)
 }
 
 .fpButton {
@@ -98,9 +100,11 @@ button[disabled=disabled].fpButton, button:disabled.fpButton {
 
 
 .fpBottom {
-    width: 540px;
-    margin: 15px 0 10px;
+    /*width: 540px;*/
+    /*margin: 15px 0 10px 5px;*/
     text-align: right;
+    /*background-color: greenyellow;*/
+    padding-right: 10px;
 }
 
 .fpPane {
@@ -108,9 +112,11 @@ button[disabled=disabled].fpButton, button:disabled.fpButton {
 }
 
 .fpPaneContent{
-    margin-top: 20px;
-    margin-bottom: 10px;
-    margin-left: 5px;
+    margin: 10px 10px 10px 10px;
+    /*margin-top: 20px;*/
+    /*margin-bottom: 10px;*/
+    /*margin-left: 5px;*/
+    /*background-color: cadetblue;*/
 }
 
 .fpCustom-amount {
@@ -183,8 +189,18 @@ label:hover.fpButton {
 */
 
 .fpPayment-types {
-    margin: 15px;
-    background-color: beige;
+    /*margin: 15px;*/
+    /*background-color: beige;*/
+    margin-bottom: 10px;
+}
+
+.fpPayment-types > span {
+    font-weight: bold;
+}
+
+#fpAmount {
+    font-weight: bold;
+    margin-bottom: 10px;
 }
 
 .fpPayment-types label.fpButton {
@@ -193,29 +209,57 @@ label:hover.fpButton {
     display: inline-block;
 }
 
+.fpPayment-type {
+    margin-left: 10px;
+}
+
 .fpPayment-fees {
     display: inline-block;
     width: auto;
 }
 
-.fpDwolla-pane{
+.fpDwolla-pane {
+    /*text-align: center;*/
+}
+
+.fpAuthorize-pane {
     text-align: center;
 }
 
 .fpPayment-panes {
-    margin: 15px;
-    background-color: aliceblue;
+    /*margin: 15px;*/
+    /*background-color: aliceblue;*/
 }
 
+.fpPaymentName {
+    font-weight: bold;
+    padding-bottom: 10px;
+}
+
+.fpPayment-pane > .fpForm {
+    margin-left: 10px;
+}
 
 #fees_container {
-    background-color: #555555;
+    /*background-color: #555555;*/
 }
 
 #fpDwolla-funding-sources {
-    background-color: palevioletred;
+    /*background-color: palevioletred;*/
+}
+
+#fpDwolla-funding-sources label{
+    width: calc(100% - 20px);
+    /*background-color: mediumvioletred;*/
+    outline: 0;
+    padding: 5px;
+    font: 13px Verdana, Tahoma, sans-serif;
 }
 
 #fpDwolla-funding-sources label{
     display: block;
+}
+
+#fpPaymentRecap {
+    /*background-color: lightpink;*/
 }

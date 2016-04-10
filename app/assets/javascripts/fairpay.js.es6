@@ -1,9 +1,5 @@
 (function (global) {
 
-
-
-
-
     //
     // Extensions
     //
@@ -59,7 +55,6 @@
             resolve();
         });
     }
-
 
     function loadFiles(urls) {
         return Promise.all(urls.map(url => get(url)));
@@ -121,6 +116,15 @@
     // DOM helpers
     //
 
+    function $(selector) {
+        const result = $$(selector);
+        return result.length == 0 ? null : result[0];
+    }
+
+    function $$(selector) {
+        return Array.from(document.querySelectorAll(selector));
+    }
+
     function hide(el) {
         if (el) el.style.display = 'none';
     }
@@ -150,50 +154,41 @@
     //
 
     function parseQuery(query) {
-        var params = {};
+        let params = {};
         if (!query) return params; // return empty object
         var Pairs = query.split(/[;&]/);
-        for (var i = 0; i < Pairs.length; i++) {
-            var KeyVal = Pairs[i].split('=');
+        for (let i = 0; i < Pairs.length; i++) {
+            const KeyVal = Pairs[i].split('=');
             if (!KeyVal || KeyVal.length != 2) continue;
-            var key = unescape(KeyVal[0]);
-            var val = unescape(KeyVal[1]);
+            let key = unescape(KeyVal[0]);
+            let val = unescape(KeyVal[1]);
             val = val.replace(/\+/g, ' ');
             params[key] = val;
         }
         return params;
     }
 
-
     function getParams(script) {
-        var queryString = script.src.replace(/^[^\?]+\??/, '');
-
-        var params = parseQuery(queryString);
-
-        var re = /^(.*:)\/\/([A-Za-z0-9\-\.]+)(:[0-9]+)?(.*)$/;
-        var matches = script.src.match(re);
+        const queryString = script.src.replace(/^[^\?]+\??/, '');
+        let params = parseQuery(queryString);
+        const re = /^(.*:)\/\/([A-Za-z0-9\-\.]+)(:[0-9]+)?(.*)$/;
+        const matches = script.src.match(re);
         params['host'] = matches[1] + '//' + matches[2] + matches[3];
         return params;
     }
 
     function myself() {
-        var scripts = document.getElementsByTagName('script');
+        const scripts = document.getElementsByTagName('script');
         return scripts[scripts.length - 1];
     }
-
 
     function render(template, data) {
         return doT.template(template)(data);
     }
 
-    function $(selector) {
-        const result = $$(selector);
-        return result.length == 0 ? null : result[0];
-    }
-
-    function $$(selector) {
-        return Array.from(document.querySelectorAll(selector));
-    }
+    //
+    // Local Storage
+    //
 
     function initLocalStorage(params) {
         return new Promise((resolve, reject) => {
@@ -226,6 +221,15 @@
             this.init(me, params);
         }
 
+
+        loadTemplates(templateNames) {
+            return loadFiles(templateNames.map(name => `${params['host']}/${name}.dot`))
+                .then((result) => result.reduce((acc, val, idx, arr) => {
+                    acc[templateNames[idx]] = val;
+                    return acc;
+                }, {}));
+        }
+
         init(me, params) {
 
             let config = {};
@@ -238,17 +242,14 @@
                 .then(() => getLocalData())
                 .then((data) => {
                     localData = data;
-                    return loadFiles([`${params['host']}/fairplay.dot`,
-                        `${params['host']}/recap.dot`,
-                        `${params['host']}/dwolla.dot`]);
+                    return this.loadTemplates(['fairpay', 'recap', 'dwolla', 'authorizenet']);
                 })
                 .then((result) => {
-
                     this.templates = result;
                     if (params.amount) {
                         config = Object.assign(config, {suggested_amounts: [params.amount]})
                     }
-
+                    this.store = Object.assign({}, {config, params, localData});
 
                     // format the amounts
                     Object.assign(config, {
@@ -256,15 +257,14 @@
                             if (-1 == amount) {
                                 return -1;
                             } else {
-                                return config.currency_format.replace('{0}', amount);
+                                return this.localizeAmount(amount);
                             }
                         })
                     });
 
-                    this.store = Object.assign({}, {config, params, localData});
 
                     // render the template and insert it after the script tag
-                    let html = render(this.templates[0], this.store.config);
+                    let html = render(this.templates['fairpay'], this.store.config);
                     me.insertAdjacentHTML('afterend', html);
 
                     // panes
@@ -282,12 +282,11 @@
                         tabsStatus[tab.id] = 'disabled';
                     });
                     tabsStatus['fpTab_0'] = 'enabled';
-                    this.togglePane(this.tabs, this.panes, 0);
+                    this.togglePane(this.tabs, this.panes, 'fpAmountPane');
                     // togglePane(tabs, panes, 2);
 
                     // disable all the 'continue' buttons
                     $$('.fpContinue').forEach(el => disable(el));
-
 
                     //
                     // Pane 1: amount + email
@@ -350,21 +349,23 @@
                         });
 
 
-                        post(`${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/submit_step1`, {
+                        const url = `${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/submit_step1`;
+                        const data = {
                             email,
                             amount
-                        })
-                            .then((data) => {
+                        };
+                        post(url, data)
+                            .then(data => {
                                 console.log(data);
                                 const state = JSON.parse(data).result;
                                 this.store = Object.assign(this.store, {state});
                                 tabsStatus['fpTab_2'] = 'enabled';
-                                this.updateCurrentPayment();
-                                this.updateFees();
+                                $('#fpAmount').textContent = `Total to pay: ${this.localizeAmount(this.store.state.transaction.base_amount)}`;
+                                this.showCurrentPayment();
                                 this.setupDwolla();
-                                this.updateDwolla();
                                 this.setupAuthorizenet();
-                                this.togglePane(this.tabs, this.panes, 2);
+                                this.updateFees();
+                                this.togglePane(this.tabs, this.panes, 'fpPaymentPane');
                             });
                         // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
                     });
@@ -380,25 +381,24 @@
                     paymentTypeButtons[0].checked = true;
                     paymentTypeButtons.forEach((button) => {
                         button.addEventListener('click', (evt) => {
-                            this.updateCurrentPayment();
+                            this.showCurrentPayment();
                         })
                     });
-
 
 
                 });
             // .catch(error => console.log(`Error in init:${error}`)); TODO: uncomment and handle better
         }
 
-        togglePane(tabList, paneList, paneIdx) {
-            console.log(`toggling pane:${paneIdx} of ${paneList}`)
+        togglePane(tabList, paneList, paneId) {
             paneList.forEach((pane, index) => {
-                if (index == paneIdx) {
-                    show(paneList[index]);
-                    addClass(tabList[index], 'selected')
+                const tab = tabList[index];
+                if (pane.id == paneId) {
+                    show(pane);
+                    addClass(tab, 'selected')
                 } else {
-                    hide(paneList[index]);
-                    removeClass(tabList[index], 'selected')
+                    hide(pane);
+                    removeClass(tab, 'selected')
                 }
             });
         }
@@ -416,6 +416,9 @@
 
 
         setupAuthorizenet() {
+
+            $("#fpPayment-pane-authorizenet").innerHTML = render(this.templates['authorizenet'], {widget: this});
+
             // form validation
             const authorizenetPayButton = $('#fpPayWithAuthorizenet');
             $$('input.fpAuthorizenet').forEach(input => {
@@ -429,7 +432,7 @@
                         get(`${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/estimate_fee?bin=${bin}&amount=${amount}`)
                             .then((data) => {
                                 const result = JSON.parse(data).result;
-                                const paymentConfig = getPaymentConfig(this.store, 'authorizenet');
+                                const paymentConfig = this.getPaymentConfig('authorizenet');
                                 paymentConfig.card_fee_str = result.fee_str === "unknown" ? result.estimated_fee : result.fee_str;
                                 this.updateFees();
                             });
@@ -458,7 +461,7 @@
                         const paymentState = JSON.parse(data).result;
                         this.store = Object.assign(this.store, {paymentState});
                         this.renderRecap();
-                        this.togglePane(this.tabs, this.panes, 3);
+                        this.togglePane(this.tabs, this.panes, 'fpRecapPane');
                     });
                 // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
             });
@@ -466,14 +469,13 @@
 
         }
 
-
         dwollaFundingSources() {
             const paymentConfig = this.getPaymentConfig('dwolla');
             return paymentConfig ? paymentConfig.funding_sources : [];
         }
 
         setupDwolla() {
-            $("#fpPayment-pane-dwolla").innerHTML = render(this.templates[2], {widget: this});
+            $("#fpPayment-pane-dwolla").innerHTML = render(this.templates['dwolla'], {widget: this});
 
             $('#fpDowlla-authorize').addEventListener('click', (evt) => {
                 let url = `${this.store.params['host']}/dwolla/auth?t=${this.store.state.transaction.uuid}&o=widget`;
@@ -486,13 +488,11 @@
                                 console.log(data);
                                 const state = JSON.parse(data).result;
                                 this.store = Object.assign(this.store, {state});
-                                this.updateDwolla();
+                                this.setupDwolla();
                             });
-
                     }
                 }, 1000);
             });
-
 
             $('#fpDowlla-pay').addEventListener('click', (evt) => {
                 const url = `${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/send_dwolla_info`;
@@ -506,32 +506,30 @@
                         const paymentState = JSON.parse(data).result;
                         this.store = Object.assign(this.store, {paymentState});
                         this.renderRecap();
-                        this.togglePane(this.tabs, this.panes, 3);
+                        this.togglePane(this.tabs, this.panes, 'fpRecapPane');
                     });
                 // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
 
 
-            })
-
-        }
-
-        renderRecap() {
-            $("#fpRecapPane").innerHTML = render(this.templates[1], this.store);
-        }
-
-        updateFees() {
-            this.store.state.payment_configs.forEach(p => {
-                $(`#fp_paymentFees_${p.kind}`).textContent = `Fees: ${p.card_fee_str}`;
             });
-        }
 
-        updateDwolla() {
             $$('.fpDwolla-pane').forEach(el => hide(el));
             if (this.getPaymentConfig('dwolla').has_dwolla_auth) {
                 show($('#fpDowlla-pane-pay'))
             } else {
                 show($('#fpDowlla-pane-authorize'))
             }
+
+        }
+
+        renderRecap() {
+            $("#fpPaymentRecap").innerHTML = render(this.templates['recap'], this.store);
+        }
+
+        updateFees() {
+            this.store.state.payment_configs.forEach(p => {
+                $(`#fp_paymentFees_${p.kind}`).textContent = `Fees: ${p.card_fee_str}`;
+            });
         }
 
         getPaymentConfig(paymentKind) {
@@ -542,12 +540,15 @@
             }
         }
 
-        updateCurrentPayment() {
+        showCurrentPayment() {
             let paymentType = $('input[name=fpPaymentType]:checked').value;
             $$(".fpPayment-pane").forEach(el => hide(el));
             show($(`#fpPayment-pane-${paymentType}`));
         }
 
+        localizeAmount(amount) {
+            return this.store.config.currency_format.replace('{0}', amount);
+        }
     }
     console.log("Widget loader loaded");
 

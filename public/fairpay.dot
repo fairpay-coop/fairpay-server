@@ -1,0 +1,107 @@
+<div id="fairpay-widget">
+    <ul class="fpTabs">
+        <li class="fpTab" id="fpTab_0" data-pane="fpAmountPane">
+            <span>Amount</span>
+        </li>
+
+        <!--<li class="fpTab" id="fpTab_1" data-pane="fpIdentityPane">-->
+        <!--<span>Identity</span>-->
+        <!--</li>-->
+
+        <li class="fpTab" id="fpTab_2" data-pane="fpPaymentPane">
+            <span>Payment</span>
+        </li>
+
+        <li class="fpTab" id="fpTab_3" data-pane="fpRecapPane">
+            <span>Finished</span>
+        </li>
+    </ul>
+
+    <div class="panes">
+        <div class="fpPane" id="fpAmountPane">
+            <div class="fpPaneContent">
+                <div>
+                    <label class="fpLabel" for="fpEmail">Your Email:</label>
+                    <input id="fpEmail" class="fpInput fpMax-input" type="email"
+                           placeholder="Please enter a valid email" required/>
+                </div>
+                <div class="fpAmount">
+                    <span class="fpLabel">
+                        Donation amount:
+                    </span>
+                    {{? it.suggested_amounts.length == 1 }}
+                    {{? it.suggested_amounts[0] == -1}}
+
+                    <input class="fpInput fpCustom-amount" type="text" placeholder="Custom Amount"/>
+                    {{??}}
+                    <span>{{= it.localizedAmounts[0]}}</span>
+                    {{?}}
+                    {{??}}
+                    {{~it.suggested_amounts :val:idx}}
+                    {{? val == -1}}
+                    <input type="radio" id="fp_other" name="fpAmount" class="fpButton" value="other"/>
+                    <label for="fp_other" class="fpButton">Other</label>
+                    <input class="fpInput fpCustom-amount" type="text" placeholder="Custom Amount"/>
+                    {{??}}
+                    <input type="radio" id="fp_{{=val}}" name="fpAmount" class="fpButton" value="{{=val}}"/>
+                    <label for="fp_{{=val}}" class="fpButton">{{=it.localizedAmounts[idx]}}</label>
+                    {{?}}
+                    {{~}}
+                    {{?}}
+                </div>
+                <div class="fpBottom">
+                    <button id="fpContinueAmountPane" class="fpButton fpContinue">continue</button>
+                </div>
+            </div>
+        </div>
+
+        <!--<div class="fpPane" id="fpIdentityPane">-->
+        <!--<h1>Pane 2</h1>-->
+        <!--<div>email</div>-->
+        <!--<div>address</div>-->
+        <!--<div>phone</div>-->
+        <!--<div>city</div>-->
+        <!--<div>state</div>-->
+        <!--<div>continue</div>-->
+        <!--</div>-->
+
+        <div class="fpPane" id="fpPaymentPane">
+            <div class="fpPaneContent">
+                <div id="fpAmount"></div>
+                <div class="fpPayment-types">
+                    <span>Payment Method:</span>
+                    {{~it.payment_configs :val:idx}}
+                    <div class="fpPayment-type">
+                        <input type="radio" id="fp_paymentType_{{=val.kind}}" name="fpPaymentType" value="{{=val.kind}}"
+                               class="fpButton"/>
+                        <label for="fp_paymentType_{{=val.kind}}" class="fpButton">{{=val.label}}</label>
+                        <span class="fpPayment-fees" id="fp_paymentFees_{{=val.kind}}">sfsdfdsfsd</span>
+                    </div>
+
+                    {{~}}
+                </div>
+
+                <div class="fpPayment-panes">
+                    <div id="fpPayment-pane-authorizenet" class="fpPayment-pane">
+                        <!-- authorizenet.dot -->
+                    </div>
+
+                    <div id="fpPayment-pane-dwolla" class="fpPayment-pane">
+                        <!--dwolla.dot-->
+                    </div>
+
+                    <div id="fpPayment-pane-paypal" class="fpPayment-pane">
+                        <h1>paypal</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fpPane" id="fpRecapPane">
+            <div class="fpPaneContent">
+                <div id="fpPaymentRecap"></div>
+                <div>create account</div>
+            </div>
+        </div>
+    </div>
+</div>

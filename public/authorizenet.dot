@@ -1,0 +1,23 @@
+<div class="fpPaymentName">
+    <span>Credit/Debit Card:</span>
+</div>
+
+<div id="fpAuthorizenet-pane-pay" class="fpAuthorizenet-pane fpForm">
+    <div>
+        <label class="fpLabel" for="fpCardNumber">Card Number:</label>
+        <input id="fpCardNumber" class="fpInput fpMax-input fpAuthorizenet" placeholder="Card Number" pattern="[0-9]{13,16}" required/>
+    </div>
+    <div>
+        <label class="fpLabel" for="fpCardExp">Card Exp (mmyy):</label>
+        <input id="fpCardExp" class="fpInput fpMax-input fpAuthorizenet" placeholder="Expiration" pattern="[0-9]{4}" required/>
+    </div>
+    <label class="fpLabel" for="fpCardCVV">Card CVV:</label>
+    <input id="fpCardCVV" class="fpInput fpMax-input fpAuthorizenet" placeholder="CVV" pattern="[0-9]{3,4}" required/>
+    <div>
+        <label class="fpLabel" for="fpCardZip">Billing Zip:</label>
+        <input id="fpCardZip" class="fpInput fpMax-input fpAuthorizenet" placeholder="Billing Zip" pattern="[0-9]{5}" required/>
+    </div>
+    <div class="fpBottom">
+        <button id="fpPayWithAuthorizenet" class="fpButton fpContinue">Pay with Card</button>
+    </div>
+</div>
