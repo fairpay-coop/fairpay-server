@@ -323,27 +323,26 @@ class DwollaService  < BasePaymentService
   end
 
 
-  def widget_data(transaction, session_data)
+  def widget_data(transaction)
     result = super(transaction)
     if transaction
       result[:has_dwolla_auth] = has_dwolla_auth(transaction)
       result[:dwolla_flow] = @merchant_config.get_data_field(:flow)
       result[:local_auth_url] = local_auth_url(transaction)
 
-      #todo: session data security
-      dwolla_session_authenticated = session_data[:dwolla_authenticated]  # make sure to allow just authenticated session
+      # dwolla_session_authenticated = session_data[:dwolla_authenticated]  # make sure to allow just authenticated session
 
       # currently duplicated with base widget data
-      current_user = resolve_current_user(session_data)
-      if current_user && current_user.email == transaction.payor.email
-        puts "authenticated user session - stored payments available"
-        profile_authenticated = true
-      end
+      # current_user = resolve_current_user(session_data)
+      # if current_user && current_user.email == transaction.payor.email
+      #   puts "authenticated user session - stored payments available"
+      #   profile_authenticated = true
+      # end
 
-      result[:dwolla_authenticated] = dwolla_session_authenticated || profile_authenticated
+      dwolla_authenticated = transaction.dwolla_authenticated || transaction.profile_authenticated
+      result[:dwolla_authenticated] = dwolla_authenticated
 
-      #todo: restrict funding sources options unless properly authenticiated
-      if true || dwolla_authenticated
+      if dwolla_authenticated
         funding_sources = funding_sources(transaction)
         if funding_sources
           options = funding_sources.map do |option|

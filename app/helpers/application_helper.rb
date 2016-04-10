@@ -28,27 +28,37 @@ module ApplicationHelper
     "%.#{decimals}f" % amount
   end
 
-  def resolve_current_user(session_data)
-    if session_data
-      if session_data[:auth_token].present?
-        user = User.find_by(auth_token: session_data[:auth_token])
-        puts "auth token user: #{user}"
-        return user
-      end
+  # def resolve_current_user(session_data)
+  #   if session_data
+  #     if session_data[:auth_token].present?
+  #       user = User.find_by(auth_token: session_data[:auth_token])
+  #       puts "auth token user: #{user}"
+  #       return user
+  #     end
+  #
+  #     if session_data[:authenticated_user]
+  #       return session_data[:authenticated_user]
+  #     else
+  #       email = session_data[:email]  #todo: widget auth'd cookie support
+  #       return User.find_by_email(email)  if email
+  #     end
+  #   end
+  #   nil
+  # end
 
-      if session_data[:authenticated_user]
-        return session_data[:authenticated_user]
+  def resolve_authenticated_profile(session_data)
+    if session_data && session_data[:auth_token].present?
+      user = User.find_by(auth_token: session_data[:auth_token])
+      puts "auth token user: #{user}"
+      if user
+        user.profile
       else
-        email = session_data[:email]  #todo: widget auth'd cookie support
-        return User.find_by_email(email)  if email
+        puts "users not found for auth_token: #{auth_token}"
+        nil
       end
+    else
+      nil
     end
-    nil
-  end
-
-  def resolve_current_profile(session_data)
-    user = resolve_current_user(session_data)
-    user.profile  if user
   end
 
   def session_auth_token

@@ -36,7 +36,8 @@ br
 - else
     - if profile_authenticated || payment_config[:dwolla_authenticated]
       /= link_to "confirm payment w/ default funding source", "/pay/#{@embed.uuid}/pay_via_dwolla/#{@transaction.uuid}"
-      form id="dwolla_form" method="post" action="/pay/#{embed[:uuid]}/step2" onsubmit="return validateDwollaForm()"
+      /form id="dwolla_form" method="post" action="/pay/#{embed[:uuid]}/step2" onsubmit="return validateDwollaForm()"
+      form id="dwolla_form"
         = hidden_field_tag :authenticity_token, form_authenticity_token
         = hidden_field_tag :embed_uuid, embed[:uuid]
         = hidden_field_tag :transaction_uuid, transaction[:uuid]
@@ -58,6 +59,41 @@ br
 
 
 javascript:
+
+  $("#dwolla_form").submit(handleDwollaPayment);
+
+  function handleDwollaPayment() {
+    //alert('handleCard');
+    var form = document.getElementById("dwolla_form");
+    var data = {};
+    FairPayApi.copyFormValues(data, form, ['embed_uuid', 'transaction_uuid', 'payment_type', 'amount', 'funding_source_id']);
+    console.log('dwolla submit data: ' + JSON.stringify(data));
+    //if (validateDwollaData(data)) {
+    if (validateDwollaForm()) {
+      FairPayApi.submitPayment(data, handleDwollaPaymentResponse);
+    }
+    return false;
+  }
+
+  function handleDwollaPaymentResponse(data) {
+    console.log('dwolla payment response: ' + JSON.stringify(data));
+    if (data.result) {
+      var status = data.result.status;
+      console.log('payment status: ' + status);
+      //$('#paymentStatus').html(status);
+      //$('#errorMessage').html('');      //var linkUrl = data.result.statusLink;
+      //var linkHtml = '<a href="' + linkUrl + '">' + linkUrl + '</a>';
+      //$('#statusLink').html(linkHtml);
+      if (data.result.redirect_url) {
+        window.location = data.result.redirect_url;
+      }
+    } else if (data.error) {
+      alert('error resp: ' + JSON.stringify(data.error));
+      //$('#paymentStatus').html('error');
+      //$('#errorMessage').html(data.error.message);
+      //$('#errorStack').html('<pre>' + data.error.stack + '</pre>');
+    }
+  }
 
   document.addEventListener("DOMContentLoaded", function (e) {
     var form = $('#dwolla_user_form');
@@ -115,5 +151,7 @@ javascript:
     if (count == 0) {
       alert("Please select a Funding Source");
       return false;
+    } else {
+      return true;
     }
   }

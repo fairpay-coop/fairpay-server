@@ -54,7 +54,7 @@ class Embeds < Grape::API
 
       get :step2_data do
         puts "embed_data - params: #{params.inspect}"
-        session_data = params[:session_data] || {}
+        # session_data = params[:session_data] || {}
         #todo: session data security
 
         embed = Embed.resolve(params[:embed_uuid])
@@ -91,7 +91,7 @@ class Embeds < Grape::API
         # #   result[:authenticated_profile] = current_user.profile
         # # end
 
-        result = transaction.step2_data(session_data)
+        result = transaction.step2_data
         wrap_result( result )
       end
 
@@ -130,25 +130,17 @@ class Embeds < Grape::API
           optional :auth_token, type: String
         end
 
-        auth_token = params[:auth_token]
+        # auth_token = params[:auth_token]
         data = params.slice(:amount, :email, :name, :recurrence, :mailing_list, :description, :memo, :offer_uuid, :return_url, :correlation_id, :auth_token)
-
-        cookies[:email] = data[:email]
 
         puts("data: #{data.inspect}")
 
         transaction = embed.step1(data)
         puts("tran: #{transaction.inspect}")
 
-        # wrap_result( {
-        #     status: transaction.status,
-        #     transaction_uuid: transaction.uuid,
-        #     redirect_url: transaction.step2_url,
-        #     transaction: transaction
-        # } )
-        session_data = {} #params[:session_data] || {}  #todo: clean this up once auth/cookie interface settles
-        session_data[:auth_token] = auth_token
-        result = transaction.step2_data(session_data)
+        # session_data = {} #params[:session_data] || {}  #todo: clean this up once auth/cookie interface settles
+        # session_data[:auth_token] = auth_token
+        result = transaction.step2_data
         result[:redirect_url] = transaction.next_step_url  # used by simple test flow
         result[:next_step_url] = transaction.next_step_url  # used by simple test flow
         puts "step1 post result: #{result}"

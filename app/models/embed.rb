@@ -277,6 +277,14 @@ class Embed < ActiveRecord::Base
       name = email  unless name.present?  # don't require 'name' as the api level, default to email
       payor = Profile.create!(email: email, name: name)
     end
+    if auth_token.present?
+      auth_user = User.find_by(auth_token: auth_token)
+      profile_authenticated = auth_user&.profile&.email == email
+    else
+      profile_authenticated = false
+    end
+    puts "auth token: #{auth_token}, profile_authenticated: #{profile_authenticated}"
+
     fee_allocation = resolve_fee_allocations.first
 
     offer = Offer.resolve(offer_uuid, required:false)
@@ -285,6 +293,7 @@ class Embed < ActiveRecord::Base
         embed: self,
         payee: self.profile,
         payor: payor,
+        profile_authenticated: profile_authenticated,
         base_amount: amount,
         status: :provisional,
         fee_allocation: fee_allocation,
@@ -367,9 +376,9 @@ class Embed < ActiveRecord::Base
     # expose :offers, using: Offer::Entity
   end
 
-  def payment_configs_data(transaction = nil, session_data = nil)
+  def payment_configs_data(transaction = nil)
     payment_configs.map do |merchant_config|
-      merchant_config.widget_data(transaction, session_data)
+      merchant_config.widget_data(transaction)
     end
   end
 
@@ -378,7 +387,7 @@ class Embed < ActiveRecord::Base
     #   merchant_config.widget_data(nil, nil)
     # end
     session_data = params[:session_data]
-    authenticated_profile = resolve_current_profile(session_data)
+    authenticated_profile = resolve_authenticated_profile(session_data)
 
     amount = amount_param(params, :amount) || get_data_field(:amount)
     description = params[:description] || get_data_field(:description)
@@ -399,12 +408,13 @@ class Embed < ActiveRecord::Base
     result = {
         embed: Embed::Entity.represent(self),
         authenticated_profile: Profile::Entity.represent(authenticated_profile),
-        payment_configs: payment_configs_data(nil, session_data),
+        payment_configs: payment_configs_data(nil),
         amount: amount,
         description: description,
         return_url: return_url,
         correlation_id: correlation_id,
         assigned_offer: Offer::Entity.represent(assigned_offer),
+        session_data: session_data,
 
         #todo: remove duplicate embed fields below once widget usage migrated
         # session_email: session_email,
@@ -421,5 +431,14 @@ class Embed < ActiveRecord::Base
     }
     result
   end
+
+  # if session_data && session_data[:auth_token].present?
+  #   user = User.find_by(auth_token: session_data[:auth_token])
+  #   puts "auth token user: #{user}"
+  #   user.profile
+  # else
+  #   nil
+  # end
+
 
 end

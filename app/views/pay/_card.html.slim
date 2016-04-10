@@ -4,6 +4,8 @@ script src="http://code.jquery.com/jquery-1.11.3.min.js"
 - profile_authenticated = @data[:authenticated_profile].present?
 - saved_payment_source = payment_config[:saved_payment_source]
 
+/|athenticated_profile: #{@data[:authenticated_profile].to_json}
+
 b Debit/Credit Card (#{payment_config[:kind_name]})
 br
 /- payment_service = merchant_config.payment_service

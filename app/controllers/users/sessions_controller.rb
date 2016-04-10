@@ -1,4 +1,4 @@
-class Users::SessionsController < Devise::SessionsController
+ class Users::SessionsController < Devise::SessionsController
 # before_filter :configure_sign_in_params, only: [:create]
 
   # GET /resource/sign_in
@@ -28,7 +28,7 @@ class Users::SessionsController < Devise::SessionsController
     # stored_location_for(resource_or_scope) || signed_in_root_path(resource_or_scope)
 
     # puts "after signup path - #{session[:finished_url]} - var: #{@finished_url}"
-    current_url = session[:current_url]
+    current_url = session[:current_url]    #todo: figure out the right time to reset this state
     puts "after sign in path - current url: #{current_url}"
     current_url || super
 

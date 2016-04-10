@@ -46,7 +46,8 @@ class DwollaController < ApplicationController
 
       # transaction_uuid = params[:t]
       # step2_uri = session[:step2_uri]
-      session[:dwolla_authenticated] = true
+      # session[:dwolla_authenticated] = true
+      transaction.update!(dwolla_authenticated: true)
 
       if origin == 'widget'
         render action: :autoclose, layout: false
@@ -67,14 +68,14 @@ class DwollaController < ApplicationController
   def autoclose
   end
 
-  def make_payment
-    transaction_uuid = params[:t]
-    puts "t uuid: #{transaction_uuid}"
-    transaction = Transaction.find_by(uuid: transaction_uuid)
-    raise "transaction not found for uuid: #{transaction_uuid}"  unless transaction
-    # transaction.payor.dwolla_token.make_payment(transaction.payee.dwolla_token, transaction.amount)
-    transaction.pay_via_dwolla
-    render json: 'success'
-  end
+  # def make_payment
+  #   transaction_uuid = params[:t]
+  #   puts "t uuid: #{transaction_uuid}"
+  #   transaction = Transaction.find_by(uuid: transaction_uuid)
+  #   raise "transaction not found for uuid: #{transaction_uuid}"  unless transaction
+  #   # transaction.payor.dwolla_token.make_payment(transaction.payee.dwolla_token, transaction.amount)
+  #   transaction.pay_via_dwolla
+  #   render json: 'success'
+  # end
 
 end

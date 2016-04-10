@@ -64,7 +64,7 @@ class BaseCardService < BasePaymentService
     # [charge_amount, estimated_fee]
   end
 
-  def widget_data(transaction, session_data)
+  def widget_data(transaction)
     # result = {
     #     label: 'Debit/Credit Card', # (#{merchant_config.kind_name})'
     #     card_fee_str: card_fee_str(transaction),

@@ -52,7 +52,8 @@ class Transaction < ActiveRecord::Base
   attr_data_field :return_url
   attr_data_field :correlation_id
   attr_data_field :address_captured  # boolean
-
+  attr_data_field :profile_authenticated  # boolean flag indicated that user authenticated has been provided for this transaction and stored payment information is available
+  attr_data_field :dwolla_authenticated   # true when we've just authenticated to dwolla in the context of this transaction
 
   after_initialize :assign_uuid
 
@@ -130,6 +131,7 @@ class Transaction < ActiveRecord::Base
   end
 
   def perform_payment(params = {})
+    puts "perform payment - params: #{params}"
     if completed
       puts "warning, duplicate payment attempted for transaction: #{self.inspect}"
       raise "payment already complete (#{self.uuid})"
@@ -362,21 +364,24 @@ class Transaction < ActiveRecord::Base
   end
 
 
-  def step2_data(session_data={})
-    puts "step2_data: session_data:#{session_data}"
+  def step2_data
+    puts "step2_data"
 
     raise "missing transaction amount"  unless base_amount && base_amount > 0
 
-    current_user = resolve_current_user(session_data)
-    if current_user && current_user.email == payor.email
-      puts "authenticated user session - stored payments available"
-      # profile_authenticated = true
-      authenticated_profile = current_user.profile
-      address = authenticated_profile&.addresses&.first
-    else
-      #todo: rip out once js session_data handling integrated
-      authenticated_profile = payor
-    end
+    # current_user = resolve_current_user(session_data)
+    # if current_user && current_user.email == payor.email
+    #   puts "authenticated user session - stored payments available"
+    #   # profile_authenticated = true
+    #   authenticated_profile = current_user.profile
+    #   address = authenticated_profile&.addresses&.first
+    # # else
+    # #   #todo: rip out once js session_data handling integrated
+    # #   authenticated_profile = payor
+    # end
+
+    authenticated_profile = resolve_authenticated_profile
+    address = authenticated_profile&.addresses&.first
     address ||= Address.new
 
     # used to resume after login
@@ -392,13 +397,29 @@ class Transaction < ActiveRecord::Base
         embed: Embed::Entity.represent(embed),  # note, not strictly needed by widget, but convenient for simple form flow
         authenticated_profile: Profile::Entity.represent(authenticated_profile),
         address: Address::Entity.represent(address),
-        payment_configs: embed.payment_configs_data(self, session_data),
+        payment_configs: embed.payment_configs_data(self),
     }
 
     result[:redirect_url] = self.step2_url  # used by simple test flow
     result
 
   end
+
+  def resolve_authenticated_profile
+    if self.profile_authenticated
+      payee
+    else
+      nil
+    end
+    # if session_data && session_data[:auth_token].present?
+    #   user = User.find_by(auth_token: session_data[:auth_token])
+    #   puts "auth token user: #{user}"
+    #   user.profile
+    # else
+    #   nil
+    # end
+  end
+
 
   def next_step_url
     case next_step
@@ -433,6 +454,7 @@ class Transaction < ActiveRecord::Base
     expose :fee_allocation_options
     expose :payee, using: Profile::Entity
     expose :payor, using: Profile::Entity
+    expose :profile_authenticated
     expose :resolve_offer, using: Offer::Entity, as: :offer
     expose :needs_address
     expose :next_step

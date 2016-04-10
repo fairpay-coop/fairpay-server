@@ -1,5 +1,6 @@
 - embed = @data[:embed]
-- auth_token = session_auth_token
+- session_data = @data[:session_data]
+- auth_token = session_data[:auth_token]  if session_data
 
 h1.title = embed[:name]
 
@@ -26,14 +27,18 @@ form id="step1_form" onsubmit="return handleStep1()"
   input type="text" id="email" name="email" value="#{profile[:email]}" autocapitalize="off"
   br
 
-  - unless auth_token.present?
+  /- unless auth_token.present?
+  - password_display = auth_token.present? ? 'display: none;' : ''
+  div id="password_block" style="#{password_display}"
     => "Password:"
     input type="password" id="password" name="password" autocapitalize="off"
     input id="signinSubmit" type="submit" value="Signin" onclick="handleSignin(); return false;"
     br
-  /= hidden_field_tag :auth_token, 'dummy'
-  => "Token:"
-  input type="text" id="auth_token" name="auth_token" value="#{auth_token}"
+
+  /todo: tidy this up, and handle when email is changed
+  = hidden_field_tag :auth_token, "#{auth_token}", id: 'auth_token'
+  /=> "Token:"
+  /input type="text" id="auth_token" name="auth_token" value="#{auth_token}"
   br
 
   - if @data[:return_url].present?
@@ -132,7 +137,7 @@ javascript:
       var token = data.result;
       //document.getElementById('auth_token');
       $("#auth_token").val(token);
-      $("");
+      $("#password_block").hide();
       FairPayApi.profile(token, handleProfileResponse);
     } else if (data.error) {
       showError(data.error.message);

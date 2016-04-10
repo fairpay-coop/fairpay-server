@@ -12,6 +12,13 @@ class User < ActiveRecord::Base
   before_save :ensure_auth_token
 
 
+  def ensure_persisted_auth_token
+    if auth_token.blank?
+      ensure_auth_token
+      save!
+    end
+    auth_token
+  end
 
 
   def ensure_auth_token

@@ -190,7 +190,7 @@ class PaypalService < BasePaymentService
   end
 
 
-  def widget_data(transaction, session_data)
+  def widget_data(transaction)
     result = super(transaction)
     result[:local_auth_url] = local_auth_url(transaction)  if transaction
     result
