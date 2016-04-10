@@ -281,7 +281,7 @@ class Embed < ActiveRecord::Base
       auth_user = User.find_by(auth_token: auth_token)
       profile_authenticated = auth_user&.profile&.email == email
     else
-      profile_authenticated = false
+      profile_authenticated = false || true ##hack force authenticated mode until widget updated to send tokens
     end
     puts "auth token: #{auth_token}, profile_authenticated: #{profile_authenticated}"
 
