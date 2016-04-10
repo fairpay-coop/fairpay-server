@@ -216,6 +216,7 @@
         constructor(me, params) {
             this.panes = [];
             this.tabs = [];
+            this.tabsStatus = {};
             this.store = {};
             this.templates = [];
             this.init(me, params);
@@ -271,17 +272,16 @@
                     this.panes = $$('.fpPane'); // get all the panes
 
                     // tabs
-                    let tabsStatus = {};
                     this.tabs = $$('.fpTab'); // get all the tabs
                     this.tabs.forEach((tab) => {
                         tab.addEventListener('click', (evt) => {
-                            if (tabsStatus[tab.id] === 'enabled') {
+                            if (this.tabsStatus[tab.id] === 'enabled') {
                                 this.togglePane(this.tabs, this.panes, tab.dataset.pane);
                             }
                         });
-                        tabsStatus[tab.id] = 'disabled';
+                        this.tabsStatus[tab.id] = 'disabled';
                     });
-                    tabsStatus['fpTab_0'] = 'enabled';
+                    this.tabsStatus['fpTab_0'] = 'enabled';
                     this.togglePane(this.tabs, this.panes, 'fpAmountPane');
                     // togglePane(tabs, panes, 2);
 
@@ -359,7 +359,7 @@
                                 console.log(data);
                                 const state = JSON.parse(data).result;
                                 this.store = Object.assign(this.store, {state});
-                                tabsStatus['fpTab_2'] = 'enabled';
+                                this.tabsStatus['fpTab_2'] = 'enabled';
                                 $('#fpAmount').textContent = `Total to pay: ${this.localizeAmount(this.store.state.transaction.base_amount)}`;
                                 this.showCurrentPayment();
                                 this.setupDwolla();
@@ -460,6 +460,7 @@
                         console.log(data);
                         const paymentState = JSON.parse(data).result;
                         this.store = Object.assign(this.store, {paymentState});
+                        this.disableTabs();
                         this.renderRecap();
                         this.togglePane(this.tabs, this.panes, 'fpRecapPane');
                     });
@@ -506,6 +507,7 @@
                         const paymentState = JSON.parse(data).result;
                         this.store = Object.assign(this.store, {paymentState});
                         this.renderRecap();
+                        this.disableTabs();
                         this.togglePane(this.tabs, this.panes, 'fpRecapPane');
                     });
                 // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
@@ -520,6 +522,10 @@
                 show($('#fpDowlla-pane-authorize'))
             }
 
+        }
+
+        disableTabs() {
+            this.tabs.forEach(tab => this.tabsStatus[tab.id] = 'disabled');
         }
 
         renderRecap() {
