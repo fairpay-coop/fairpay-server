@@ -539,7 +539,7 @@
                 post(url, data)
                     .then(data => {
                         console.log(data);
-                        const aut_token = JSON.parse(data).result;
+                        const auth_token = JSON.parse(data).result;
                         // store auth_token in local storage
                         xdLocalStorage.setItem('auth_token', auth_token, (data) => {
                             console.log('auth_token')
