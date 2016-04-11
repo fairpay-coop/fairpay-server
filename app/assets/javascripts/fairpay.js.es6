@@ -64,7 +64,7 @@
     // Network op helpers
     //
 
-    function get(url) {
+    function get(url, headers) {
         return new Promise((resolve, reject) => {
             var request = new XMLHttpRequest();
             url = url + (-1 === url.indexOf('?') ? '?' : '&') + "_=" + Number(new Date());
@@ -84,11 +84,14 @@
                 reject(evt.target.status);
             };
 
+            if (headers) {
+                headers.forEach(header => request.setRequestHeader(header[0], header[1]));
+            }
             request.send();
         });
     }
 
-    function post(url, data) {
+    function post(url, data, headers) {
         return new Promise((resolve, reject) => {
             var request = new XMLHttpRequest();
             request.open('POST', url, true);
@@ -107,7 +110,9 @@
                 reject(evt.target.status);
             };
 
-            request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+            if (headers) {
+                headers.forEach(header => request.setRequestHeader(header[0], header[1]));
+            }
             request.send(JSON.stringify(data));
         });
     }
@@ -235,18 +240,22 @@
 
             let config = {};
             let localData = {};
-            get(`${params['host']}/api/v1/embeds/${params['uuid']}/embed_data`)
+            const url = `${params['host']}/api/v1/embeds/${params['uuid']}/embed_data`;
+
+            getLocalData()
+                .then(data => {
+                    this.store = Object.assign(this.store, {localData: data})
+                })
+                .then(() => get(url, this.getHeaders()))
                 .then(data => config = JSON.parse(data).result)
-                .then(() => getLocalData())
-                .then(data => localData = data)
                 .then(() => this.loadTemplates(['fairpay', 'recap', 'dwolla', 'authorizenet']))
-                .then(result  => this.templates = result)
+                .then(result => this.templates = result)
                 .then(() => {
 
                     if (params.amount) {
                         config = Object.assign(config, {suggested_amounts: [params.amount]})
                     }
-                    this.store = Object.assign({}, {config, params, localData});
+                    this.store = Object.assign(this.store, {config, params});
 
                     // format the amounts
                     Object.assign(config, {
@@ -312,8 +321,8 @@
                     // setup email
                     let emailInput = $('#fpEmail');
 
-                    if (this.store.localData.email) {
-                        emailInput.value = this.store.localData.email;
+                    if (this.store.config.user_email) {
+                        emailInput.value = this.store.config.user_email;
                     }
                     emailInput.addEventListener('input', (evt) => {
                         this.validateForm([emailInput], continueButton);
@@ -338,7 +347,7 @@
                             email,
                             amount
                         };
-                        post(url, data)
+                        post(url, data, this.getHeaders())
                             .then(data => {
                                 console.log(data);
                                 const state = JSON.parse(data).result;
@@ -412,8 +421,8 @@
                     if (evt.target.id === "fpCardNumber") {
                         const bin = evt.target.value.slice(0, 6);
                         const amount = this.store.state.transaction.base_amount;
-
-                        get(`${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/estimate_fee?bin=${bin}&amount=${amount}`)
+                        const url = `${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/estimate_fee?bin=${bin}&amount=${amount}`;
+                        get(url, this.getHeaders())
                             .then((data) => {
                                 const result = JSON.parse(data).result;
                                 const paymentConfig = this.getPaymentConfig('authorizenet');
@@ -439,7 +448,7 @@
                     card_cvv: $('#fpCardCVV').value,
                     billing_zip: $('#fpCardZip').value
                 };
-                post(url, data)
+                post(url, data, this.getHeaders())
                     .then(data => {
                         console.log(data);
                         const paymentState = JSON.parse(data).result;
@@ -468,7 +477,8 @@
                 let interval = window.setInterval(() => {
                     if (authorizeWindow == null || authorizeWindow.closed) {
                         window.clearInterval(interval);
-                        get(`${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/step2_data?transaction_uuid=${this.store.state.transaction.uuid}`)
+                        const url = `${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/step2_data?transaction_uuid=${this.store.state.transaction.uuid}`;
+                        get(url, this.getHeaders())
                             .then((data) => {
                                 console.log(data);
                                 const state = JSON.parse(data).result;
@@ -485,7 +495,7 @@
                     transaction_uuid: this.store.state.transaction.uuid,
                     funding_source_id: $('input[name=fpDwollaFundingSource]:checked').value
                 };
-                post(url, data)
+                post(url, data, this.getHeaders())
                     .then(data => {
                         console.log(data);
                         const paymentState = JSON.parse(data).result;
@@ -530,13 +540,14 @@
 
             // signup
             $('#fpSignup').addEventListener('click', (evt) => {
+                debugger;
                 const url = `${this.store.params['host']}/api/v1/users/signup`;
                 const email = $('#fpSignupEmail').value;
                 const data = {
                     email,
                     password: $('#fpSignupPassword').value
                 };
-                post(url, data)
+                post(url, data, this.getHeaders())
                     .then(data => {
                         console.log(data);
                         const auth_token = JSON.parse(data).result;
@@ -556,9 +567,6 @@
                 hide($('#fp-signup'));
             }
             hide($('#fp-signup-confirmation'));
-
-
-
 
 
         }
@@ -585,6 +593,14 @@
 
         localizeAmount(amount) {
             return this.store.config.currency_format.replace('{0}', amount);
+        }
+
+        getHeaders() {
+            let headers = [['Content-Type', 'application/json; charset=UTF-8']];
+            if (this.store.localData.auth_token) {
+                headers.push(['X-Auth-Token', this.store.localData.auth_token])
+            }
+            return headers;
         }
     }
     console.log("Widget loader loaded");

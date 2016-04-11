@@ -16,7 +16,7 @@ class Embeds < Grape::API
     route_param :embed_uuid, type: String do
 
       get do
-        embed = Embed.resolve(params[:embed_uuid])
+        Embed.resolve(params[:embed_uuid])
       end
 
       #todo
@@ -49,6 +49,9 @@ class Embeds < Grape::API
         embed = Embed.resolve(params[:embed_uuid])
         result = embed.embed_data
         # result[:session_email] = cookies[:email]
+        if authenticated_user
+          result.merge!(user_email: authenticated_user.email)
+        end
         wrap_result( result )
       end
 

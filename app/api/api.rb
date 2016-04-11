@@ -17,6 +17,15 @@ class API < Grape::API
     #   Profile.find_by_email(email)  if email
     # end
 
+    def authenticate!
+      error!('Unauthorized. Invalid or expired token.', 401) unless authenticated_user
+    end
+
+    def authenticated_user
+      token = headers['X-Auth-Token']
+      @authenticated_user ||= User.find_by_auth_token(token) if token
+    end
+
     include ApplicationHelper
   end
 
