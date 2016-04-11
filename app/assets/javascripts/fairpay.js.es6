@@ -207,7 +207,7 @@
 
     function getLocalData() {
         return new Promise((resolve, reject) => {
-            xdLocalStorage.getItem('email', data => resolve({email: data.value}));
+            xdLocalStorage.getItem('auth_token', data => resolve({auth_token: data.value}));
         });
     }
 
@@ -236,17 +236,13 @@
             let config = {};
             let localData = {};
             get(`${params['host']}/api/v1/embeds/${params['uuid']}/embed_data`)
-                .then(data => {
-                    console.log(data);
-                    config = JSON.parse(data).result
-                })
+                .then(data => config = JSON.parse(data).result)
                 .then(() => getLocalData())
-                .then((data) => {
-                    localData = data;
-                    return this.loadTemplates(['fairpay', 'recap', 'dwolla', 'authorizenet']);
-                })
-                .then((result) => {
-                    this.templates = result;
+                .then(data => localData = data)
+                .then(() => this.loadTemplates(['fairpay', 'recap', 'dwolla', 'authorizenet']))
+                .then(result  => this.templates = result)
+                .then(() => {
+
                     if (params.amount) {
                         config = Object.assign(config, {suggested_amounts: [params.amount]})
                     }
@@ -262,7 +258,6 @@
                             }
                         })
                     });
-
 
                     // render the template and insert it after the script tag
                     let html = render(this.templates['fairpay'], this.store.config);
@@ -319,15 +314,11 @@
 
                     if (this.store.localData.email) {
                         emailInput.value = this.store.localData.email;
-                        enable(continueButton);
                     }
                     emailInput.addEventListener('input', (evt) => {
-                        if (evt.target.checkValidity()) {
-                            enable(continueButton);
-                        } else {
-                            disable(continueButton);
-                        }
+                        this.validateForm([emailInput], continueButton);
                     });
+                    this.validateForm([emailInput], continueButton);
 
                     // handle continue
                     continueButton.addEventListener('click', (evt) => {
@@ -341,14 +332,7 @@
                             }
                         }
 
-                        let email = $('#fpEmail').value;
-
-                        // store email in local storage
-                        xdLocalStorage.setItem('email', email, (data) => {
-                            console.log('email saved')
-                        });
-
-
+                        const email = $('#fpEmail').value;
                         const url = `${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/submit_step1`;
                         const data = {
                             email,
@@ -461,7 +445,7 @@
                         const paymentState = JSON.parse(data).result;
                         this.store = Object.assign(this.store, {paymentState});
                         this.disableTabs();
-                        this.renderRecap();
+                        this.setupRecap();
                         this.togglePane(this.tabs, this.panes, 'fpRecapPane');
                     });
                 // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
@@ -506,7 +490,7 @@
                         console.log(data);
                         const paymentState = JSON.parse(data).result;
                         this.store = Object.assign(this.store, {paymentState});
-                        this.renderRecap();
+                        this.setupRecap();
                         this.disableTabs();
                         this.togglePane(this.tabs, this.panes, 'fpRecapPane');
                     });
@@ -528,8 +512,55 @@
             this.tabs.forEach(tab => this.tabsStatus[tab.id] = 'disabled');
         }
 
-        renderRecap() {
+        setupRecap() {
+            // render the pane
             $("#fpPaymentRecap").innerHTML = render(this.templates['recap'], this.store);
+
+            // pre-fill the email
+            $('#fpSignupEmail').value = this.store.state.transaction.payor.email;
+
+            // form validation
+            const signupButton = $('#fpSignup');
+            $$('input.fpSignup').forEach(input => {
+                input.addEventListener('input', evt => {
+                    this.validateForm([evt.target], signupButton);
+                });
+            });
+            this.validateForm($$('input.fpSignup'), signupButton);
+
+            // signup
+            $('#fpSignup').addEventListener('click', (evt) => {
+                const url = `${this.store.params['host']}/api/v1/users/signup`;
+                const email = $('#fpSignupEmail').value;
+                const data = {
+                    email,
+                    password: $('#fpSignupPassword').value
+                };
+                post(url, data)
+                    .then(data => {
+                        console.log(data);
+                        const aut_token = JSON.parse(data).result;
+                        // store auth_token in local storage
+                        xdLocalStorage.setItem('auth_token', auth_token, (data) => {
+                            console.log('auth_token')
+                        });
+                        hide($('#fp-signup'));
+                        show($('#fp-signup-confirmation'));
+                        $('#fpAccountEmail').textContent = email;
+
+                    });
+                // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
+            });
+
+            if (this.store.localData.auth_token) { // TODO: check if it's the correct test
+                hide($('#fp-signup'));
+            }
+            hide($('#fp-signup-confirmation'));
+
+
+
+
+
         }
 
         updateFees() {

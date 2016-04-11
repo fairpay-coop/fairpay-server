@@ -1,2 +1,27 @@
 <p>Your payment of {{=it.state.transaction.base_amount}} has been completed.</p>
 <p>A confirmation email has been sent to {{=it.state.transaction.payor.email}}.</p>
+
+<div id="fp-signup" class="fpForm">
+    <p>Create a fairpay account for a future faster experience</p>
+
+    <div>
+        <label class="fpLabel" for="fpSignupEmail">Email:</label>
+        <input id="fpSignupEmail" class="fpInput fpSignup fpMax-input" type="email"
+               placeholder="Please enter a valid email" required/>
+    </div>
+    <div>
+        <label class="fpLabel" for="fpSignupPassword">Password:</label>
+        <input id="fpSignupPassword" class="fpInput fpSignup fpMax-input" type="password"
+               placeholder="8 to 16 characters password." pattern="[!-~]{8,16}" required/>
+    </div>
+    <div class="fpBottom">
+        <button id="fpSignup" class="fpButton fpContinue">Signup</button>
+    </div>
+</div>
+
+<div id="fp-signup-confirmation">
+    <p>Your account has been created.</p>
+    <p>A confirmation email has been sent to <span id="fpAccountEmail"></span>.</p>
+</div>
+
+
