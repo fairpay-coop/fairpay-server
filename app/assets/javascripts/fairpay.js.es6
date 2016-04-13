@@ -236,40 +236,49 @@
                 }, {}));
         }
 
+        getEmbedData() {
+            const url = `${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/embed_data`;
+            return get(url, this.getHeaders())
+                .then(data => {
+                    let embedData = JSON.parse(data).result;
+
+                    if (this.store.params.amount) {
+                        embedData = Object.assign(embedData, {suggested_amounts: [params.amount]})
+                    }
+                    // format the amounts
+                    Object.assign(embedData, {
+                        localizedAmounts: embedData.suggested_amounts.map((amount) => {
+                            if (-1 == amount) {
+                                return -1;
+                            } else {
+                                return this.localizeAmount(amount, embedData.currency_format);
+                            }
+                        })
+                    });
+                    return embedData;
+                });
+        }
+
         init(me, params) {
 
             let config = {};
             let localData = {};
-            const url = `${params['host']}/api/v1/embeds/${params['uuid']}/embed_data`;
+            this.store = Object.assign(this.store, {params});
 
             getLocalData()
                 .then(data => {
                     this.store = Object.assign(this.store, {localData: data})
                 })
-                .then(() => get(url, this.getHeaders()))
-                .then(data => config = JSON.parse(data).result)
+                .then(() => this.getEmbedData())
+                .then(embedData => this.store = Object.assign(this.store, {embedData}))
                 .then(() => this.loadTemplates(['fairpay', 'recap', 'dwolla', 'authorizenet']))
                 .then(result => this.templates = result)
                 .then(() => {
 
-                    if (params.amount) {
-                        config = Object.assign(config, {suggested_amounts: [params.amount]})
-                    }
-                    this.store = Object.assign(this.store, {config, params});
-
-                    // format the amounts
-                    Object.assign(config, {
-                        localizedAmounts: config.suggested_amounts.map((amount) => {
-                            if (-1 == amount) {
-                                return -1;
-                            } else {
-                                return this.localizeAmount(amount);
-                            }
-                        })
-                    });
+                   
 
                     // render the template and insert it after the script tag
-                    let html = render(this.templates['fairpay'], this.store.config);
+                    let html = render(this.templates['fairpay'], this.store.embedData);
                     me.insertAdjacentHTML('afterend', html);
 
                     // panes
@@ -321,8 +330,8 @@
                     // setup email
                     let emailInput = $('#fpEmail');
 
-                    if (this.store.config.user_email) {
-                        emailInput.value = this.store.config.user_email;
+                    if (this.store.embedData.authenticated_profile) {
+                        emailInput.value = this.store.embedData.authenticated_profile.email;
                     }
                     emailInput.addEventListener('input', (evt) => {
                         this.validateForm([emailInput], continueButton);
@@ -332,8 +341,8 @@
                     // handle continue
                     continueButton.addEventListener('click', (evt) => {
                         let amount = 0;
-                        if (this.store.config.suggested_amounts.length == 1) {
-                            amount = this.store.config.suggested_amounts[0];
+                        if (this.store.embedData.suggested_amounts.length == 1) {
+                            amount = this.store.embedData.suggested_amounts[0];
                         } else {
                             amount = $('input[name=fpAmount]:checked').value;
                             if (amount === "other") {
@@ -539,8 +548,7 @@
             this.validateForm($$('input.fpSignup'), signupButton);
 
             // signup
-            $('#fpSignup').addEventListener('click', (evt) => {
-                debugger;
+            signupButton.addEventListener('click', (evt) => {
                 const url = `${this.store.params['host']}/api/v1/users/signup`;
                 const email = $('#fpSignupEmail').value;
                 const data = {
@@ -563,11 +571,10 @@
                 // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
             });
 
-            if (this.store.localData.auth_token) { // TODO: check if it's the correct test
+            if (this.hasUserAccount()) {
                 hide($('#fp-signup'));
             }
             hide($('#fp-signup-confirmation'));
-
 
         }
 
@@ -591,8 +598,8 @@
             show($(`#fpPayment-pane-${paymentType}`));
         }
 
-        localizeAmount(amount) {
-            return this.store.config.currency_format.replace('{0}', amount);
+        localizeAmount(amount, template = this.store.embedData.currency_format) {
+            return template.replace('{0}', amount);
         }
 
         getHeaders() {
@@ -601,6 +608,10 @@
                 headers.push(['X-Auth-Token', this.store.localData.auth_token])
             }
             return headers;
+        }
+
+        hasUserAccount() {
+            return this.store.embedData.authenticated_profile && this.store.embedData.authenticated_profile.has_user
         }
     }
     console.log("Widget loader loaded");

@@ -60,13 +60,8 @@ class Users < Grape::API
     end
 
     get :profile do
-      params do
-        required :token, type: String
-      end
-      token = params[:token]
-      user = User.find_by(auth_token: token)
-      raise "user not found for token"  unless user
-      result = Profile::Entity.represent(user.profile)
+      authenticate!
+      result = Profile::Entity.represent(authenticated_user.profile)
       wrap_result( result )
     end
 

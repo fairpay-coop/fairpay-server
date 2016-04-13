@@ -19,19 +19,6 @@ class Embeds < Grape::API
         Embed.resolve(params[:embed_uuid])
       end
 
-      #todo
-      get :config do
-        embed = Embed.resolve(params[:embed_uuid])
-        wrap_result( {
-            uuid: embed.uuid,
-            payee: embed.profile&.name,
-            payment_types: embed.get_data_field(:payment_types),
-            payment_fees: embed.get_data_field(:payment_types).each_with_object({}) {|type, res| res[type] = "$0.%02d" % rand(25)},
-            amounts: [5, 10, 50, -1],
-            amount_format: '${0}'
-        } )
-      end
-
       get :campaign_status do
         puts "campaign_status - params: #{params.inspect}"
         embed = Embed.resolve(params[:embed_uuid])
@@ -48,9 +35,8 @@ class Embeds < Grape::API
         puts "embed_data - params: #{params.inspect}"
         embed = Embed.resolve(params[:embed_uuid])
         result = embed.embed_data
-        # result[:session_email] = cookies[:email]
         if authenticated_user
-          result.merge!(user_email: authenticated_user.email)
+          result.merge!(authenticated_profile: Profile::Entity.represent(authenticated_user.profile))
         end
         wrap_result( result )
       end
