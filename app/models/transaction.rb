@@ -407,7 +407,7 @@ class Transaction < ActiveRecord::Base
 
   def resolve_authenticated_profile
     if self.profile_authenticated
-      payee
+      payor
     else
       nil
     end
