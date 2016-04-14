@@ -1,12 +1,22 @@
 <div class="fpPaymentName">
     <span>Dwolla:</span>
 </div>
-<div id="fpDowlla-pane-authorize" class="fpDwolla-pane">
-    <div class="fpBottom">
-        <button id="fpDowlla-authorize" class="fpButton">Authorize with Dwolla</button>
-    </div>
-</div>
+{{? it.widget.isDwollaAuthenticated() }}
 <div id="fpDowlla-pane-pay" class="fpDwolla-pane fpForm">
+    {{? it.widget.needSigninForDwollaPayment() }}
+    <p>Please sign in with fairpay to use your previously authenticated Dwolla token.</p>
+    <div id="fpDwolla-signin">
+        <div>
+            <label class="fpLabel" for="fpDwollaSigninPassword">Password:</label>
+            <input id="fpDwollaSigninPassword" class="fpInput fpMax-input" type="password"
+                   placeholder="Enter your fairpay password." pattern="[!-~]{8,16}" required/>
+        </div>
+        <div class="fpBottom">
+            <button id="fpDwollaSignin" class="fpButton fpContinue">Signin</button>
+        </div>
+    </div>
+
+    {{??}}
     <div id="fpDwolla-funding-sources">
         {{~it.widget.dwollaFundingSources() :val:idx}}
         <div>
@@ -26,6 +36,16 @@
     <div class="fpBottom">
         <button id="fpDowlla-pay" class="fpButton">Pay with Dwolla</button>
     </div>
+    {{?}}
+
 </div>
+{{??}}
+<div id="fpDowlla-pane-authorize" class="fpDwolla-pane">
+    <div class="fpBottom">
+        <button id="fpDowlla-authorize" class="fpButton">Authorize with Dwolla</button>
+    </div>
+</div>
+{{?}}
+
 
 

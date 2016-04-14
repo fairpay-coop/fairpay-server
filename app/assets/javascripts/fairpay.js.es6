@@ -275,7 +275,7 @@
                 .then(result => this.templates = result)
                 .then(() => {
 
-                   
+
 
                     // render the template and insert it after the script tag
                     let html = render(this.templates['fairpay'], this.store.embedData);
@@ -480,43 +480,65 @@
         setupDwolla() {
             $("#fpPayment-pane-dwolla").innerHTML = render(this.templates['dwolla'], {widget: this});
 
-            $('#fpDowlla-authorize').addEventListener('click', (evt) => {
-                let url = `${this.store.params['host']}/dwolla/auth?t=${this.store.state.transaction.uuid}&o=widget`;
-                let authorizeWindow = window.open(url, "_blank", "width=500, height=550");
-                let interval = window.setInterval(() => {
-                    if (authorizeWindow == null || authorizeWindow.closed) {
-                        window.clearInterval(interval);
-                        const url = `${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/step2_data?transaction_uuid=${this.store.state.transaction.uuid}`;
-                        get(url, this.getHeaders())
-                            .then((data) => {
-                                console.log(data);
-                                const state = JSON.parse(data).result;
-                                this.store = Object.assign(this.store, {state});
-                                this.setupDwolla();
-                            });
-                    }
-                }, 1000);
-            });
+            if (this.isDwollaAuthenticated()) {
 
-            $('#fpDowlla-pay').addEventListener('click', (evt) => {
-                const url = `${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/send_dwolla_info`;
-                const data = {
-                    transaction_uuid: this.store.state.transaction.uuid,
-                    funding_source_id: $('input[name=fpDwollaFundingSource]:checked').value
-                };
-                post(url, data, this.getHeaders())
-                    .then(data => {
-                        console.log(data);
-                        const paymentState = JSON.parse(data).result;
-                        this.store = Object.assign(this.store, {paymentState});
-                        this.setupRecap();
-                        this.disableTabs();
-                        this.togglePane(this.tabs, this.panes, 'fpRecapPane');
+
+                if (this.needSigninForDwollaPayment()) {
+
+                    const signinButton = $('#fpDwollaSignin');
+                    $('#fpDwollaSigninPassword').addEventListener('input', evt => {
+                        this.validateForm([evt.target], signinButton);
                     });
-                // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
 
-
-            });
+                    signinButton.addEventListener('click', (evt) => {
+                        const url = `${this.store.params['host']}/api/v1/users/signin`;
+                        const data = {
+                            email: this.store.state.transaction.payor.email,
+                            password: $('#fpDwollaSigninPassword').value
+                        };
+                        post(url, data, this.getHeaders())
+                            .then(data => {
+                                console.log(data);
+                                const auth_token = JSON.parse(data).result;
+                                this.persistAuthToken(auth_token);
+                                this.updateTransaction()
+                                    .then(()=> this.setupDwolla());
+                            });
+                        // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
+                    });
+                }
+                else {
+                    $('#fpDowlla-pay').addEventListener('click', (evt) => {
+                        const url = `${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/send_dwolla_info`;
+                        const data = {
+                            transaction_uuid: this.store.state.transaction.uuid,
+                            funding_source_id: $('input[name=fpDwollaFundingSource]:checked').value
+                        };
+                        post(url, data, this.getHeaders())
+                            .then(data => {
+                                console.log(data);
+                                const paymentState = JSON.parse(data).result;
+                                this.store = Object.assign(this.store, {paymentState});
+                                this.setupRecap();
+                                this.disableTabs();
+                                this.togglePane(this.tabs, this.panes, 'fpRecapPane');
+                            });
+                        // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
+                    });
+                }
+            } else {
+                $('#fpDowlla-authorize').addEventListener('click', (evt) => {
+                    let url = `${this.store.params['host']}/dwolla/auth?t=${this.store.state.transaction.uuid}&o=widget`;
+                    let authorizeWindow = window.open(url, "_blank", "width=500, height=550");
+                    let interval = window.setInterval(() => {
+                        if (authorizeWindow == null || authorizeWindow.closed) {
+                            window.clearInterval(interval);
+                            this.updateTransaction()
+                                .then(() => this.setupDwolla());
+                        }
+                    }, 1000);
+                });
+            }
 
             $$('.fpDwolla-pane').forEach(el => hide(el));
             if (this.getPaymentConfig('dwolla').has_dwolla_auth) {
@@ -525,6 +547,15 @@
                 show($('#fpDowlla-pane-authorize'))
             }
 
+        }
+
+        isDwollaAuthenticated() {
+            return this.getPaymentConfig('dwolla').has_dwolla_auth;
+        }
+
+        needSigninForDwollaPayment() {
+            return this.getPaymentConfig('dwolla').has_dwolla_auth
+                && !( this.getPaymentConfig('dwolla').dwolla_authenticated || this.authToken() );
         }
 
         disableTabs() {
@@ -560,13 +591,10 @@
                         console.log(data);
                         const auth_token = JSON.parse(data).result;
                         // store auth_token in local storage
-                        xdLocalStorage.setItem('auth_token', auth_token, (data) => {
-                            console.log('auth_token')
-                        });
+                        this.persistAuthToken(auth_token);
                         hide($('#fp-signup'));
                         show($('#fp-signup-confirmation'));
                         $('#fpAccountEmail').textContent = email;
-
                     });
                 // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
             });
@@ -602,9 +630,13 @@
             return template.replace('{0}', amount);
         }
 
+        authToken() {
+            return this.store.localData.auth_token;
+        }
+
         getHeaders() {
             let headers = [['Content-Type', 'application/json; charset=UTF-8']];
-            if (this.store.localData.auth_token) {
+            if (this.authToken()) {
                 headers.push(['X-Auth-Token', this.store.localData.auth_token])
             }
             return headers;
@@ -612,6 +644,24 @@
 
         hasUserAccount() {
             return this.store.embedData.authenticated_profile && this.store.embedData.authenticated_profile.has_user
+        }
+
+        updateTransaction() {
+            const url = `${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/step2_data?transaction_uuid=${this.store.state.transaction.uuid}`;
+            return get(url, this.getHeaders())
+                .then((data) => {
+                    console.log(data);
+                    const state = JSON.parse(data).result;
+                    this.store = Object.assign(this.store, {state});
+                });
+        }
+
+        persistAuthToken(auth_token) {
+            // store auth_token in local storage
+            xdLocalStorage.setItem('auth_token', auth_token, (data) => {
+                console.log('auth_token saved')
+            });
+            this.store = Object.assign(this.store, {localData: { auth_token: auth_token}});
         }
     }
     console.log("Widget loader loaded");
