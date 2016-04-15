@@ -21,8 +21,12 @@ class API < Grape::API
       error!('Unauthorized. Invalid or expired token.', 401) unless authenticated_user
     end
 
+    def auth_token_header
+      headers['X-Auth-Token']
+    end
+
     def authenticated_user
-      token = headers['X-Auth-Token']
+      token = auth_token_header
       @authenticated_user ||= User.find_by_auth_token(token) if token
     end
 

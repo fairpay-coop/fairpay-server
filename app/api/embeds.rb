@@ -119,16 +119,14 @@ class Embeds < Grape::API
           optional :auth_token, type: String
         end
 
-        # auth_token = params[:auth_token]
-        data = params.slice(:amount, :email, :name, :recurrence, :mailing_list, :description, :memo, :offer_uuid, :return_url, :correlation_id, :auth_token)
-
+        auth_token = params[:auth_token] || auth_token_header
+        data = params.slice(:amount, :email, :name, :recurrence, :mailing_list, :description, :memo, :offer_uuid, :return_url, :correlation_id)
+        data[:auth_token] = auth_token
         puts("data: #{data.inspect}")
 
         transaction = embed.step1(data)
         puts("tran: #{transaction.inspect}")
 
-        # session_data = {} #params[:session_data] || {}  #todo: clean this up once auth/cookie interface settles
-        # session_data[:auth_token] = auth_token
         result = transaction.step2_data
         result[:redirect_url] = transaction.next_step_url  # used by simple test flow
         result[:next_step_url] = transaction.next_step_url  # used by simple test flow
