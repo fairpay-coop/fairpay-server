@@ -49,14 +49,8 @@ class Users < Grape::API
 
     # tests if user exists for given email
     get :exists do
-      puts "exists - params: #{params.inspect}"
-      params do
-        required :email, type: String
-      end
-      email = params[:email]
-      user = User.find_by_email(email)
-      result = user.present?
-      wrap_result( result )
+      authenticate!
+      wrap_result( true )
     end
 
     get :profile do

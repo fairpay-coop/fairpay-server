@@ -421,55 +421,107 @@
 
             $("#fpPayment-pane-authorizenet").innerHTML = render(this.templates['authorizenet'], {widget: this});
 
-            // form validation
-            const authorizenetPayButton = $('#fpPayWithAuthorizenet');
-            $$('input.fpAuthorizenet').forEach(input => {
-                input.addEventListener('input', evt => {
-                    this.validateForm([evt.target], authorizenetPayButton);
+            if (this.isAuthorizenetAuthenticated()) {
 
-                    if (evt.target.id === "fpCardNumber") {
-                        const bin = evt.target.value.slice(0, 6);
-                        const amount = this.store.state.transaction.base_amount;
-                        const url = `${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/estimate_fee?bin=${bin}&amount=${amount}`;
-                        get(url, this.getHeaders())
-                            .then((data) => {
-                                const result = JSON.parse(data).result;
-                                const paymentConfig = this.getPaymentConfig('authorizenet');
-                                paymentConfig.card_fee_str = result.fee_str === "unknown" ? result.estimated_fee : result.fee_str;
-                                this.updateFees();
+                // THERE IS A SAVED CARD
+
+                if (this.needSigninForAuthorizenetPayment()) {
+
+                    // NEED TO BE LOGGED IN TO USE IT
+                    const signinButton = $('#fpAuthorizenetSignin');
+                    $('#fpAuthorizenetSigninPassword').addEventListener('input', evt => {
+                        this.validateForm([evt.target], signinButton);
+                    });
+
+                    signinButton.addEventListener('click', (evt) => {
+                        const url = `${this.store.params['host']}/api/v1/users/signin`;
+                        const data = {
+                            email: this.store.state.transaction.payor.email,
+                            password: $('#fpAuthorizenetSigninPassword').value
+                        };
+                        post(url, data, this.getHeaders())
+                            .then(data => {
+                                console.log(data);
+                                const auth_token = JSON.parse(data).result;
+                                this.persistAuthToken(auth_token);
+                                this.updateTransaction()
+                                    .then(()=> this.setupAuthorizenet());
                             });
                         // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
-                    }
-
-                });
-            });
-            this.validateForm($$('input.fpAuthorizenet'), authorizenetPayButton);
-
-
-            // pay button
-            authorizenetPayButton.addEventListener('click', (evt) => {
-                const url = `${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/submit_payment`;
-                const data = {
-                    transaction_uuid: this.store.state.transaction.uuid,
-                    payment_type: 'authorizenet',
-                    card_number: $('#fpCardNumber').value,
-                    card_mmyy: $('#fpCardExp').value,
-                    card_cvv: $('#fpCardCVV').value,
-                    billing_zip: $('#fpCardZip').value
-                };
-                post(url, data, this.getHeaders())
-                    .then(data => {
-                        console.log(data);
-                        const paymentState = JSON.parse(data).result;
-                        this.store = Object.assign(this.store, {paymentState});
-                        this.disableTabs();
-                        this.setupRecap();
-                        this.togglePane(this.tabs, this.panes, 'fpRecapPane');
                     });
-                // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
-            });
+                } else {
+                    // LOGGED IN, CAN USE IT
 
+                    const authorizenetPayButton = $('#fpPayWithAuthorizenetSavedCard');
+                    // pay button
+                    authorizenetPayButton.addEventListener('click', (evt) => {
+                        const url = `${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/submit_payment`;
+                        const data = {
+                            use_payment_source_checkbox: true
+                        };
+                        post(url, data, this.getHeaders())
+                            .then(data => {
+                                console.log(data);
+                                const paymentState = JSON.parse(data).result;
+                                this.store = Object.assign(this.store, {paymentState});
+                                this.disableTabs();
+                                this.setupRecap();
+                                this.togglePane(this.tabs, this.panes, 'fpRecapPane');
+                            });
+                        // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
+                    });
 
+                }
+
+            } else {
+                // NO SAVED CARD
+                debugger;
+
+                const authorizenetPayButton = $('#fpPayWithAuthorizenet');
+                // form validation
+                $$('input.fpAuthorizenet').forEach(input => {
+                    input.addEventListener('input', evt => {
+                        this.validateForm([evt.target], authorizenetPayButton);
+
+                        if (evt.target.id === "fpCardNumber") {
+                            const bin = evt.target.value.slice(0, 6);
+                            const amount = this.store.state.transaction.base_amount;
+                            const url = `${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/estimate_fee?bin=${bin}&amount=${amount}`;
+                            get(url, this.getHeaders())
+                                .then((data) => {
+                                    const result = JSON.parse(data).result;
+                                    const paymentConfig = this.getPaymentConfig('authorizenet');
+                                    paymentConfig.card_fee_str = result.fee_str === "unknown" ? result.estimated_fee : result.fee_str;
+                                    this.updateFees();
+                                });
+                            // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
+                        }
+
+                    });
+                });
+                // pay button
+                authorizenetPayButton.addEventListener('click', (evt) => {
+                    const url = `${this.store.params['host']}/api/v1/embeds/${this.store.params['uuid']}/submit_payment`;
+                    const data = {
+                        transaction_uuid: this.store.state.transaction.uuid,
+                        payment_type: 'authorizenet',
+                        card_number: $('#fpCardNumber').value,
+                        card_mmyy: $('#fpCardExp').value,
+                        card_cvv: $('#fpCardCVV').value,
+                        billing_zip: $('#fpCardZip').value
+                    };
+                    post(url, data, this.getHeaders())
+                        .then(data => {
+                            console.log(data);
+                            const paymentState = JSON.parse(data).result;
+                            this.store = Object.assign(this.store, {paymentState});
+                            this.disableTabs();
+                            this.setupRecap();
+                            this.togglePane(this.tabs, this.panes, 'fpRecapPane');
+                        });
+                    // .catch((error) => console.log(`error:${error}`)); TODO: uncomment and handle better
+                });
+            }
         }
 
         dwollaFundingSources() {
@@ -481,7 +533,6 @@
             $("#fpPayment-pane-dwolla").innerHTML = render(this.templates['dwolla'], {widget: this});
 
             if (this.isDwollaAuthenticated()) {
-
 
                 if (this.needSigninForDwollaPayment()) {
 
@@ -554,8 +605,25 @@
         }
 
         needSigninForDwollaPayment() {
-            return this.getPaymentConfig('dwolla').has_dwolla_auth
+            return this.isDwollaAuthenticated()
                 && !( this.getPaymentConfig('dwolla').dwolla_authenticated || this.authToken() );
+        }
+
+        isAuthorizenetAuthenticated() {
+            return this.getPaymentConfig('authorizenet').saved_payment_source;
+        }
+
+        needSigninForAuthorizenetPayment() {
+            return this.isAuthorizenetAuthenticated() && !this.authToken();
+        }
+
+        authorizenetSavedCardShortDescription() {
+            const paymentConfig = this.getPaymentConfig('authorizenet')
+            if (!paymentConfig.saved_payment_source) {
+                return nil
+            }
+            const description = paymentConfig.saved_payment_source.description;
+            return description.split(',')[0].split('...')[1];
         }
 
         disableTabs() {
@@ -643,7 +711,7 @@
         }
 
         hasUserAccount() {
-            return this.store.embedData.authenticated_profile && this.store.embedData.authenticated_profile.has_user
+            return !!this.authToken();
         }
 
         updateTransaction() {
@@ -661,7 +729,7 @@
             xdLocalStorage.setItem('auth_token', auth_token, (data) => {
                 console.log('auth_token saved')
             });
-            this.store = Object.assign(this.store, {localData: { auth_token: auth_token}});
+            this.store = Object.assign(this.store, {localData: {auth_token: auth_token}});
         }
     }
     console.log("Widget loader loaded");
