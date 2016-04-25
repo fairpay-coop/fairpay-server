@@ -62,7 +62,7 @@
                campaign = embed[:campaign]
                pcnt = campaign[:financial_pcnt]
             %>
-              <a href="#" class="btn btn-default btnC1">Donate</a>
+              <a href="/donate/<%= embed[:uuid] %>" class="btn btn-default btnC1">Donate</a>
               <div class="donateCounter">
                 <div class="donateNumberCounter">
                     <h6><span>$<%= format_amount(campaign[:financial_total],0) %></span> of</h6>

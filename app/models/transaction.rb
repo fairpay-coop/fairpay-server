@@ -91,12 +91,15 @@ class Transaction < ActiveRecord::Base
     end
   end
 
+  #todo: figure out best way to factor out these two different url patterns
   def finished_url
-    "#{base_url}/pay/#{embed.uuid}/thanks/#{uuid}"
+    # "#{base_url}/pay/#{embed.uuid}/thanks/#{uuid}"
+    "#{base_url}/thanks/#{uuid}"
   end
 
   def step2_url
-    "#{base_url}/pay/#{embed.uuid}/step2/#{uuid}"
+    # "#{base_url}/pay/#{embed.uuid}/step2/#{uuid}"
+    "#{base_url}/payment/#{uuid}"
   end
 
   def address_url

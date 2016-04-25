@@ -21,8 +21,13 @@ Rails.application.routes.draw do
   # Landing page
   root 'abuntoo#index'
   # todo: better factor these routes defs
-  get '/terms' => 'abuntoo#terms'
-  get '/privacy' => 'abuntoo#privacy'
+  get 'terms' => 'abuntoo#terms'
+  get 'privacy' => 'abuntoo#privacy'
+  get 'donate' => 'abuntoo#donate'
+  get 'donate/:uuid' => 'abuntoo#donate'
+  get 'payment/:transaction_uuid' => 'abuntoo#payment'
+  get 'thanks/:transaction_uuid' => 'abuntoo#thanks'
+
 
   get '/test' => 'welcome#index'
 

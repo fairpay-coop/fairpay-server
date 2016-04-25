@@ -1,0 +1,293 @@
+- embed = @data[:embed]
+- session_data = @data[:session_data]
+- auth_token = session_data[:auth_token]  if session_data
+
+h1.title = embed[:name]
+
+br
+
+- campaign = embed[:campaign]
+- if campaign.present?
+  = render 'pay/campaign_progress', campaign: campaign
+
+div id="errorMessage" style="display: none;"
+
+/form id="step1Form" method="post" action="/pay/#{@embed.uuid}/step1" onsubmit="return validateStep1Form()"
+form id="step1_form" onsubmit="return handleStep1()"
+
+  = hidden_field_tag :authenticity_token, form_authenticity_token
+  = hidden_field_tag :embed_uuid, embed[:uuid]
+
+  - profile = @data[:authenticated_profile] || {}
+  /- if profile
+  => "Name:"
+  input type="text" id="name" name="name" value="#{profile[:name]}"
+  br
+  => "Email:"
+  input type="text" id="email" name="email" value="#{profile[:email]}" autocapitalize="off"
+  br
+
+  /- unless auth_token.present?
+  - password_display = auth_token.present? ? 'display: none;' : ''
+  div id="password_block" style="#{password_display}"
+    => "Password:"
+    input type="password" id="password" name="password" autocapitalize="off"
+    input id="signinSubmit" type="submit" value="Signin" onclick="handleSignin(); return false;"
+    br
+
+  /todo: tidy this up, and handle when email is changed
+  = hidden_field_tag :auth_token, "#{auth_token}", id: 'auth_token'
+  /=> "Token:"
+  /input type="text" id="auth_token" name="auth_token" value="#{auth_token}"
+  br
+
+  - if @data[:return_url].present?
+    = hidden_field_tag :return_url, @data[:return_url]
+
+  - if @data[:correlation_id].present?
+    = hidden_field_tag :correlation_id, @data[:correlation_id]
+
+  - if @data[:description].present?
+    = hidden_field_tag :description, @data[:description]
+    => "Description: #{@data[:description]}"
+    br
+
+  - if @data[:amount]
+    = hidden_field_tag :assigned_amount, @data[:amount]
+    => "Amount: $#{format_amount(@data[:amount])}"
+    br
+
+  - else
+    - include_amount_field = false
+    - if embed[:suggested_amounts].present?
+      - for amount in embed[:suggested_amounts]
+        - if amount > 0
+          = radio_button_tag :chosen_amount, amount
+          =<> amount
+          |&nbsp;
+          = " "
+        - else
+          - include_amount_field = true
+      br
+    - else
+      - include_amount_field = true
+
+    - if include_amount_field
+      => "Amount:"
+      input id="step1Amount" type="text" name="entered_amount" value=""
+      br
+
+  - if embed[:recurrence_options].present?
+    - for option in embed[:recurrence_options]
+      = radio_button_tag :recurrence, option[:value].to_s, option[:checked]
+      =<> option[:label]
+      |&nbsp;
+      = " "
+    br
+
+  - if embed[:mailing_list_enabled]
+    => "Join Mailing List:"
+    input type="checkbox" name="mailing_list" value="join"
+    br
+
+  - if embed[:capture_memo]
+    => "Memo:"
+    input type="text" name="memo"
+    br
+
+  - assigned_offer = @data[:assigned_offer]
+  - if assigned_offer.present?
+    / when offer is passed in as a param
+    = hidden_field_tag :assigned_offer_uuid, assigned_offer[:uuid]
+    |Reward: #{assigned_offer[:label]}
+    br
+
+  - else
+    - if campaign && campaign[:offers].present?
+      |Choose a reward:
+      br
+      - for offer in campaign[:offers]
+        = radio_button_tag :chosen_offer_uuid, offer[:uuid]
+        =<> offer[:label]
+        /|&nbsp;
+        /= " "
+        br
+      /br
+
+  input id="step1Submit" type="submit" value="Next"
+
+
+/script src="http://code.jquery.com/jquery-1.11.3.min.js"
+/script src="/js/fairpayapi.js?v=2"
+
+javascript:
+
+  //FairPayApi.setEndpoint('http://localhost:3000');
+  //FairPayApi.setApiKey('abuntoo');
+  //FairPayApi.setEmbedUuid('VJ7iA5cQg');
+
+  //$("#card_form").submit(handleCard);
+
+  function handleSignin() {
+    var data = {};
+    var form = document.getElementById("step1_form");
+    FairPayApi.copyFormValues(data, form, ['email', 'password']);
+    if (validateSigninData(data)) {
+      FairPayApi.signin(data, handleSigninResponse);
+    }
+    return false;
+  }
+
+  function handleSigninResponse(data) {
+    console.log('signin response: ' + JSON.stringify(data));
+    if (data.result) {
+      var token = data.result;
+      //document.getElementById('auth_token');
+      $("#auth_token").val(token);
+      $("#password_block").hide();
+      FairPayApi.profile(token, handleProfileResponse);
+    } else if (data.error) {
+      showError(data.error.message);
+    }
+  }
+
+  function handleProfileResponse(data) {
+    console.log('profile response: ' + JSON.stringify(data));
+    if (data.result) {
+      console.log('name: ' + data.result.name);
+      $("#name").val(data.result.name);
+    } else if (data.error) {
+      showError(data.error.message);
+    }
+  }
+
+  function handleStep1() {
+    var data = {};
+    var form = document.getElementById("step1_form");
+    FairPayApi.copyFormValues(data, form, ['embed_uuid', 'name', 'email', 'recurrence', 'mailing_list', 'description', 'memo', 'return_url', 'correlation_id', 'auth_token']);
+    data.amount = resolveAmount();
+    data.offer_uuid = resolveOfferUuid();
+    //alert('data: ' + JSON.stringify(data));
+
+    if (validateStep1Data(data)) {
+      console.log('beforfe submitStep1');
+      FairPayApi.submitStep1(data, handleStep1Response);
+    }
+    return false;
+  }
+
+  function handleStep1Response(data) {
+    console.log('step1 response: ' + JSON.stringify(data));
+    if (data.result) {
+      //var status = data.result.status;
+      //$('#errorMessage').html('');      //var linkUrl = data.result.statusLink;
+      if (data.result.next_step_url) {
+        window.location = data.result.next_step_url;
+      }
+    } else if (data.error) {
+      showError(data.error.message);
+    }
+  }
+
+  function showError(message) {
+    $('#errorMessage').show();
+    $('#errorMessage').html(message);
+    //$('#errorStack').html('<pre>' + data.error.stack + '</pre>');
+  }
+
+  function hideError(message) {
+    $('#errorMessage').hide();
+    $('#errorMessage').html('');
+  }
+  function resolveAmount() {
+    var assigned_amount = number_field_val('assigned_amount');
+    var entered_amount = number_field_val('entered_amount');
+    var amount_chosen_count = $("input[name=chosen_amount]:checked").length;
+    var chosen_amount = $("input[name=chosen_amount]:checked").val();
+    //if (amount_chosen_count > 0) {
+    //  alert("chosen_amount: " + chosen_amount);
+    //}
+    if (assigned_amount > 0) {
+      return assigned_amount;
+    } else if (entered_amount > 0) {
+      return entered_amount;
+    } else if (amount_chosen_count > 0) {
+      return chosen_amount;
+    } else {
+      return 0;
+    }
+  }
+
+  function resolveOfferUuid() {
+    var chosen = $("input[name=chosen_offer_uuid]:checked").val();
+    if (chosen && chosen != null) {
+      return chosen;
+    } else {
+      var assigned = field_val('assigned_offer_uuid', null);
+      return assigned;
+    }
+  }
+
+  function validateStep1Data(data) {
+    if (data['amount'] == 0) {
+      showError("Please enter an amount");
+      return false;
+    }
+    if (!validatePresent(data['email'], 'an Email')) {
+      return false;
+    }
+    return true;
+  }
+
+  function validateSigninData(data) {
+    if (!validatePresent(data['email'], 'an Email')) {
+      return false;
+    }
+    if (!validatePresent(data['password'], 'a Password')) {
+      return false;
+    }
+    return true;
+  }
+  //todo: factor this over to fairpayapi.js
+  function validatePresent(value, field_description) {
+    if (value == undefined || value == null || value.length == 0) {
+      showError("Please enter " + field_description);
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  //function validateStep1Form() {
+  //  var assigned_amount = number_field_val('assigned_amount');
+  //  var entered_amount = number_field_val('entered_amount');
+  //  var amount_chosen_count = $("input[name=chosen_amount]:checked").length;
+  //  //var amount = $('#step1Amount').val();
+  //  //if (amount_chosen == 0 && (amount == null || amount == "")) {
+  //  //  alert("Please enter an amount");
+  //  //  return false;
+  //  //}
+  //  if (assigned_amount == 0 && entered_amount == 0 && amount_chosen_count == 0) {
+  //    alert("Please enter an amount");
+  //    return false;
+  //  }
+  //  var email = $('#email').val();
+  //  if (email == null || email == "") {
+  //    alert("Please enter an email");
+  //    return false;
+  //  }
+  //  return true;
+  //}
+
+  function number_field_val(name) {
+    return Number(field_val(name, 0));
+  }
+
+  function field_val(name, default_value) {
+    var field_spec = 'input[name="' + name + '"]';
+    var raw = $(field_spec).val(); // confirm if this statement is always safe
+    //alert(name + " raw val: " + raw);
+    var val = raw ? raw : default_value;
+    //alert(name + " val: " + val);
+    return val;
+  }
