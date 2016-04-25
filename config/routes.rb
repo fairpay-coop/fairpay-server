@@ -20,6 +20,9 @@ Rails.application.routes.draw do
 
   # Landing page
   root 'abuntoo#index'
+  # todo: better factor these routes defs
+  get '/terms' => 'abuntoo#terms'
+  get '/privacy' => 'abuntoo#privacy'
 
   get '/test' => 'welcome#index'
 
