@@ -19,7 +19,7 @@ Rails.application.routes.draw do
 
 
   # Landing page
-  root 'welcome#index'
+  root 'abuntoo#index'
 
   get  'widget/:uuid' => 'pay#widget'
 

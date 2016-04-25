@@ -1,0 +1,299 @@
+main {
+  margin-top: 100px;
+}
+h1 {
+  font-size: 40px;
+}
+h3 {
+  font-size: 22px;
+}
+h5 {
+  font-size: 25px;
+}
+h6 {
+  font-size: 20px
+}
+.clearB {
+  clear: both;
+}
+.noPadd {
+  padding: 0;
+}
+.noPaddR {
+  padding-right: 0;
+}
+.noPaddL {
+  padding-left: 0;
+}
+.navbar {
+  background: rgba(201, 238, 99, 1);
+  color: white;
+}
+.navbar-nav>li>a, .navbar-nav>.active>a,
+.navbar-nav>.active>a:focus,
+.navbar-nav>.active>a:hover,
+.navbar-brand {
+  color: white;
+}
+.navbar-nav > .open > a, .navbar-nav > .active > a {
+  background-image: none;
+  background: inherit;
+}
+.navbar-nav li a {
+  color: white;
+}
+.nav>li>a:focus, .nav>li>a:hover {
+  background: inherit;
+  color: gray;
+}
+.mainTagline {
+  color: #EE6383;
+  text-align: center;
+  font-family: Helvetica;
+  font-weight: bold;
+  line-height: 1;
+}
+.mainSubline {
+  color: #707070;
+  text-align: center;
+  font-family: sans-serif;
+  font-weight: normal;
+  line-height: 1;
+}
+.mainSectionMenu {
+  width: 100%;
+  display: block;
+  font-size: 16px;
+  color: black;
+  padding: 0;
+}
+.mainSectionMenu li {
+  display: inline-block;
+  min-width: 125px;
+  padding-bottom: 10px;
+  margin-right: 22px;
+  border-bottom: 6px solid rgba(201, 238, 99, 1);
+}
+.mainSectionMenu li a {
+  color: black;
+  font-size: 16px;
+  text-decoration: none;
+  font-family: Helvetica;
+}
+#headingSection {
+  margin-bottom: 70px;
+}
+.btnC1 {
+  background: #EE6383;
+  color: white;
+  border-color: white;
+  width: 100%;
+  padding: 10px;
+}
+.btnC1:hover, .btnC1:active, .btnC1:focus, .btnC1:visited {
+  color: white !important;
+  background-color: #E8486D !important;
+  border-color: white !important;
+}
+.progress-bar {
+  background: rgba(201, 238, 99, 1);
+}
+.progress {
+  background: rgba(112, 112, 112, 1);
+  border-radius: 0;
+  border: none;
+  margin-bottom: 10px;
+}
+.donateCounter {
+  margin-top: 25px;
+}
+.donateCounter hr {
+  border-bottom: 2px solid rgba(204, 204, 204, 1);
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+.donateNumberCounter {
+  margin-bottom: 20px;
+}
+.donateNumberCounter h5, .donateNumberCounter h6 {
+  text-align: right;
+  font-weight: normal;
+  line-height: 1.2;
+  font-family: sans-serif;
+  margin: 0;
+}
+.donateNumberCounter h6 {
+  font-weight: 100;
+}
+.donorCount {
+  text-align: left;
+  text-transform: uppercase;
+  font-weight: 400;
+  line-height: 1;
+  margin: 0;
+}
+.locationDonation {
+  font-size: 15px;
+  text-align: center;
+  line-height: 1;
+}
+.donorRewardBox {
+  background: #E8E8E7;
+  padding: 12px 20px;
+  margin-top: 20px;
+}
+.rewardHelp {
+  color: #EE6383;
+  font-size: 15px;
+  font-style: normal;
+  float: right;
+  text-decoration: none;
+}
+.rewardPrice {
+  line-height: 1;
+  margin: 0;
+  font-family: georgia;
+  font-weight: bold;
+  font-size: 18px;
+  text-align: left;
+  float: left;
+}
+.rewardTagline {
+  line-height: 1.2;
+  margin: 0;
+  margin-top: 20px;
+  font-family: georgia;
+  font-weight: 100;
+  font-size: 18px;
+  text-align: left;
+}
+.rewardSubline {
+  line-height: 1.2;
+  margin: 10px 0;
+  font-family: sans-serif;
+  font-weight: 100;
+  font-size: 15px;
+  text-align: left;
+}
+.donorRewardBox hr {
+  border-bottom: 2px solid rgba(238, 99, 131, 1);
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+.donorRewardBox p {
+  line-height: 1.2;
+  margin: 0;
+  font-family: georgia;
+  font-weight: 100;
+  font-style: italic;
+  font-size: 13px;
+  text-align: left;
+}
+.donorRewardBox .donorCount {
+  float: left;
+}
+.donorRewardBox .donorStatus {
+  float: right;
+}
+.donorRewardBox .donorCount, .donorRewardBox .donorStatus {
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 400;
+  color: #EE6383;
+  font-family: sans-serif;
+  text-transform: none;
+  margin-top: 10px;
+}
+.greenDonorReward {
+  background: #F2FBD8;
+}
+#shareBlockSection {
+  background: #171717;
+  padding: 15px;
+  margin-top: 25px;
+}
+
+.topFeeds {
+  padding: 10px;
+  background: #EE8863;
+  color: white;
+  margin-bottom: 10px;
+  font-family: georgia;
+  font-size: 18px;
+}
+.topFeedBlue {
+  background: #63C9EE;
+}
+.topFeedPink {
+  background: #EE6383;
+}
+.sectionAEnc {
+  min-height: 370px;
+}
+.sectionBEnc {
+  min-height: 180px;
+}
+.sectionTitle {
+  border-bottom: 6px solid rgba(201, 238, 99, 1);
+  padding-bottom: 8px;
+  width: auto;
+}
+.footerCopyright {
+  color: black;
+  font-size: 15px;
+  text-align: center;
+}
+footer {
+  background: #DEF5A1;
+  padding: 40px 0;
+  margin-top: 60px;
+}
+.bottomMenu {
+  color: black;
+  padding: 0;
+  text-align: center;
+}
+.bottomMenu li {
+  display: inline-block;
+  margin-right: 10px;
+  font-size: 15px;
+}
+.bottomMenu li a {
+  text-decoration: none;
+  color: black;
+}
+.bottomMenu .social {
+  font-size: 22px;
+}
+
+.termsPage p {
+  font-family: Helvetica;
+  font-size: 20px;
+  color: black;
+  line-height: 1.2
+}
+.termsPage h3 {
+  font-family: Helvetica;
+  font-size: 22px;
+  color: darkgrey;
+  font-weight: 400;
+  margin: 35px 0;
+  margin-bottom: 20px;
+}
+.termsPage h6 {
+  font-family: Georgia;
+  font-size: 20px;
+  color: #EE6383;
+  font-weight: 600;
+  font-style: italic;
+}
+.taglineTerms {
+  font-family: georgia;
+  font-size: 25px;
+  color: #6383EE;
+  font-weight: 600;
+}
+.termModify {
+  font-size: 17px;
+  color: darkgrey !important;
+}
