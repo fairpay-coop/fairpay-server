@@ -69,10 +69,12 @@ class Offer < ActiveRecord::Base
 
   # update persisted stats indicating an offer was taken
   def allocate
-    allocated = 0  unless allocated
-    allocated += 1
+    puts "offer.allocate - already allocated: #{self.allocated}"
+    self.allocated = 0  unless self.allocated
+    self.allocated += 1
     # save!  #todo: make sure this is transactionally safe
-    self.update!(allocated: allocated)
+    puts "new allocated: #{self.allocated}"
+    self.update!(allocated: self.allocated)
   end
 
   KIND_LABELS = {abuntoo: 'An Abuntoo Reward', exclusive: 'Exclusive to this campaign!'}
