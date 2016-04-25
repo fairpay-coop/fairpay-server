@@ -21,6 +21,8 @@ Rails.application.routes.draw do
   # Landing page
   root 'abuntoo#index'
 
+  get '/test' => 'welcome#index'
+
   get  'widget/:uuid' => 'pay#widget'
 
   get   '/api/v1/embed/:uuid' => 'embed#widget_data'

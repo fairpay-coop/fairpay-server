@@ -1,3 +1,7 @@
+<%
+   embed = @data[:embed]
+   # campaign = embed[:campaign]
+%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -32,11 +36,11 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="index.html">BRINGARTBACK</a>
+          <a class="navbar-brand" href="/">BRINGARTBACK</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
+            <li class="active"><a href="/">Home</a></li>
             <li><a href="#">Story</a></li>
             <li><a href="#">Gallery</a></li>
             <li><a href="#">Donors</a></li>
@@ -104,261 +108,111 @@
 
       <div class="col-md-4">
           <aside>
+            <%
+               campaign = embed[:campaign]
+               pcnt = campaign[:financial_pcnt]
+            %>
               <a href="#" class="btn btn-default btnC1">Donate</a>
               <div class="donateCounter">
                 <div class="donateNumberCounter">
-                    <h6><span>$2,713</span> of</h6>
-                    <h5>$10,000</h5>
+                    <h6><span>$<%= format_amount(campaign[:financial_total],0) %></span> of</h6>
+                    <h5>$<%= format_amount(campaign[:financial_goal],0) %></h5>
                 </div>
                 <div class="progress">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
-                    30%
+                  <div class="progress-bar" role="progressbar" aria-valuenow="<%= pcnt %>" aria-valuemin="0" aria-valuemax="100" style="width: <%=pcnt%>%;">
+                    <%= pcnt %>%
                   </div>
                 </div>
-                <p class="donorCount">19 DONORS</p>
+                <p class="donorCount"><%= campaign[:supporter_total] %> DONORS</p>
                 <hr>
                 <p class="locationDonation"><i class="fa fa-map-marker"></i>    San Francisco, CA</p>
               </div>
 
+            <%
+               campaign[:offers].each do |offer|
+            %>
               <div class="donorRewardBox">
-                <h4 class="rewardPrice">$300</h4>
+                <h4 class="rewardPrice">$<%= format_amount(offer[:minimum_contribution],0) %></h4>
                 <a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>
                 <div class="clearB"></div>
-                <h3 class="rewardTagline">Limited Edition Screen Print Set (Six Unique Prints)</h3>
-                <h5 class="rewardSubline"><i>from</i> Gary Houston &amp; John Muir Students</h5>
+                <h3 class="rewardTagline"><%= offer[:name] %></h3>
+                <h5 class="rewardSubline"><i>from</i> <%= offer[:provided_by] %></h5>
                 <hr>
-                <p>Exclusive to this campaign!</p>
-                <p class="donorCount">19 donors</p>
-                <p class="donorStatus">sorry, all claimed</p>
+                <p> <%= offer[:kind_label] %></p>
+                <p class="donorCount"><%= offer[:allocated] %> donor(s)</p>
+                <p class="donorStatus"><%= offer[:availability] %></p>
                 <div class="clearB"></div>
               </div>
+            <%
+               end
+            %>
 
-              <div class="donorRewardBox">
-                <h4 class="rewardPrice">$50</h4>
-                <a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>
-                <div class="clearB"></div>
-                <h3 class="rewardTagline">Limited Edition Art Fair Screen Print</h3>
-                <h5 class="rewardSubline"><i>from</i> Gary Houston &amp; John Muir Students</h5>
-                <hr>
-                <p>Exclusive to this campaign!</p>
-                <p class="donorCount">3 donors</p>
-                <p class="donorStatus">still available</p>
-                <div class="clearB"></div>
-              </div>
+              <!--<div class="donorRewardBox">-->
+                <!--<h4 class="rewardPrice">$50</h4>-->
+                <!--<a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>-->
+                <!--<div class="clearB"></div>-->
+                <!--<h3 class="rewardTagline">Limited Edition Art Fair Screen Print</h3>-->
+                <!--<h5 class="rewardSubline"><i>from</i> Gary Houston &amp; John Muir Students</h5>-->
+                <!--<hr>-->
+                <!--<p>Exclusive to this campaign!</p>-->
+                <!--<p class="donorCount">3 donors</p>-->
+                <!--<p class="donorStatus">still available</p>-->
+                <!--<div class="clearB"></div>-->
+              <!--</div>-->
 
-              <div class="donorRewardBox">
-                <h4 class="rewardPrice">$25</h4>
-                <a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>
-                <div class="clearB"></div>
-                <h3 class="rewardTagline">Limited Edition Grateful Dead Poster</h3>
-                <h5 class="rewardSubline"><i>from</i> Anonymous Art Donor</h5>
-                <hr>
-                <p>Exclusive to this campaign!</p>
-                <p class="donorCount">12 donors</p>
-                <p class="donorStatus">10 left</p>
-                <div class="clearB"></div>
-              </div>
+              <!--<div class="donorRewardBox">-->
+                <!--<h4 class="rewardPrice">$25</h4>-->
+                <!--<a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>-->
+                <!--<div class="clearB"></div>-->
+                <!--<h3 class="rewardTagline">Limited Edition Grateful Dead Poster</h3>-->
+                <!--<h5 class="rewardSubline"><i>from</i> Anonymous Art Donor</h5>-->
+                <!--<hr>-->
+                <!--<p>Exclusive to this campaign!</p>-->
+                <!--<p class="donorCount">12 donors</p>-->
+                <!--<p class="donorStatus">10 left</p>-->
+                <!--<div class="clearB"></div>-->
+              <!--</div>-->
 
-              <div class="donorRewardBox greenDonorReward">
-                <h4 class="rewardPrice">$45</h4>
-                <a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>
-                <div class="clearB"></div>
-                <h3 class="rewardTagline">Free 75-Min. Float Tank Experience</h3>
-                <h5 class="rewardSubline"><i>from</i> Oakland Floats</h5>
-                <hr>
-                <p>An Abuntoo Reward</p>
-                <p class="donorCount">12 donors</p>
-                <p class="donorStatus">still available</p>
-                <div class="clearB"></div>
-              </div>
+              <!--<div class="donorRewardBox greenDonorReward">-->
+                <!--<h4 class="rewardPrice">$45</h4>-->
+                <!--<a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>-->
+                <!--<div class="clearB"></div>-->
+                <!--<h3 class="rewardTagline">Free 75-Min. Float Tank Experience</h3>-->
+                <!--<h5 class="rewardSubline"><i>from</i> Oakland Floats</h5>-->
+                <!--<hr>-->
+                <!--<p>An Abuntoo Reward</p>-->
+                <!--<p class="donorCount">12 donors</p>-->
+                <!--<p class="donorStatus">still available</p>-->
+                <!--<div class="clearB"></div>-->
+              <!--</div>-->
 
-              <div class="donorRewardBox greenDonorReward">
-                <h4 class="rewardPrice">$45</h4>
-                <a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>
-                <div class="clearB"></div>
-                <h3 class="rewardTagline">"Sacred Economics" by Charles </h3>
-                <h5 class="rewardSubline"><i>from</i> Cecilia Tom</h5>
-                <hr>
-                <p>An Abuntoo Reward</p>
-                <p class="donorCount">14 donors</p>
-                <p class="donorStatus">9 left</p>
-                <div class="clearB"></div>
-              </div>
+              <!--<div class="donorRewardBox greenDonorReward">-->
+                <!--<h4 class="rewardPrice">$45</h4>-->
+                <!--<a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>-->
+                <!--<div class="clearB"></div>-->
+                <!--<h3 class="rewardTagline">"Sacred Economics" by Charles </h3>-->
+                <!--<h5 class="rewardSubline"><i>from</i> Cecilia Tom</h5>-->
+                <!--<hr>-->
+                <!--<p>An Abuntoo Reward</p>-->
+                <!--<p class="donorCount">14 donors</p>-->
+                <!--<p class="donorStatus">9 left</p>-->
+                <!--<div class="clearB"></div>-->
+              <!--</div>-->
 
-              <div class="donorRewardBox greenDonorReward">
-                <h4 class="rewardPrice">$700</h4>
-                <a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>
-                <div class="clearB"></div>
-                <h3 class="rewardTagline">Limited Edition Grateful Dead Poster</h3>
-                <h5 class="rewardSubline"><i>from</i> Anonymous Art Donor</h5>
-                <hr>
-                <p>An Abuntoo Reward</p>
-                <p class="donorCount">14 donors</p>
-                <p class="donorStatus">7 left</p>
-                <div class="clearB"></div>
-              </div>
-
-              <div class="donorRewardBox greenDonorReward">
-                <h4 class="rewardPrice">$700</h4>
-                <a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>
-                <div class="clearB"></div>
-                <h3 class="rewardTagline">Limited Edition Grateful Dead Poster</h3>
-                <h5 class="rewardSubline"><i>from</i> Anonymous Art Donor</h5>
-                <hr>
-                <p>An Abuntoo Reward</p>
-                <p class="donorCount">14 donors</p>
-                <p class="donorStatus">7 left</p>
-                <div class="clearB"></div>
-              </div>
-
-              <div class="donorRewardBox greenDonorReward">
-                <h4 class="rewardPrice">$700</h4>
-                <a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>
-                <div class="clearB"></div>
-                <h3 class="rewardTagline">Limited Edition Grateful Dead Poster</h3>
-                <h5 class="rewardSubline"><i>from</i> Anonymous Art Donor</h5>
-                <hr>
-                <p>An Abuntoo Reward</p>
-                <p class="donorCount">14 donors</p>
-                <p class="donorStatus">7 left</p>
-                <div class="clearB"></div>
-              </div>
-
-              <div class="donorRewardBox greenDonorReward">
-                <h4 class="rewardPrice">$700</h4>
-                <a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>
-                <div class="clearB"></div>
-                <h3 class="rewardTagline">Limited Edition Grateful Dead Poster</h3>
-                <h5 class="rewardSubline"><i>from</i> Anonymous Art Donor</h5>
-                <hr>
-                <p>An Abuntoo Reward</p>
-                <p class="donorCount">14 donors</p>
-                <p class="donorStatus">7 left</p>
-                <div class="clearB"></div>
-              </div>
+              <!--<div class="donorRewardBox greenDonorReward">-->
+                <!--<h4 class="rewardPrice">$700</h4>-->
+                <!--<a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>-->
+                <!--<div class="clearB"></div>-->
+                <!--<h3 class="rewardTagline">Limited Edition Grateful Dead Poster</h3>-->
+                <!--<h5 class="rewardSubline"><i>from</i> Anonymous Art Donor</h5>-->
+                <!--<hr>-->
+                <!--<p>An Abuntoo Reward</p>-->
+                <!--<p class="donorCount">14 donors</p>-->
+                <!--<p class="donorStatus">7 left</p>-->
+                <!--<div class="clearB"></div>-->
+              <!--</div>-->
 
 
-              <div class="donorRewardBox greenDonorReward">
-                <h4 class="rewardPrice">$700</h4>
-                <a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>
-                <div class="clearB"></div>
-                <h3 class="rewardTagline">Limited Edition Grateful Dead Poster</h3>
-                <h5 class="rewardSubline"><i>from</i> Anonymous Art Donor</h5>
-                <hr>
-                <p>An Abuntoo Reward</p>
-                <p class="donorCount">14 donors</p>
-                <p class="donorStatus">7 left</p>
-                <div class="clearB"></div>
-              </div>
-
-
-              <div class="donorRewardBox greenDonorReward">
-                <h4 class="rewardPrice">$700</h4>
-                <a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>
-                <div class="clearB"></div>
-                <h3 class="rewardTagline">Limited Edition Grateful Dead Poster</h3>
-                <h5 class="rewardSubline"><i>from</i> Anonymous Art Donor</h5>
-                <hr>
-                <p>An Abuntoo Reward</p>
-                <p class="donorCount">14 donors</p>
-                <p class="donorStatus">7 left</p>
-                <div class="clearB"></div>
-              </div>
-
-
-              <div class="donorRewardBox greenDonorReward">
-                <h4 class="rewardPrice">$700</h4>
-                <a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>
-                <div class="clearB"></div>
-                <h3 class="rewardTagline">Limited Edition Grateful Dead Poster</h3>
-                <h5 class="rewardSubline"><i>from</i> Anonymous Art Donor</h5>
-                <hr>
-                <p>An Abuntoo Reward</p>
-                <p class="donorCount">14 donors</p>
-                <p class="donorStatus">7 left</p>
-                <div class="clearB"></div>
-              </div>
-
-
-              <div class="donorRewardBox greenDonorReward">
-                <h4 class="rewardPrice">$700</h4>
-                <a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>
-                <div class="clearB"></div>
-                <h3 class="rewardTagline">Limited Edition Grateful Dead Poster</h3>
-                <h5 class="rewardSubline"><i>from</i> Anonymous Art Donor</h5>
-                <hr>
-                <p>An Abuntoo Reward</p>
-                <p class="donorCount">14 donors</p>
-                <p class="donorStatus">7 left</p>
-                <div class="clearB"></div>
-              </div>
-
-
-              <div class="donorRewardBox greenDonorReward">
-                <h4 class="rewardPrice">$700</h4>
-                <a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>
-                <div class="clearB"></div>
-                <h3 class="rewardTagline">Limited Edition Grateful Dead Poster</h3>
-                <h5 class="rewardSubline"><i>from</i> Anonymous Art Donor</h5>
-                <hr>
-                <p>An Abuntoo Reward</p>
-                <p class="donorCount">14 donors</p>
-                <p class="donorStatus">7 left</p>
-                <div class="clearB"></div>
-              </div>
-
-
-              <div class="donorRewardBox greenDonorReward">
-                <h4 class="rewardPrice">$700</h4>
-                <a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>
-                <div class="clearB"></div>
-                <h3 class="rewardTagline">Limited Edition Grateful Dead Poster</h3>
-                <h5 class="rewardSubline"><i>from</i> Anonymous Art Donor</h5>
-                <hr>
-                <p>An Abuntoo Reward</p>
-                <p class="donorCount">14 donors</p>
-                <p class="donorStatus">7 left</p>
-                <div class="clearB"></div>
-              </div>
-
-              <div class="donorRewardBox greenDonorReward">
-                <h4 class="rewardPrice">$700</h4>
-                <a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>
-                <div class="clearB"></div>
-                <h3 class="rewardTagline">Limited Edition Grateful Dead Poster</h3>
-                <h5 class="rewardSubline"><i>from</i> Anonymous Art Donor</h5>
-                <hr>
-                <p>An Abuntoo Reward</p>
-                <p class="donorCount">14 donors</p>
-                <p class="donorStatus">7 left</p>
-                <div class="clearB"></div>
-              </div>
-
-              <div class="donorRewardBox greenDonorReward">
-                <h4 class="rewardPrice">$700</h4>
-                <a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>
-                <div class="clearB"></div>
-                <h3 class="rewardTagline">Limited Edition Grateful Dead Poster</h3>
-                <h5 class="rewardSubline"><i>from</i> Anonymous Art Donor</h5>
-                <hr>
-                <p>An Abuntoo Reward</p>
-                <p class="donorCount">14 donors</p>
-                <p class="donorStatus">7 left</p>
-                <div class="clearB"></div>
-              </div>
-
-              <div class="donorRewardBox greenDonorReward">
-                <h4 class="rewardPrice">$700</h4>
-                <a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>
-                <div class="clearB"></div>
-                <h3 class="rewardTagline">Limited Edition Grateful Dead Poster</h3>
-                <h5 class="rewardSubline"><i>from</i> Anonymous Art Donor</h5>
-                <hr>
-                <p>An Abuntoo Reward</p>
-                <p class="donorCount">14 donors</p>
-                <p class="donorStatus">7 left</p>
-                <div class="clearB"></div>
-              </div>
           </aside>
       </div>
   </div>

@@ -28,6 +28,8 @@ class Offer < ActiveRecord::Base
   belongs_to :profile
   belongs_to :campaign
 
+  attr_data_field :provided_by
+
   after_initialize :assign_uuid
 
 
@@ -73,13 +75,18 @@ class Offer < ActiveRecord::Base
     self.update!(allocated: allocated)
   end
 
+  KIND_LABELS = {abuntoo: 'An Abuntoo Reward', exclusive: 'Exclusive to this campaign!'}
+
+  def kind_label
+    KIND_LABELS[kind.to_sym] if kind
+  end
 
   def entity
     Entity.new(self)
   end
 
   class Entity < Grape::Entity
-    expose :uuid, :name, :label, :minimum_contribution, :remaining, :limit, :kind
+    expose :uuid, :name, :label, :minimum_contribution, :remaining, :limit, :kind, :availability, :allocated, :provided_by, :kind, :kind_label
   end
 
 end
