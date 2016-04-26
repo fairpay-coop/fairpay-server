@@ -28,6 +28,7 @@ class AbuntooController < PayController
     else
       @data
     end
+    render 'donate_raw'  if params[:raw]
   end
 
   def payment
@@ -54,6 +55,7 @@ class AbuntooController < PayController
     else
       @data
     end
+    render 'payment_raw'  if params[:raw]
   end
 
   def thanks
