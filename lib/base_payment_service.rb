@@ -28,7 +28,7 @@ class BasePaymentService
   end
 
   def saved_payment_source(transaction, autocreate: true)
-    if supports_saved_payment_source
+    if supports_saved_payment_source && transaction.payor
       payment_source = transaction.payor.payment_source_for_type(payment_type, autocreate: autocreate)
     else
       nil

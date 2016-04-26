@@ -122,6 +122,7 @@ class Embeds < Grape::API
         auth_token = params[:auth_token] || auth_token_header
         data = params.slice(:amount, :email, :name, :recurrence, :mailing_list, :description, :memo, :offer_uuid, :return_url, :correlation_id)
         data[:auth_token] = auth_token
+        data[:authenticated_email] = cookies[:authenticated_email]  # auto0
         puts("data: #{data.inspect}")
 
         transaction = embed.step1(data)
@@ -131,6 +132,11 @@ class Embeds < Grape::API
         result[:redirect_url] = transaction.next_step_url  # used by simple test flow
         result[:next_step_url] = transaction.next_step_url  # used by simple test flow
         puts "step1 post result: #{result}"
+
+        # cookies[:current_transaction_uuid] = {value: transaction.uuid, path: '/'}
+        cookies[:next_step_url] = {value: transaction.step2_url, path: '/'}
+        puts "setting cookie[next_step_url]: #{transaction.step2_url}"
+
         wrap_result( result )
       end
 

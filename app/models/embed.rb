@@ -27,6 +27,7 @@ class Embed < ActiveRecord::Base
   attr_data_field :description
   attr_data_field :return_url
   attr_data_field :capture_address   # list of address type: mailing, billing, shipping.  if present, then capture specified full addresses for payor
+  attr_data_field :step1_email_optional
 
   # if assigned present option on 'finished' view to provide preauthorization to automatically charge saved payment information once per specified interval.
   # subfields: interval_count, interval_units, interval_description
@@ -270,13 +271,18 @@ class Embed < ActiveRecord::Base
     return_url = params[:return_url]
     correlation_id = params[:correlation_id]
     auth_token = params[:auth_token]
-
-    raise "email required" unless email.present?
-    payor = Profile.find_by(email: email)
-    unless payor
-      name = email  unless name.present?  # don't require 'name' as the api level, default to email
-      payor = Profile.create!(email: email, name: name)
+    authenticated_email = params[:authenticated_email]
+    if email.blank? && authenticated_email.present?
+      puts "using auth0 authenticted email"
+      email = authenticated_email
     end
+
+    if email.present?
+      payor = Profile.find_or_create(email: email, name: name)
+    else
+      raise "email required"  unless step1_email_optional
+    end
+
     if auth_token.present?
       auth_user = User.find_by(auth_token: auth_token)
       profile_authenticated = auth_user&.profile&.email == email

@@ -17,6 +17,7 @@ form id="step1_form" onsubmit="return handleStep1()"
 
   = hidden_field_tag :authenticity_token, form_authenticity_token
   = hidden_field_tag :embed_uuid, embed[:uuid]
+  = hidden_field_tag :authenticated_email, auth0_user&.email, id: :authenticated_email
 
   - profile = @data[:authenticated_profile] || {}
 
@@ -41,9 +42,9 @@ form id="step1_form" onsubmit="return handleStep1()"
   => "My Contribution Today:"
   input id="step1Amount" type="text" name="entered_amount" value="" size=5
   br
-  => "Email:"
-  input type="text" id="email" name="email" value="#{profile[:email]}" autocapitalize="off"  size=25
-  br
+  /=> "Email:"
+  /input type="text" id="email" name="email" value="#{profile[:email]}" autocapitalize="off"  size=25
+  /br
 
   br
 
@@ -73,6 +74,29 @@ form id="step1_form" onsubmit="return handleStep1()"
 
   br
   input id="step1Submit" type="submit" value="Next"
+
+
+/script src="https://cdn.auth0.com/js/lock-9.0.min.js"
+/
+//javascript:
+//
+//  var lock = new Auth0Lock('7hoTB8QL1yquIQQc4UBTuDZlhwIMjHz5', 'fairpay.auth0.com');
+//
+//
+//  function signin() {
+//    console.log("signin");
+//    lock.show({
+//        callbackURL: 'http://jfedev.fairpay.coop:3000/auth/auth0/callback'
+//      , responseType: 'code'
+//      , authParams: {
+//        scope: 'openid profile'
+//      }
+//    });
+//  }
+
+/button onclick="window.signin();"
+/  |Login
+
 
 
 /script src="http://code.jquery.com/jquery-1.11.3.min.js"
@@ -139,7 +163,12 @@ javascript:
     if (data.result) {
       //var status = data.result.status;
       //$('#errorMessage').html('');      //var linkUrl = data.result.statusLink;
-      if (data.result.next_step_url) {
+      var authenticated_email = $("#authenticated_email").val();
+      console.log("authenticated email: " + authenticated_email);
+      if (authenticated_email == '') {
+        console.log("signin needed");
+        window.signin();
+      } else if (data.result.next_step_url) {
         window.location = data.result.next_step_url;
       }
     } else if (data.error) {
@@ -191,9 +220,9 @@ javascript:
       showError("Please enter an amount");
       return false;
     }
-    if (!validatePresent(data['email'], 'an Email')) {
-      return false;
-    }
+    //if (!validatePresent(data['email'], 'an Email')) {
+    //  return false;
+    //}
     return true;
   }
 

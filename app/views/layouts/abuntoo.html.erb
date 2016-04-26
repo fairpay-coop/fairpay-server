@@ -44,6 +44,17 @@
             <li><a href="#">Story</a></li>
             <li><a href="#">Gallery</a></li>
             <li><a href="#">Donors</a></li>
+
+            <li>
+              <% if auth0_signed_in %>
+                <%= auth0_profile.name %>
+                <button onclick="location.href='/auth/logout';">Logout</button>
+                &nbsp;
+              <% else %>
+                <button onclick="window.signin();">Login</button>
+              <% end %>
+            </li>
+
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -70,5 +81,20 @@
   </footer>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
+
+<script src="https://cdn.auth0.com/js/lock-9.0.min.js"></script>
+<script type="text/javascript">
+  var lock = new Auth0Lock('7hoTB8QL1yquIQQc4UBTuDZlhwIMjHz5', 'fairpay.auth0.com');
+  function signin() {
+    lock.show({
+      callbackURL: 'http://jfedev.fairpay.coop:3000/auth/auth0/callback'
+      , responseType: 'code'
+      , authParams: {
+        scope: 'openid profile'
+      }
+    });
+  }
+</script>
+
 </body>
 </html>

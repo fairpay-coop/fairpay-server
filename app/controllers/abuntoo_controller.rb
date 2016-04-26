@@ -36,6 +36,17 @@ class AbuntooController < PayController
     raise "invalid transaction id: #{params[:transaction_uuid]}" unless transaction #todo confirm provisional status
     session[:current_url] = transaction.step2_url
 
+    # patch the current transaction with the authenticator
+    unless transaction.payor
+      puts "payment - payor missing - cookies: #{cookies.to_json}"
+      authenticated_profile = auth0_profile
+      if authenticated_profile
+        #todo: should probably move this into a transaction instance method
+        puts "updating transaction payor with authenticated profile: #{authenticated_profile.inspect}"
+        transaction.update!(payor: authenticated_profile, profile_authenticated: true)
+      end
+    end
+
     @data = hashify( transaction.step2_data )
 
     if params[:json]

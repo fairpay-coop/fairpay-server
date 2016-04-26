@@ -70,6 +70,28 @@ module ApplicationHelper
     current_user&.auth_token
   end
 
+  def auth0_signed_in
+    auth0_authenticated_email.present?
+  end
+
+  def auth0_user
+    email = auth0_authenticated_email
+    if email
+      user = User.find_or_create(email: email)
+      unless user
+      end
+    end
+  end
+
+  def auth0_profile
+    email = auth0_authenticated_email
+    Profile.find_or_create(email: email)  if email
+  end
+
+  def auth0_authenticated_email
+    cookies[:authenticated_email]
+  end
+
   #force all object representations into hashes.  todo: does this utility already exist?
   def hashify(obj)
     JSON.parse(obj.to_json).with_indifferent_access

@@ -27,6 +27,15 @@ class Profile < ActiveRecord::Base
     User.find_by(email: email)
   end
 
+  def self.find_or_create(email: nil, name: email)
+    result = Profile.find_by(email: email)
+    unless result
+      name = email  unless name.present?  # don't require 'name' as the api level, default to email
+      result = Profile.create!(email: email, name: name)
+    end
+    result
+  end
+
 
   #todo: rip out all usages.  migrate to mechant config or type/key
   def payment_source_for_type(type, autocreate: true)  # todo: make this default false

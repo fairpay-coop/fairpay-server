@@ -31,6 +31,16 @@ class User < ActiveRecord::Base
     Profile.find_by(email: email)
   end
 
+
+  def self.find_or_create(email: nil)
+    result = User.find_by(email: email)
+    unless result
+      result = User.create!(email: email)
+    end
+    result
+  end
+
+
   class Entity < Grape::Entity
     expose :id, :email
   end

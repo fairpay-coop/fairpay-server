@@ -163,7 +163,7 @@ class DwollaService  < BasePaymentService
   # end
 
   def payment_source_for_transaction(transaction)
-    transaction.payor.dwolla_payment_source(client_id)
+    transaction.payor&.dwolla_payment_source(client_id)
   end
 
   def has_dwolla_auth(transaction)

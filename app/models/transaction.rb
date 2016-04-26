@@ -190,6 +190,9 @@ class Transaction < ActiveRecord::Base
     embed.capture_address.present?  && ! self.address_captured
   end
 
+  # def submit_payor(profile)
+  #
+  # end
 
   def update_campaign
     if embed.campaign

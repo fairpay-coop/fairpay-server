@@ -1,3 +1,12 @@
+# abuntoo standalone specific config
+STANDALONE_EMBED_UUID=...
+
+AUTH0_CLIENT_ID=...
+AUTH0_CLIENT_SECRET=...
+AUTH0_DOMAIN=fairpay.auth0.com
+AUTH0_CALLBACK_URL=http://localhost:3000/callback
+
+
 # details about creating various needed test accounts and credentials can be found at
 #  https://docs.google.com/document/d/1A1U-crqquWvg19VSv6ba38er7h7URHoDVS9XjFWG_wA/edit?usp=sharing
 
