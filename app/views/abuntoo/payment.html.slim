@@ -1,0 +1,110 @@
+- embed = @data[:embed]
+- transaction = @data[:transaction]
+- offer = transaction[:offer]
+- address = @data[:address]
+
+/= render 'payor_payee', transaction: transaction
+
+h4 Summary
+table border=1
+  tr
+    td
+      b Donation Amount
+    td
+      |$#{transaction[:base_amount]}
+  tr
+    td
+      b Reward(s) Selected
+    td
+      = offer[:name]
+  tr
+    td
+      b Shipping Address
+    td
+      input type="text" name="organization_name" value="#{address[:organization_name]}" placeholder="First & Last Name" size=30
+      br
+      input type="text" name="street_address" value="#{address[:street_address]}" placeholder="Street Address" size=30
+      br
+      input type="text" name="extended_address" value="#{address[:extended_address]}" placeholder="Street Address 2" size=30
+      br
+      input type="text" name="locality" value="#{address[:locality]}" placeholder="City" size=18
+      input type="text" name="region" value="#{address[:region]}" placeholder="CA" size=4
+      input type="text" name="postal_code" value="#{address[:postal_code]}" placeholder="Zip" size=5
+      br
+br
+h4 Payment Choice - Select ONE Method
+
+table border=1
+  tr
+    td
+      |Fees paid by:
+      br
+      - allocation_options = transaction[:fee_allocation_options]
+      - if allocation_options.size == 1
+        = allocation_options.first[:label]
+        br
+      - else
+        form id="fee_allocation_form"
+          /note: auth token not currently used
+          = hidden_field_tag :authenticity_token, form_authenticity_token
+          = hidden_field_tag :embed_uuid, embed[:uuid]
+          = hidden_field_tag :transaction_uuid, transaction[:uuid]
+
+          - for option in allocation_options
+            |&nbsp;
+            = " "
+            = radio_button_tag :fee_allocation, option[:value].to_s, option[:checked]
+            =<> option[:label]
+            br
+              /|&nbsp;
+              /= " "
+    td width="400px"
+      - consider_this = embed[:consider_this]
+      - if consider_this
+        b Consider this:
+        | #{consider_this}
+        br
+br
+table border=1
+  - for payment_config in @data[:payment_configs]
+    = render payment_config[:form_name], payment_config: payment_config, data: @data
+
+br
+= check_box_tag :agree_to_terms, :true
+=<> ''
+| By submitting a payment via this form, you acknowledge that you agree to our
+=<> link_to 'Terms of Service', terms_path, target: '_blank'
+| and
+=<> link_to 'Privacy Policy', privacy_path, target: '_blank'
+|  We provide transaction fee information via
+=<> link_to 'FairPay', 'http://fairpay.coop', target: '_blank'
+| to empower you to decide where your money goes - to the credit card companies, or to support our mission of generating abundance for organizations and communities in need.
+
+javascript:
+
+  document.addEventListener("DOMContentLoaded", function (e) {
+    var fee_allocation_form = $('#fee_allocation_form');
+    if (fee_allocation_form) {
+      $('input[type=radio][name=fee_allocation]').on('change', function () {
+        var allocation = $(this).val();
+        //alert("allocation changed: " + allocation);
+        updateFeeAllocation(allocation);
+      });
+    }
+  }, false);
+
+
+  function updateFeeAllocation(allocation) {
+    //alert('handleCard');
+    var form = document.getElementById("fee_allocation_form");
+    var data = {};
+    FairPayApi.copyFormValues(data, form, ['embed_uuid', 'transaction_uuid']);
+    data.fee_allocation = allocation;
+    //alert('data: ' + JSON.stringify(data));
+    FairPayApi.updateFeeAllocation(data, handleAllocationResponse);
+    return false;
+  }
+
+  function handleAllocationResponse(data) {
+    //alert('fee allocation response: ' + JSON.stringify(data));
+  }

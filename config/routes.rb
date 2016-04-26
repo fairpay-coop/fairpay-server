@@ -21,35 +21,35 @@ Rails.application.routes.draw do
   # Landing page
   root 'abuntoo#index'
   # todo: better factor these routes defs
-  get 'terms' => 'abuntoo#terms'
-  get 'privacy' => 'abuntoo#privacy'
-  get 'donate' => 'abuntoo#donate'
-  get 'donate/:uuid' => 'abuntoo#donate'
-  get 'payment/:transaction_uuid' => 'abuntoo#payment'
-  get 'thanks/:transaction_uuid' => 'abuntoo#thanks'
+  get 'terms', to: 'abuntoo#terms', as: :terms
+  get 'privacy', to: 'abuntoo#privacy', as: :privacy
+  get 'donate', to: 'abuntoo#donate', as: :donate
+  get 'donate/:uuid', to: 'abuntoo#donate'
+  get 'payment/:transaction_uuid', to: 'abuntoo#payment'
+  get 'thanks/:transaction_uuid', to: 'abuntoo#thanks'
 
 
-  get '/test' => 'welcome#index'
+  get '/test', to: 'welcome#index'
 
-  get  'widget/:uuid' => 'pay#widget'
+  get  'widget/:uuid', to: 'pay#widget'
 
-  get   '/api/v1/embed/:uuid' => 'embed#widget_data'
+  get   '/api/v1/embed/:uuid', to: 'embed#widget_data'
   get   '/api/v1/embed/:uuid/estimate_fee' => 'embed#estimate_fee'
 
   # need better names for these actions
-  post  '/api/v1/embed/:uuid/step1' => 'embed#step1'
-  post  '/api/v1/embed/:uuid/step2' => 'embed#step2'
+  post  '/api/v1/embed/:uuid/step1', to: 'embed#step1'
+  post  '/api/v1/embed/:uuid/step2', to: 'embed#step2'
   # temp get method matchers until cross-site iframe post supported
-  get  '/api/v1/embed/:uuid/step1' => 'embed#step1'
-  get  '/api/v1/embed/:uuid/step2' => 'embed#step2'
+  get  '/api/v1/embed/:uuid/step1', to: 'embed#step1'
+  get  '/api/v1/embed/:uuid/step2', to: 'embed#step2'
 
-  get  '/api/v1/embed/:uuid/update_fee_allocation' => 'embed#update_fee_allocation'
-  get  '/api/v1/embed/:uuid/send_dwolla_info' => 'embed#send_dwolla_info'
+  get  '/api/v1/embed/:uuid/update_fee_allocation', to: 'embed#update_fee_allocation'
+  get  '/api/v1/embed/:uuid/send_dwolla_info', to: 'embed#send_dwolla_info'
 
 
-  get  '/dwolla/auth' => 'dwolla#auth'
-  get  '/dwolla/oauth_complete' => 'dwolla#oauth_complete'
-  get  '/dwolla/make_payment' => 'dwolla#make_payment'
+  get  '/dwolla/auth', to: 'dwolla#auth'
+  get  '/dwolla/oauth_complete', to: 'dwolla#oauth_complete'
+  get  '/dwolla/make_payment', to: 'dwolla#make_payment'
 
 
   get  'pay/paypal' => 'pay#paypal'

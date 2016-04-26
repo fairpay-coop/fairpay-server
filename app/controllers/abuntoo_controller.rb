@@ -28,7 +28,6 @@ class AbuntooController < PayController
     else
       @data
     end
-
   end
 
   def payment
@@ -44,8 +43,6 @@ class AbuntooController < PayController
     else
       @data
     end
-
-    render 'pay/step2'
   end
 
   def thanks

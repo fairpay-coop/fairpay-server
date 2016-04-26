@@ -19,101 +19,59 @@ form id="step1_form" onsubmit="return handleStep1()"
   = hidden_field_tag :embed_uuid, embed[:uuid]
 
   - profile = @data[:authenticated_profile] || {}
-  /- if profile
-  => "Name:"
-  input type="text" id="name" name="name" value="#{profile[:name]}"
-  br
-  => "Email:"
-  input type="text" id="email" name="email" value="#{profile[:email]}" autocapitalize="off"
-  br
-
-  /- unless auth_token.present?
-  - password_display = auth_token.present? ? 'display: none;' : ''
-  div id="password_block" style="#{password_display}"
-    => "Password:"
-    input type="password" id="password" name="password" autocapitalize="off"
-    input id="signinSubmit" type="submit" value="Signin" onclick="handleSignin(); return false;"
-    br
 
   /todo: tidy this up, and handle when email is changed
-  = hidden_field_tag :auth_token, "#{auth_token}", id: 'auth_token'
+  /= hidden_field_tag :auth_token, "#{auth_token}", id: 'auth_token'
   /=> "Token:"
   /input type="text" id="auth_token" name="auth_token" value="#{auth_token}"
+  /br
+
+  /table padding=2
+  /  tr
+  /    td
+  /      |My Contribution Today:
+  /    td
+  /      input id="step1Amount" type="text" name="entered_amount" value="" size=5
+  /  tr
+  /    td
+  /      |Email:
+  /    td
+  /      input type="text" id="email" name="email" value="#{profile[:email]}" autocapitalize="off"
+
+  => "My Contribution Today:"
+  input id="step1Amount" type="text" name="entered_amount" value="" size=5
+  br
+  => "Email:"
+  input type="text" id="email" name="email" value="#{profile[:email]}" autocapitalize="off"  size=25
   br
 
-  - if @data[:return_url].present?
-    = hidden_field_tag :return_url, @data[:return_url]
+  br
 
-  - if @data[:correlation_id].present?
-    = hidden_field_tag :correlation_id, @data[:correlation_id]
-
-  - if @data[:description].present?
-    = hidden_field_tag :description, @data[:description]
-    => "Description: #{@data[:description]}"
+  /- if embed[:recurrence_options].present?
+  /  - for option in embed[:recurrence_options]
+  /    = radio_button_tag :recurrence, option[:value].to_s, option[:checked]
+  /    =<> option[:label]
+  /    |&nbsp;
+  /    = " "
+  /  br
+  /
+  /- if embed[:mailing_list_enabled]
+  /  => "Join Mailing List:"
+  /  input type="checkbox" name="mailing_list" value="join"
+  /  br
+  /
+  - if campaign && campaign[:offers].present?
+    |Please select ONE OR MORE thank-you gifts.  Yes, you can make multiple selections!
     br
-
-  - if @data[:amount]
-    = hidden_field_tag :assigned_amount, @data[:amount]
-    => "Amount: $#{format_amount(@data[:amount])}"
+    = check_box_tag :chosen_offer_none, :true
+    =<> 'No Gift'
     br
-
-  - else
-    - include_amount_field = false
-    - if embed[:suggested_amounts].present?
-      - for amount in embed[:suggested_amounts]
-        - if amount > 0
-          = radio_button_tag :chosen_amount, amount
-          =<> amount
-          |&nbsp;
-          = " "
-        - else
-          - include_amount_field = true
-      br
-    - else
-      - include_amount_field = true
-
-    - if include_amount_field
-      => "Amount:"
-      input id="step1Amount" type="text" name="entered_amount" value=""
+    - for offer in campaign[:offers]
+      = check_box_tag :chosen_offer_uuid, offer[:uuid]
+      =<> offer[:label]
       br
 
-  - if embed[:recurrence_options].present?
-    - for option in embed[:recurrence_options]
-      = radio_button_tag :recurrence, option[:value].to_s, option[:checked]
-      =<> option[:label]
-      |&nbsp;
-      = " "
-    br
-
-  - if embed[:mailing_list_enabled]
-    => "Join Mailing List:"
-    input type="checkbox" name="mailing_list" value="join"
-    br
-
-  - if embed[:capture_memo]
-    => "Memo:"
-    input type="text" name="memo"
-    br
-
-  - assigned_offer = @data[:assigned_offer]
-  - if assigned_offer.present?
-    / when offer is passed in as a param
-    = hidden_field_tag :assigned_offer_uuid, assigned_offer[:uuid]
-    |Reward: #{assigned_offer[:label]}
-    br
-
-  - else
-    - if campaign && campaign[:offers].present?
-      |Choose a reward:
-      br
-      - for offer in campaign[:offers]
-        = radio_button_tag :chosen_offer_uuid, offer[:uuid]
-        =<> offer[:label]
-        /|&nbsp;
-        /= " "
-        br
-      /br
-
+  br
   input id="step1Submit" type="submit" value="Next"
 
 
