@@ -484,12 +484,14 @@ footer {
     margin-right: 40px;
 }
 .paypalBTN {
-    width: 160px;
-    margin-top: 75px;
+  margin-top: -15px;
+  margin-left: 20px;
+  margin-right: 40px;
 }
 hr {
   border-bottom: 1px solid rgba(204, 204, 204, 1);
 }
 #paymentTerms {
   font-size: 12px;
+  display: inline-block;
 }

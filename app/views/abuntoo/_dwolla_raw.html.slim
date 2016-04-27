@@ -5,10 +5,9 @@
 
 tr
   td
-    div class="labelEnc" style="height: 150px"
-      b Dwolla (e-check service)
-      br
-      | Transaction Fee: $0.00
+    b Dwolla (e-check service)
+    br
+    | Transaction Fee: $0.00
   td
     - unless payment_config[:has_dwolla_auth]
       - if payment_config[:dwolla_flow] == 'prompt_existing'
@@ -19,34 +18,28 @@ tr
           /div#dwolla_prompt_existing
           |Are you an existing Dwolla user?
           br
-          p id="paymentAgree"
-            = radio_button_tag :dwolla_user, :true
-            = " Yes  "
-            |&nbsp;
-            =< radio_button_tag :dwolla_user, :false
-            = " No"
+          = radio_button_tag :dwolla_user, :true
+          = " Yes  "
+          |&nbsp;
+          =< radio_button_tag :dwolla_user, :false
+          = " No"
+          br
           div id="dwolla_auth" style="display: none;"
-            /= link_to "Provide Dwolla Authorization", "/dwolla/auth?t=#{transaction[:uuid]}"
-            = link_to "Authorize", "/dwolla/auth?t=#{transaction[:uuid]}", class: "btnC2 submitBTN", style: "width: 200px;"
-            /a href="/dwolla/auth?t=#{transaction[:uuid]}" class="btnC2 submitBTN" style="width: 200px;"
-            /  |Authorize
+            = link_to "Provide Dwolla Authorization", "/dwolla/auth?t=#{transaction[:uuid]}"
             br
           div id="dwolla_send_more_info" style="display: none;"
-            p id="paymentAgree"
-              input type="checkbox" name="send_dwolla_info" value="true"
-              =< "Send me more information by email about the Dwolla e-check service which can be used to avoid credit card fees in the future."
+            input type="checkbox" name="send_dwolla_info" value="true"
+            =< "Send me more information by email about the Dwolla e-check service which can be used to avoid credit card fees in the future."
             br
       - else
-        /= link_to "authorize", "/dwolla/auth?t=#{transaction[:uuid]}"
-        a href="/dwolla/auth?t=#{transaction[:uuid]}" class="btnC2 submitBTN" style="width: 200px;"
-          |Authorize
+        = link_to "authorize", "/dwolla/auth?t=#{transaction[:uuid]}"
         br
 
     - else
         - if profile_authenticated || payment_config[:dwolla_authenticated]
           /= link_to "confirm payment w/ default funding source", "/pay/#{@embed.uuid}/pay_via_dwolla/#{@transaction.uuid}"
           /form id="dwolla_form" method="post" action="/pay/#{embed[:uuid]}/step2" onsubmit="return validateDwollaForm()"
-          form id="dwolla_form" onsubmit="return handleDwollaPayment()"
+          form id="dwolla_form"
             = hidden_field_tag :authenticity_token, form_authenticity_token
             = hidden_field_tag :embed_uuid, embed[:uuid], id: "embed_uuid"
             = hidden_field_tag :transaction_uuid, transaction[:uuid], id: "transaction_uuid"
@@ -57,14 +50,10 @@ tr
             /- funding_sources = dwolla_service.funding_sources(@transaction)
             /  ##in @transaction.payor.dwolla_token.funding_sources(@transaction.base_amount)
             - for option in payment_config[:funding_sources]
-              / id used to hijacked style which seemed pretty close
-              p id="paymentAgree"
-                = radio_button_tag :funding_source_id, option[:id], option[:default]
-                = " " + option[:name]
-            /input type="submit" value="Pay with Dwolla"
-            a href="" class="btnC2 submitBTN" style="width: 200px;" onclick="$(this).closest('form').submit(); return false;"
-              |Pay with Dwolla
-
+              = radio_button_tag :funding_source_id, option[:id], option[:default]
+              = " " + option[:name]
+              br
+            input type="submit" value="Pay with Dwolla"
         - else
           b Please sign in to use your previously authenticated Dwolla token.
           br
@@ -79,7 +68,7 @@ tr
 
 javascript:
 
-  //$("#dwolla_form").submit(handleDwollaPayment);
+  $("#dwolla_form").submit(handleDwollaPayment);
 
   function handleDwollaPayment() {
     //alert('handleCard');

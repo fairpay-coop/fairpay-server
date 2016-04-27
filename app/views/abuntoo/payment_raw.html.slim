@@ -70,7 +70,7 @@ table border=1
 br
 table border=1
   - for payment_config in @data[:payment_configs]
-    = render payment_config[:form_name], payment_config: payment_config, data: @data
+    = render "#{payment_config[:form_name]}_raw", payment_config: payment_config, data: @data
 
 br
 = check_box_tag :agree_to_terms, :true

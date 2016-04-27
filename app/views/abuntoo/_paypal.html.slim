@@ -1,11 +1,14 @@
 tr
   td
-    b PayPal
-    br
-    - embed = @data[:embed]
-    - transaction = @data[:transaction]
-    | Transaction Fee: #{payment_config[:card_fee_str]}
-
+    /style="height: 50px"
+    div class="labelEnc"
+      b PayPal
+      br
+      - embed = @data[:embed]
+      - transaction = @data[:transaction]
+      | Transaction Fee: #{payment_config[:card_fee_str]}
   td
-    = link_to "Pay via PayPal", "/paypal/checkout?t=#{transaction[:uuid]}"
+    /= link_to "Pay via PayPal", "/paypal/checkout?t=#{transaction[:uuid]}"
+    a href="/paypal/checkout?t=#{transaction[:uuid]}" class="btnC2 paypalBTN"
+      img src="images/paypal.png" alt="Paypal"
 

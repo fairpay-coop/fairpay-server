@@ -1,6 +1,9 @@
 <%
    embed = @data[:embed]
    campaign = embed[:campaign]
+   transaction = @data[:transaction]
+   offer = transaction[:offer]
+
 %>
 
 <div class="row">
@@ -9,11 +12,12 @@
       <div class="col-md-8">
           <section id="paymentSection">
               <!-- MAIN SECTION -->
-              <div class="row">
-              	<div class="col-md-12">
-              		<a href="donate.html" class="btnC2">Back</a>
-              	</div>
-              </div>
+
+              <!--<div class="row">-->
+              	<!--<div class="col-md-12">-->
+              		<!--<a href="donate.html" class="btnC2">Back</a>-->
+              	<!--</div>-->
+              <!--</div>-->
 
               <div class="row">
               	<div class="col-md-12">
@@ -27,8 +31,14 @@
 
               	<div class="col-md-7" id="payInputSection">
               		<form>
-              			<input type="text" value="$90" id="input1"></input>
-              			<textarea style="height: 100px;" id="input2">Name of Reward 1 or No GiftName of Reward 2 (if applicable) Keep expanding based on # of rewards selected.</textarea>
+              			<input type="text" value="$<%=transaction[:base_amount]%>" id="input1"></input>
+              			<textarea style="height: 100px;" id="input2">
+                      <% if offer %>
+                          <%= offer[:name] %>
+                      <%else%>
+                          None
+                      <%end%>
+                    </textarea>
               			<input type="text" name="" placeholder="First &amp; Last Name" id="input3"></input>
               			<input type="text" name="" placeholder="Street Address" id="input4"></input>
               			<input type="text" name="" placeholder="City" id="input5"></input>
@@ -42,104 +52,77 @@
               	<div class="col-md-12">
               		<h5>Payment Choice - Select ONE Method</h5>
               	</div>
-              	<div class="col-md-5">
-              		<div class="labelEnc">Dwolla (e-check service) Transaction Fee: $0</div>
-              		<div class="labelEnc" style="height: 400px">Debit / Credit Transaction Fee: $X.XX - $X.XX (based on card type)</div>
-              		<div class="labelEnc" style="height: 100px;">PayPal Transaction Fee: $X.XX</div>
-              	</div>
+                <table border=1>
+                  <% @data[:payment_configs].each do |payment_config| %>
+                      <%= render payment_config[:form_name], payment_config: payment_config, data: @data %>
+                  <% end %>
+                </table>
 
-              	<div class="col-md-7" id="payInputSection">
-              		<form>
-              			<a href="#" class="btnC2 authorizeBTN floatL">Authorize</a>
-              			<a href="#" class="floatR" style="margin-top: 25px;">No Account?  Learn More</a>
-              			<div class="clearB"></div>
-              			<input type="text" name="" placeholder="First &amp; Last Name"style="margin-top: 18px;" id="input8"></input>
-              			<input type="text" name="" placeholder="Card #" id="input9"></input>
-              			<input type="text" name="" placeholder="Exp.  MM / YY" id="input10"></input>
-              			<input type="text" name="" placeholder="CVV (Security Code)" id="input11"></input>
-              			<input type="text" name="" placeholder="Billing Zip" id="input12"></input>
-              			<p id="paymentAgree"><input type="checkbox" name="confirm" value="Confirm">   Securely save payment info for fast future checkouts.  You can manage your payment settings in your donor profile.</p>
-              			<a href="#" class="btnC2 submitBTN">Submit</a>
-              			<a href="#" class="btnC2 paypalBTN"><img src="images/paypal.png" alt="Paypal"></a>
-              		</form>
-              	</div>
+              	<!--<div class="col-md-5">-->
+                  <!--<div class="labelEnc">-->
+                    <!--Dwolla (e-check service)<br>-->
+                    <!--Transaction Fee: $0</div>-->
+              		<!--<div class="labelEnc" style="height: 400px">Debit / Credit Transaction Fee: $X.XX - $X.XX (based on card type)</div>-->
+              		<!--<div class="labelEnc" style="height: 100px;">PayPal Transaction Fee: $X.XX</div>-->
+              	<!--</div>-->
+
+
+
+              	<!--<div class="col-md-7" id="payInputSection">-->
+
+                  <%
+#                      configs = @data[:payment_configs]
+#                      dwolla_config = configs.find{|pc|pc[:form_name] == 'dwolla'}
+#                      card_config = configs.find{|pc|pc[:form_name] == 'card'}
+#                      paypal_config = configs.find{|pc|pc[:form_name] == 'paypal'}
+                  %>
+                  <%#= render 'dwolla_2', payment_config: dwolla_config, data: @data %>
+
+                  <!--&lt;!&ndash;<form>&ndash;&gt;-->
+              			<!--&lt;!&ndash;<a href="#" class="btnC2 authorizeBTN floatL">Authorize</a>&ndash;&gt;-->
+              			<!--&lt;!&ndash;<a href="#" class="floatR" style="margin-top: 25px;">No Account?  Learn More</a>&ndash;&gt;-->
+              			<!--&lt;!&ndash;<div class="clearB"></div>&ndash;&gt;-->
+
+
+
+              			<!--<input type="text" name="" placeholder="First &amp; Last Name"style="margin-top: 18px;" id="input8"></input>-->
+              			<!--<input type="text" name="" placeholder="Card #" id="input9"></input>-->
+              			<!--<input type="text" name="" placeholder="Exp.  MM / YY" id="input10"></input>-->
+              			<!--<input type="text" name="" placeholder="CVV (Security Code)" id="input11"></input>-->
+              			<!--<input type="text" name="" placeholder="Billing Zip" id="input12"></input>-->
+              			<!--<p id="paymentAgree"><input type="checkbox" name="confirm" value="Confirm">   Securely save payment info for fast future checkouts.  You can manage your payment settings in your donor profile.</p>-->
+              			<!--<a href="#" class="btnC2 submitBTN">Submit</a>-->
+              			<!--<a href="#" class="btnC2 paypalBTN"><img src="images/paypal.png" alt="Paypal"></a>-->
+              		<!--&lt;!&ndash;</form>&ndash;&gt;-->
+              	<!--</div>-->
 
               	<div class="col-md-12">
-              		<hr>
-              		<p id="paymentTerms">By submitting a payment via this form, you acknowledge that you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.<br><br>We provide transaction fee information via <a href="#">FairPay</a> to empower you to decide where your money goes - to the credit card companies, or to support our mission of generating abundance for organizations and communities in need.</p>
+              		<!--<hr>-->
+                  <!--<p id="paymentTerms">-->
+
+                  <p id="paymentAgree">
+                    <br>
+                    <%= check_box_tag :agree_to_terms, :true %>
+                    By submitting a payment via this form, you acknowledge that you agree to our
+                    <%= link_to 'Terms of Service', terms_path, target: '_blank' %>
+                    and
+                    <!--<a href="/terms.html>">Terms of Service</a> and -->
+                    <!--<a href="#">Privacy Policy</a>-->
+                    <%= link_to 'Privacy Policy', privacy_path, target: '_blank' %>
+                    .<br><br>
+                    We provide transaction fee information via
+                    <a href="#">FairPay</a>
+                    to empower you to decide where your money goes - to the credit card companies, or to support our mission of generating abundance for organizations and communities in need.</p>
               	</div>
               </div>
-
-              
 
           </section>
       </div>
 
       <div class="col-md-4">
           <aside>
-              <div class="donateCounter">
-                <div class="donateNumberCounter">
-                    <h6><span>$2,713</span> of</h6>
-                    <h5>$10,000</h5>
-                </div>
-                <div class="progress">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
-                    30%
-                  </div>
-                </div>
-                <p class="donorCount">19 DONORS</p>
-                <hr>
-                <p class="locationDonation"><i class="fa fa-map-marker"></i>    San Francisco, CA</p>
-              </div>
-              <img id="sideBarPwrdImg" src="images/pwrdAbuntoo.png" alt="Powered by Abuntoo" class="img-responsive">
-				<div id="accordion">	
-				  <h3>What is Abuntoo?</h3>
-				  <div>
-				    <p>
-				    Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
-				    ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit
-				    amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut
-				    odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
-				    </p>
-				  </div>
-				  <h3>What are Abuntoo Rewards?</h3>
-				  <div>
-				    <p>
-				    Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
-				    purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor
-				    velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In
-				    suscipit faucibus urna.
-				    </p>
-				  </div>
-				  <h3>Is my transaction secure?</h3>
-				  <div>
-				    <p>
-				    Nam enim risus, molestie et, porta ac, aliquam ac, risus. Quisque lobortis.
-				    Phasellus pellentesque purus in massa. Aenean in pede. Phasellus ac libero
-				    ac tellus pellentesque semper. Sed ac felis. Sed commodo, magna quis
-				    lacinia ornare, quam ante aliquam nisi, eu iaculis leo purus venenatis dui.
-				    </p>
-				    <ul>
-				      <li>List item one</li>
-				      <li>List item two</li>
-				      <li>List item three</li>
-				    </ul>
-				  </div>
-				  <h3>I have more questions!</h3>
-				  <div>
-				    <p>
-				    Cras dictum. Pellentesque habitant morbi tristique senectus et netus
-				    et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in
-				    faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia
-				    mauris vel est.
-				    </p>
-				    <p>
-				    Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus.
-				    Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
-				    inceptos himenaeos.
-				    </p>
-				  </div>
-				</div>
+            <%= render 'campaign_progress', campaign: campaign%>
+            <%= render 'abuntoo_sidebar' %>
           </aside>
       </div>
   </div>

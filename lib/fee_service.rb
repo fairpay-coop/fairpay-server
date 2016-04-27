@@ -37,7 +37,8 @@ class FeeService
     else
       low, high = calculate_fee(transaction)
       result = "$#{format_amount(low)}"
-      result += "-#{format_amount(high)} (depends on card type)"  if high
+      # result += "-#{format_amount(high)} (depends on card type)"  if high
+      result += "-#{format_amount(high)}"  if high
       result
     end
   end
@@ -45,7 +46,8 @@ class FeeService
   def fee_range_str(amount)
     low, high = fee_range(amount)
     result = "$#{format_amount(low)}"
-    result += "-#{format_amount(high)} (depends on card type)"  if high
+    # result += "-#{format_amount(high)} (depends on card type)"  if high
+    result += "-#{format_amount(high)}"  if high
     result
   end
 

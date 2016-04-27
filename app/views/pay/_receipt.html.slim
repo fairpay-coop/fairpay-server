@@ -12,9 +12,9 @@
 /br
 = render 'pay/payor_payee', transaction: transaction
 
-- if transaction[:description]
-|Description: #{transaction[:description]}
-br
+- if transaction[:description].present?
+  |Description: #{transaction[:description]}
+  br
 
 - memo = transaction[:memo]
 - if memo.present?

@@ -21,7 +21,9 @@ class BaseCardService < BasePaymentService
   def handle_payment(transaction, params)
     use_payment_source = params[:use_payment_source].to_s == 'true'  #todo: better pattern here?
     save_payment_info = params[:save_payment_info].to_s == 'true'
-
+    card_mmyy = to_mmyy(params[:card_mmyy])
+    puts("mmyy: #{card_mmyy}")
+    params[:card_mmyy] = card_mmyy
     # charge_amount = transaction.amount
 
     # if use_payment_source
@@ -62,6 +64,18 @@ class BaseCardService < BasePaymentService
     # transaction.update!(status: 'completed', paid_amount: paid_amount, estimated_fee: estimated_fee)
     # transaction
     # [charge_amount, estimated_fee]
+  end
+
+  # normalizes a 'mm/yy[yy]' string into 'mmyy'
+  def to_mmyy(value)
+    parts = value.split('/')
+    if parts.size != 2
+      value
+    else
+      mm = parts[0].rjust(2,'0')
+      yy = parts[1].length <= 2 ? parts[1] : parts[1][-2..-1]
+      mm+yy
+    end
   end
 
   def widget_data(transaction)
