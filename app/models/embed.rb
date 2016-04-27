@@ -27,7 +27,6 @@ class Embed < ActiveRecord::Base
   attr_data_field :description
   attr_data_field :return_url
   attr_data_field :capture_address   # list of address type: mailing, billing, shipping.  if present, then capture specified full addresses for payor
-  attr_data_field :step1_email_optional
 
   # if assigned present option on 'finished' view to provide preauthorization to automatically charge saved payment information once per specified interval.
   # subfields: interval_count, interval_units, interval_description
@@ -281,7 +280,11 @@ class Embed < ActiveRecord::Base
     end
 
     if email.present?
-      payor = Profile.find_or_create(email: email, name: name)
+      if email != '_deferred_'
+        payor = Profile.find_or_create(email: email, name: name)
+      else
+        puts "email capture deferred"
+      end
     else
       raise "email required"  unless step1_email_optional
     end
