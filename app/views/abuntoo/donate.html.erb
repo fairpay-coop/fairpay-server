@@ -51,7 +51,7 @@
                   %>
                       <div class="donateGift">
                         <a class="checkMark">
-                          <%= check_box_tag "chosen_offer_uuid_#{offer[:uuid]}", offer[:uuid], false, class: 'offer', 'data-min-contrib': offer[:minimum_contribution] %>
+                          <%= check_box_tag :chosen_offer_uuid, offer[:uuid], false, class: 'offer', 'data-min-contrib': offer[:minimum_contribution], id: "chosen_offer_uuid_#{offer[:uuid]}" %>
                         </a>
                         <h6><%= offer[:name] %></h6>
                         <h5>$<%= format_amount(offer[:minimum_contribution],0) %></h5>
@@ -243,13 +243,19 @@
   }
 
   function resolveOfferUuid() {
-    var chosen = $("input[name=chosen_offer_uuid]:checked").val();
-    if (chosen && chosen != null) {
-      return chosen;
-    } else {
-      var assigned = field_val('assigned_offer_uuid', null);
-      return assigned;
+    var chosens = []
+    $("input[name=chosen_offer_uuid]:checked").each( function(idx,elt){
+      chosens.push($(elt).val())
+    });
+
+    if (chosens.length == 0) {
+      var assignedUuid = field_val('assigned_offer_uuid', null);
+      if (assignedUuid) {
+        chosens.push();
+      }
     }
+
+    return chosens.join();
   }
 
   function validateStep1Data(data) {
@@ -260,6 +266,11 @@
 
     if (data['amount'] < minimumAmount()) {
       showError("Please enter at least the minimum donation.", $('#donateSelectBox'));
+      return false;
+    }
+
+    if (data['offer_uuid'].length == 0 && !$('#chosen_offer_none')[0].checked) {
+      showError("Please pick a gift or select 'no gift'.", $('#donateSelectBox'));
       return false;
     }
 
