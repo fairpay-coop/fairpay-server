@@ -1,8 +1,6 @@
-/ todo: factor with payor receipt view and use data hash
-
 - transaction = @transaction
 
-b Payment Received - #{transaction.payor.name}
+b Payment Received - #{transaction[:payor][:name]}
 hr
 br
 
@@ -10,34 +8,34 @@ b = transaction.embed.display_name
 br
 br
 
-= render 'pay/payor_payee', transaction: @data[:transaction]
+= render 'pay/payor_payee', transaction: transaction
 
-- if transaction.description.present?
-  |Description: #{transaction.description}
+- if transaction.description
+  |Description: #{transaction[:description]}
   br
 
-- memo = transaction.get_data_field(:memo)
-- if memo.present?
+- memo = transaction[:memo]
+- if memo
   |Memo: #{memo}
   br
 
-- if transaction.base_amount != transaction.paid_amount
+- if transaction[:base_amount] != transaction[:paid_amount]
   |Base Amount: $
   b
     / todo: understand why the helper isn't automatically available for ActionMailer rendering
-    = ApplicationHelper.format_amount(transaction.base_amount)
+    = ApplicationHelper.format_amount(transaction[:base_amount])
   br
 |Paid Amount: $
 b
-  = ApplicationHelper.format_amount(transaction.paid_amount)
+  = ApplicationHelper.format_amount(transaction[:paid_amount])
 br
 br
 
-|Payment Method: #{transaction.payment_type_display}
+|Payment Method: #{transaction[:payment_type_display]}
 br
-|Transaction Fee: $#{ApplicationHelper.format_amount(transaction.estimated_fee)}
+|Transaction Fee: $#{ApplicationHelper.format_amount(transaction[:estimated_fee])}
 br
-- if transaction.estimated_fee > 0
+- if transaction[:estimated_fee] > 0
   |Fee Allocation: #{transaction.fee_allocation_label_merchant}
   br
   |Customer paid fee surcharge: $#{ApplicationHelper.format_amount(transaction.allocated_fee)}

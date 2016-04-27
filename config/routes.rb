@@ -32,6 +32,7 @@ Rails.application.routes.draw do
   get 'donate/:uuid', to: 'abuntoo#donate'
   get 'payment/:transaction_uuid', to: 'abuntoo#payment'
   get 'thanks/:transaction_uuid', to: 'abuntoo#thanks'
+  get 'merchant_receipt/:transaction_uuid' => 'abuntoo#merchant_receipt'
 
 
   get '/test', to: 'welcome#index'

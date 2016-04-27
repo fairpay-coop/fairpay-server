@@ -1,1 +1,2 @@
-= render 'merchant_receipt', transaction: @transaction
+- transaction = @data[:transaction]
+= render 'merchant_receipt', transaction: transaction

@@ -252,7 +252,8 @@ class Transaction < ActiveRecord::Base
   def async_completion
     puts "async completion - #{id}"
     send_receipts
-    if mailing_list && mailing_list != 'false'
+    #todo: factor and clean up adaptable boolean comparisons
+    if mailing_list && mailing_list.to_s == 'true' || mailing_list.to_s == '1'
       puts "mailing lib subscribe - #{payor.email}"
       mailing_list_subscribe
     end

@@ -1,5 +1,6 @@
-b Payment Receipt - #{@transaction.payee.name}
+- transaction = @data[:transaction]
+b Payment Receipt - #{transaction[:payee][:name]}
 hr
 br
 
-= render 'pay/receipt', transaction: @transaction
+= render 'pay/receipt', transaction: transaction

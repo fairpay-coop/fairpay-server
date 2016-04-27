@@ -77,6 +77,13 @@ class AbuntooController < PayController
     end
   end
 
+  def merchant_receipt
+    @embed = Embed.by_uuid(params[:uuid])
+    @transaction = Transaction.by_uuid(params[:transaction_uuid])
+    @data = hashify( @transaction.step2_data )  #todo: consider different view of data
+    render 'pay/merchant_receipt'
+  end
+
   def terms
   end
 
