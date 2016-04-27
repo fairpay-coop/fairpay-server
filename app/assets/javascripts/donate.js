@@ -109,13 +109,19 @@ function resolveAmount() {
 }
 
 function resolveOfferUuid() {
-  var chosen = $("input[name=chosen_offer_uuid]:checked").val();
-  if (chosen && chosen != null) {
-    return chosen;
-  } else {
-    var assigned = field_val('assigned_offer_uuid', null);
-    return assigned;
+  var chosens = []
+  $("input[name=chosen_offer_uuid]:checked").each( function(idx,elt){
+    chosens.push($(elt).val())
+  });
+
+  if (chosens.length == 0) {
+    var assignedUuid = field_val('assigned_offer_uuid', null);
+    if (assignedUuid) {
+      chosens.push();
+    }
   }
+
+  return chosens.join();
 }
 
 function validateStep1Data(data) {
@@ -126,6 +132,11 @@ function validateStep1Data(data) {
 
   if (data['amount'] < minimumAmount()) {
     showError("Please enter at least the minimum donation.", $('#donateSelectBox'));
+    return false;
+  }
+
+  if (data['offer_uuid'].length == 0 && !$('#chosen_offer_none')[0].checked) {
+    showError("Please pick a gift or select 'no gift'.");
     return false;
   }
 
