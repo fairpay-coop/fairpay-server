@@ -328,7 +328,14 @@ footer {
     -webkit-appearance: none;
     padding: 5px;
     text-align: center;
+    width: 60px;
 }
+
+#donateCurrency {
+  font-size: 20px;
+  margin-right: 2px;
+}
+
 #donateNote {
   margin-top: 10px;
   font-family: georgia;

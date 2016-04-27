@@ -1,5 +1,6 @@
 <%
    embed = @data[:embed]
+   embed[:minimum_amount] = 5
    campaign = embed[:campaign]
 %>
 
@@ -22,16 +23,8 @@
                   <h3>My Contribution Today:</h3>
                 </div>
                 <div class="col-md-6">
-                  <select id="donateSelectBox">
-                    <option value="5">$5</option>
-                    <option value="10">$10</option>
-                    <option value="25">$25</option>
-                    <option value="30">$30</option>
-                    <option value="50">$50</option>
-                    <option value="100">$100</option>
-                    <option value="500">$500</option>
-                  </select>
-                  <p id="donateNote">Minimum donation $5.  Please give more if you're able to! </p>
+                  <span id="donateCurrency">$</span><%= text_field_tag :donateSelectBox %>
+                 <p id="donateNote">Minimum donation <span id="minimumDonation">$5</span>.  Please give more if you're able to! </p>
                   <a href="#" class="btnC2 floatL" onclick="$(this).closest('form').submit(); return false;">Next</a>
                   <div class="clearB"></div>
                 </div>
@@ -47,7 +40,7 @@
                 <div class="col-md-12">
                   <div class="donateGift">
                     <a class="checkMark">
-                      <%= check_box_tag :chosen_offer_none, :true %>
+                      <%= check_box_tag :chosen_offer_none, :true, false, 'data-min-contrib': embed[:minimum_amount]  %>
                     </a>
                     <h6>No Gift</h6>
                     <div class="clearB"></div>
@@ -58,7 +51,7 @@
                   %>
                       <div class="donateGift">
                         <a class="checkMark">
-                          <%= check_box_tag :chosen_offer_uuid, offer[:uuid] %>
+                          <%= check_box_tag "chosen_offer_uuid_#{offer[:uuid]}", offer[:uuid], false, class: 'offer', 'data-min-contrib': offer[:minimum_contribution] %>
                         </a>
                         <h6><%= offer[:name] %></h6>
                         <h5>$<%= format_amount(offer[:minimum_contribution],0) %></h5>
@@ -211,16 +204,19 @@
     }
   }
 
-  function showError(message) {
-    $('#errorMessage').show();
-    $('#errorMessage').html(message);
-    //$('#errorStack').html('<pre>' + data.error.stack + '</pre>');
+  function showError(message, elt) {
+    if (elt) {
+      $(elt).notify(message, {className: "error", autoHideDelay: 2000, showDuration:100, position: "right"});
+    } else {
+      $.notify(message, {className: "error", autoHideDelay: 2000, showDuration:100 });
+    }
   }
 
   function hideError(message) {
     $('#errorMessage').hide();
     $('#errorMessage').html('');
   }
+
   function resolveAmount() {
     var amount = $( "#donateSelectBox" ).val();
     console.log("select box amount: " + amount);
@@ -258,9 +254,15 @@
 
   function validateStep1Data(data) {
     if (data['amount'] == 0) {
-      showError("Please enter an amount");
+      showError("Please enter an amount", $('#donateSelectBox'));
       return false;
     }
+
+    if (data['amount'] < minimumAmount()) {
+      showError("Please enter at least the minimum donation.", $('#donateSelectBox'));
+      return false;
+    }
+
     //if (!validatePresent(data['email'], 'an Email')) {
     //  return false;
     //}
@@ -319,5 +321,57 @@
     //alert(name + " val: " + val);
     return val;
   }
+
+  function formatAmount(amount, decimals) {
+    decimals = decimals || 2;
+    return format("$%." + decimals + "f", amount);
+  }
+
+
+  function minimumAmount() {
+    var no_gift_cb = $('#chosen_offer_none');
+    var minimumAmount = 0;
+    if ( !no_gift_cb[0].checked)  {
+      $('.offer').each(function(idx, elt) {
+        if (elt.checked) {
+          minimumAmount += $(elt).data('min-contrib');
+        }
+      })
+    }
+    if (minimumAmount == 0 ) {
+      minimumAmount = no_gift_cb.data('min-contrib');
+    }
+
+    return minimumAmount;
+  }
+
+  function updateContribution() {
+    $('#minimumDonation').text(formatAmount(minimumAmount()));
+//    var donateSelectBox = $('#donateSelectBox');
+//    if (donateSelectBox.val() < minimumAmount) {
+//      donateSelectBox.val(minimumAmount);
+//    }
+  }
+
+  $(function() {
+    $('.checkMark').change(function(evt) {
+
+      var no_gift_changed = evt.target.id === 'chosen_offer_none';
+      var no_gift_cb = $('#chosen_offer_none')[0];
+
+      if (no_gift_changed && no_gift_cb.checked) {
+        $('.offer').each(function(idx, elt) {
+          elt.checked = false;
+        })
+      } else {
+        no_gift_cb.checked = false;
+        no_gift_cb.checked = false;
+      }
+      updateContribution();
+    } );
+
+    updateContribution();
+
+  });
 
 </script>
