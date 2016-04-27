@@ -73,7 +73,12 @@ function handleEstimateFeeResponse(data) {
 //$("#card_form").submit(handleCard);
 
 function handleCard() {
-  console.log('handleCard');
+  console.log('handleCard - agreed terms:' + agreedToTerms());
+  if ( ! agreedToTerms ) {
+    alert('Please agree to terms before proceeding');
+    scrollToTag('#paymentAgree', -30);
+    return false;
+  }
   var form = document.getElementById("card_form");
   var data = {};
   FairPayApi.copyFormValues(data, form, ['embed_uuid', 'transaction_uuid', 'payment_type', 'amount', 'card_number', 'card_mmyy', 'card_cvv', 'billing_zip', 'save_payment_info', 'use_payment_source']);
@@ -82,6 +87,10 @@ function handleCard() {
     FairPayApi.submitPayment(data, handleCardResponse);
   }
   return false;
+}
+
+function agreedToTerms() {
+  $('input[type=checkbox][name=agree_to_terms]').is(':checked')
 }
 
 function validateCardFields(data) {
