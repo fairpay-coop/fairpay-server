@@ -27,6 +27,7 @@ class Transaction < ActiveRecord::Base
   #   t.string :payment_type
   #   t.string :mailing_list
   #  add_reference :transactions, :offer, index: true, foreign_key: true
+  # note: reference to single offer, list of offers may also be assigned to :offer_uuids data field
 
   # data attributes:
   #   correlation_id - passed in and returned with confirmation redirect and/or callback
@@ -48,7 +49,7 @@ class Transaction < ActiveRecord::Base
 
 
   attr_data_field :memo
-  attr_data_field :offer_uuid
+  attr_data_field :offer_uuid   # may be a comma separated list
   attr_data_field :return_url
   attr_data_field :correlation_id
   attr_data_field :address_captured  # boolean
@@ -126,7 +127,7 @@ class Transaction < ActiveRecord::Base
   end
 
   def payment_type_display
-    payment_service_for_type(payment_type).payment_type_display  if payment_type
+    payment_service_for_type(payment_type).payment_type_display  if payment_type.present?
   end
 
   def completed
@@ -216,6 +217,10 @@ class Transaction < ActiveRecord::Base
     end
   end
 
+  def resolve_offers
+    Offer.resolve_list(offer_uuid)
+  end
+
   def resolve_return_url
     result = return_url || embed.return_url
     correlation_id_val = correlation_id
@@ -294,8 +299,7 @@ class Transaction < ActiveRecord::Base
   # end
 
   def payment_service_for_type(payment_type)
-    # merchant_config_for_type(payment_type).payment_service
-    embed.payment_service_for_type(payment_type)
+    embed.payment_service_for_type(payment_type)  if payment_type.present?
   end
 
 
@@ -462,7 +466,8 @@ class Transaction < ActiveRecord::Base
     expose :payee, using: Profile::Entity
     expose :payor, using: Profile::Entity
     expose :profile_authenticated
-    expose :resolve_offer, using: Offer::Entity, as: :offer
+    expose :resolve_offer, using: Offer::Entity, as: :offer   # can remove once usages migrated to offers
+    expose :resolve_offers, using: Offer::Entity, as: :offers # returns a list
     expose :needs_address
     expose :next_step
     # used by 'thanks' view

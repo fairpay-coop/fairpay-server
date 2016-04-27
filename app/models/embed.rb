@@ -267,7 +267,7 @@ class Embed < ActiveRecord::Base
     mailing_list = params[:mailing_list]
     description = params[:description]
     memo = params[:memo]
-    offer_uuid = params[:offer_uuid]
+    offer_uuid = params[:offer_uuid]  # note, may be a comma separated list
     return_url = params[:return_url]
     correlation_id = params[:correlation_id]
     auth_token = params[:auth_token]
@@ -295,7 +295,7 @@ class Embed < ActiveRecord::Base
 
     fee_allocation = resolve_fee_allocations.first
 
-    offer = Offer.resolve(offer_uuid, required:false)
+    offer = Offer.resolve(offer_uuid, required:false)  # note, will parse out first value if a list
 
     transaction = Transaction.create!(
         embed: self,
@@ -308,7 +308,8 @@ class Embed < ActiveRecord::Base
         recurrence: recurrence,
         mailing_list: mailing_list,
         description: description,
-        offer: offer
+        offer: offer,
+        offer_uuid: offer_uuid
     )
     transaction.update_data_field(:memo, memo)  #todo, clean up handling of json attrs
     transaction.update_data_field(:offer_uuid, offer_uuid)  if offer_uuid # save raw uuid just in case relation lookup failed

@@ -30,18 +30,26 @@
 
               	<div class="col-md-7" id="payInputSection">
               		<form>
-              			<input type="text" value="$<%=transaction[:base_amount]%>" id="input1"></input>
-              			<textarea style="height: 100px;" id="input2">
-                      <% if offer %>
-                          <%= offer[:name] %>
-                      <%else%>
-                          None
-                      <%end%>
-                    </textarea>
+              			<input type="text" value="$<%=transaction[:base_amount]%>" id="input1" disabled/>
+              			<textarea style="height: 100px;" id="input2" disabled>
+<%
+   offers = transaction[:offers]
+   if offers.present?
+     offers.each do |offer|
+%><%= offer[:name] %>
+<%
+   end
+   else
+%>
+None
+<%
+   end
+%>
+</textarea>
               			<input type="text" name="" placeholder="First &amp; Last Name" id="input3"></input>
               			<input type="text" name="" placeholder="Street Address" id="input4"></input>
               			<input type="text" name="" placeholder="City" id="input5"></input>
-              			<input type="text" name="" value="CA" id="input5"></input>
+              			<input type="text" name="" placeholder="CA" id="input5"></input>
               			<input type="text" name="" placeholder="Zip" id="input7"></input>
               		</form>
               	</div>

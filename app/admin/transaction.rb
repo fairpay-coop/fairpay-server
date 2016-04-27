@@ -1,7 +1,7 @@
 ActiveAdmin.register Transaction do
 
 
-  permit_params :payor_id, :payee_id, :base_amount, :kind, :fee_allocation, :allocated_fee, :paid_amount, :payment_type, :status, :recurrence, :offer_id  # /, :data_json
+  permit_params :payor_id, :payee_id, :base_amount, :kind, :fee_allocation, :allocated_fee, :paid_amount, :payment_type, :status, :recurrence, :offer_id, :data_json
 
 
   index do
