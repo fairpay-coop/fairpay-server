@@ -12,25 +12,28 @@
           <section id="paymentSection">
               <!-- MAIN SECTION -->
 
-              <!--<div class="row">-->
-              	<!--<div class="col-md-12">-->
-              		<!--<a href="donate.html" class="btnC2">Back</a>-->
-              	<!--</div>-->
-              <!--</div>-->
+              <div class="row">
+              	<div class="col-md-12">
+              		<a href="/donate.html" class="btnC2">Back</a>
+              	</div>
+              </div>
 
               <div class="row">
               	<div class="col-md-12">
               		<h5>Summary</h5>
               	</div>
-              	<div class="col-md-5">
-              		<div class="labelEnc">Donation Amount</div>
-              		<div class="labelEnc" style="height: 100px">Reward(s) Selected</div>
-              		<div class="labelEnc" style="height: 200px;">Enter a Shipping Address if any of your selected rewards require shipping. U.S. only.</div>
-              	</div>
 
+                <div class="col-md-5">
+                  <div class="labelEnc">Donation Amount</div>
+                </div>
+                <div class="col-md-7" id="payInputSection">
+                  <input type="text" value="$<%=transaction[:base_amount]%>" id="input1" disabled/>
+                </div>
+
+              	<div class="col-md-5">
+              		<div class="labelEnc" style="height: 100px">Reward(s) Selected</div>
+              	</div>
               	<div class="col-md-7" id="payInputSection">
-              		<form>
-              			<input type="text" value="$<%=transaction[:base_amount]%>" id="input1" disabled/>
               			<textarea style="height: 100px;" id="input2" disabled>
 <%
    offers = transaction[:offers]
@@ -46,13 +49,26 @@ None
    end
 %>
 </textarea>
-              			<input type="text" name="" placeholder="First &amp; Last Name" id="input3"></input>
-              			<input type="text" name="" placeholder="Street Address" id="input4"></input>
-              			<input type="text" name="" placeholder="City" id="input5"></input>
-              			<input type="text" name="" placeholder="CA" id="input5"></input>
-              			<input type="text" name="" placeholder="Zip" id="input7"></input>
-              		</form>
               	</div>
+
+                <% if transaction[:needs_address] %>
+
+                  <div class="col-md-5">
+                    <div class="labelEnc" style="height: 200px;">Enter a Shipping Address if any of your selected rewards require shipping. U.S. only.</div>
+                  </div>
+
+                  <div class="col-md-7" id="payInputSection">
+                    <form>
+                      <input type="text" name="" placeholder="First &amp; Last Name" id="input3"></input>
+                      <input type="text" name="" placeholder="Street Address" id="input4"></input>
+                      <input type="text" name="" placeholder="City" id="input5"></input>
+                      <input type="text" name="" placeholder="CA" id="input5"></input>
+                      <input type="text" name="" placeholder="Zip" id="input7"></input>
+                    </form>
+                  </div>
+
+                <% end %>
+
               </div>
 
               <div class="row">

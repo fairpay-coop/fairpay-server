@@ -188,7 +188,14 @@ class Transaction < ActiveRecord::Base
   end
 
   def needs_address
-    embed.capture_address.present?  && ! self.address_captured
+    (has_offer_needing_ship_address || embed.capture_address.present?)  && ! self.address_captured
+  end
+
+  def has_offer_needing_ship_address
+    resolve_offers.each do |offer|
+      return true  if offer.shipping_address_needed.present?
+    end
+    false
   end
 
   # def submit_payor(profile)
@@ -447,7 +454,7 @@ class Transaction < ActiveRecord::Base
     if completed
       :finished
     else
-      if needs_address
+      if needs_address && embed.capture_address.present?  #todo: need cleaner way to distinguish standalone flow
         :address
       else
         :payment
