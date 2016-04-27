@@ -7,8 +7,8 @@ script src="http://code.jquery.com/jquery-1.11.3.min.js"
 /|athenticated_profile: #{@data[:authenticated_profile].to_json}
 
 tr
-  td width='40%'
-    div class="labelEnc" style="height: 300px"
+  td width='40%' style="padding: 10px;"
+    div class="labelEnc" style="height: 420px"
       b Debit/Credit Card (#{payment_config[:kind_name]})
       br
       - card_fee_str = payment_config[:card_fee_str]
@@ -18,7 +18,7 @@ tr
         br
         |(depends on card type)
 
-  td
+  td style="padding: 10px;"
     div id="errorMessage"
 
     form id="card_form" onsubmit="return handleCard()"
@@ -35,11 +35,11 @@ tr
       /- payment_source = payment_service.saved_payment_source(@transaction, autocreate:false)
       - if saved_payment_source
         - if profile_authenticated
-          | Use saved payment info? #{saved_payment_source[:description]}
-          = " "
-          /input type="checkbox" name="payment_source" value="#{payment_source.id}" checked="true"
-          input type="checkbox" id="use_payment_source_checkbox" name="use_payment_source" value="true" checked="true"
-          br
+          p id="paymentAgree"
+            | Use saved payment info? #{saved_payment_source[:description]}
+            = " "
+            input type="checkbox" id="use_payment_source_checkbox" name="use_payment_source" value="true" checked="true"
+          /br
         - else
           b Please sign in to use your previously saved payment information.
           br
@@ -68,14 +68,8 @@ tr
             input type="checkbox" name="save_payment_info" value="true"
             /input type="checkbox" name="confirm" value="Confirm"
             |Securely save payment info for fast future checkouts.  You can manage your payment settings in your donor profile.
-        a class="btnC2 submitBTN" style="width: 180px;" onclick="$(this).closest('form').submit(); return false;"
-          |Pay with Card
-
-      /  - if payment_config[:supports_saved_payment_source]
-      /    input type="checkbox" name="save_payment_info" value="true"
-      /    =< "Securely save payment infomation for fast future payments."
-      /    br
-      /
+      a class="btnC2 submitBTN" style="width: 180px;" onclick="$(this).closest('form').submit(); return false;"
+        |Pay with Card
       /input id="step2_submit" type="submit" value="Pay with Card"
 
 

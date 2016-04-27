@@ -3,7 +3,6 @@
    campaign = embed[:campaign]
    transaction = @data[:transaction]
    offer = transaction[:offer]
-
 %>
 
 <div class="row">
@@ -52,54 +51,18 @@
               	<div class="col-md-12">
               		<h5>Payment Choice - Select ONE Method</h5>
               	</div>
-                <table border=1>
+
+                <%= render "fee_allocation", embed: embed, transaction: transaction %>
+
+                <table border=0 style="border-spacing: 5px;">
                   <% @data[:payment_configs].each do |payment_config| %>
                       <%= render payment_config[:form_name], payment_config: payment_config, data: @data %>
                   <% end %>
                 </table>
 
-              	<!--<div class="col-md-5">-->
-                  <!--<div class="labelEnc">-->
-                    <!--Dwolla (e-check service)<br>-->
-                    <!--Transaction Fee: $0</div>-->
-              		<!--<div class="labelEnc" style="height: 400px">Debit / Credit Transaction Fee: $X.XX - $X.XX (based on card type)</div>-->
-              		<!--<div class="labelEnc" style="height: 100px;">PayPal Transaction Fee: $X.XX</div>-->
-              	<!--</div>-->
-
-
-
-              	<!--<div class="col-md-7" id="payInputSection">-->
-
-                  <%
-#                      configs = @data[:payment_configs]
-#                      dwolla_config = configs.find{|pc|pc[:form_name] == 'dwolla'}
-#                      card_config = configs.find{|pc|pc[:form_name] == 'card'}
-#                      paypal_config = configs.find{|pc|pc[:form_name] == 'paypal'}
-                  %>
-                  <%#= render 'dwolla_2', payment_config: dwolla_config, data: @data %>
-
-                  <!--&lt;!&ndash;<form>&ndash;&gt;-->
-              			<!--&lt;!&ndash;<a href="#" class="btnC2 authorizeBTN floatL">Authorize</a>&ndash;&gt;-->
-              			<!--&lt;!&ndash;<a href="#" class="floatR" style="margin-top: 25px;">No Account?  Learn More</a>&ndash;&gt;-->
-              			<!--&lt;!&ndash;<div class="clearB"></div>&ndash;&gt;-->
-
-
-
-              			<!--<input type="text" name="" placeholder="First &amp; Last Name"style="margin-top: 18px;" id="input8"></input>-->
-              			<!--<input type="text" name="" placeholder="Card #" id="input9"></input>-->
-              			<!--<input type="text" name="" placeholder="Exp.  MM / YY" id="input10"></input>-->
-              			<!--<input type="text" name="" placeholder="CVV (Security Code)" id="input11"></input>-->
-              			<!--<input type="text" name="" placeholder="Billing Zip" id="input12"></input>-->
-              			<!--<p id="paymentAgree"><input type="checkbox" name="confirm" value="Confirm">   Securely save payment info for fast future checkouts.  You can manage your payment settings in your donor profile.</p>-->
-              			<!--<a href="#" class="btnC2 submitBTN">Submit</a>-->
-              			<!--<a href="#" class="btnC2 paypalBTN"><img src="images/paypal.png" alt="Paypal"></a>-->
-              		<!--&lt;!&ndash;</form>&ndash;&gt;-->
-              	<!--</div>-->
-
               	<div class="col-md-12">
               		<!--<hr>-->
                   <!--<p id="paymentTerms">-->
-
                   <p id="paymentAgree">
                     <br>
                     <%= check_box_tag :agree_to_terms, :true %>

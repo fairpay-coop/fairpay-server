@@ -1,0 +1,61 @@
+table border="0"
+  tr
+    td style="padding: 10px;"
+      |Fees paid by:
+      br
+      - allocation_options = transaction[:fee_allocation_options]
+      - if allocation_options.size == 1
+        = allocation_options.first[:label]
+        br
+      - else
+      form id="fee_allocation_form"
+        /note: auth token not currently used
+        = hidden_field_tag :authenticity_token, form_authenticity_token
+        = hidden_field_tag :embed_uuid, embed[:uuid]
+        = hidden_field_tag :transaction_uuid, transaction[:uuid]
+
+        - for option in allocation_options
+          p id="paymentAgree"
+            |&nbsp;
+            = " "
+            = radio_button_tag :fee_allocation, option[:value].to_s, option[:checked]
+            =<> option[:label]
+            /br
+            /|&nbsp;
+            /= " "
+    td width="400px" style="padding: 10px;"
+      - consider_this = embed[:consider_this]
+      - if consider_this
+        b Consider this:
+        | #{consider_this}
+        br
+br
+
+javascript:
+
+  document.addEventListener("DOMContentLoaded", function (e) {
+    var fee_allocation_form = $('#fee_allocation_form');
+    if (fee_allocation_form) {
+      $('input[type=radio][name=fee_allocation]').on('change', function () {
+        var allocation = $(this).val();
+        //alert("allocation changed: " + allocation);
+        updateFeeAllocation(allocation);
+      });
+    }
+  }, false);
+
+
+  function updateFeeAllocation(allocation) {
+    //alert('handleCard');
+    var form = document.getElementById("fee_allocation_form");
+    var data = {};
+    FairPayApi.copyFormValues(data, form, ['embed_uuid', 'transaction_uuid']);
+    data.fee_allocation = allocation;
+    //alert('data: ' + JSON.stringify(data));
+    FairPayApi.updateFeeAllocation(data, handleAllocationResponse);
+    return false;
+  }
+
+  function handleAllocationResponse(data) {
+    //alert('fee allocation response: ' + JSON.stringify(data));
+  }
