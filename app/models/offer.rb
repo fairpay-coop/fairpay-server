@@ -29,6 +29,10 @@ class Offer < ActiveRecord::Base
   belongs_to :campaign
 
   attr_data_field :provided_by
+  attr_data_field :provider_website
+  attr_data_field :redeemable_in
+  attr_data_field :ships_to
+  attr_data_field :shipping_address_needed
 
   after_initialize :assign_uuid
 
@@ -88,7 +92,9 @@ class Offer < ActiveRecord::Base
   end
 
   class Entity < Grape::Entity
-    expose :uuid, :name, :label, :minimum_contribution, :remaining, :limit, :kind, :availability, :allocated, :provided_by, :kind, :kind_label
+    expose :uuid, :name, :label, :kind, :kind_label, :minimum_contribution
+    expose :remaining, :limit, :availability, :allocated
+    expose :provided_by, :provider_website, :redeemable_in, :ships_to, :shipping_address_needed
   end
 
 end
