@@ -1,5 +1,3 @@
-
-
 function handleAddress() {
   console.log('handleAddresss');
   var data = {};
@@ -36,11 +34,11 @@ function scrollToTag(tag, adjust){
 }
 
 
-function showError(message) {
-  $('#errorMessage').show();
-  $('#errorMessage').html(message);
-  //$('#errorStack').html('<pre>' + data.error.stack + '</pre>');
-}
+//function showError(message) {
+//  $('#errorMessage').show();
+//  $('#errorMessage').html(message);
+//  //$('#errorStack').html('<pre>' + data.error.stack + '</pre>');
+//}
 
 function hideError(message) {
   $('#errorMessage').hide();

@@ -92,11 +92,23 @@ function validateAgreedToTerms() {
   if ( agreedToTerms() ) {
     return true;
   } else {
-    $("#agreeTermsNotice").show();
+    el = $('input[type=checkbox][name=agree_to_terms]');
+    //$("#agreeTermsNotice").show();
     scrollToBottom();
+    showError('Please agree to terms before proceeding', el);
+    console.log("validateAgreedToTerms - returning false");
     return false;
   }
 }
+
+//function newShowError(message, elt) {
+//  if (elt) {
+//    $(elt).notify(message, {className: "error", autoHideDelay: 2000, showDuration:100, position: "right"});
+//  } else {
+//    $.notify(message, {className: "error", autoHideDelay: 2000, showDuration:100 });
+//  }
+//}
+
 
 function scrollToBottom() {
   $(window).scrollTop($(document).height());
