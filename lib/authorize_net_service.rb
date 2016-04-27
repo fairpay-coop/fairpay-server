@@ -60,7 +60,7 @@ class AuthorizeNetService  < BaseCardService
     request.transactionRequest = TransactionRequestType.new()
     request.transactionRequest.amount = amount
     request.transactionRequest.payment = PaymentType.new
-    request.transactionRequest.payment_raw.creditCard = credit_card_type(data)
+    request.transactionRequest.payment.creditCard = credit_card_type(data)
     request.transactionRequest.transactionType = TransactionTypeEnum::AuthCaptureTransaction
 
     response = @gateway.create_transaction(request)

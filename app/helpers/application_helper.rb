@@ -47,8 +47,15 @@ module ApplicationHelper
   # end
 
   def resolve_authenticated_profile(session_data)
-    auth_token = session_data ? session_data[:auth_token] : nil
-    resolve_profile_from_token(auth_token)
+    authenticated_email = session_data ? session_data[:authenticated_email] : nil
+    if authenticated_email
+      # handle the flow with an auth0 authenticated session
+      return Profile.find_or_create(email: authenticated_email)
+    else
+      # the api auth token flow
+      auth_token = session_data ? session_data[:auth_token] : nil
+      resolve_profile_from_token(auth_token)
+    end
   end
 
   def resolve_profile_from_token(auth_token)

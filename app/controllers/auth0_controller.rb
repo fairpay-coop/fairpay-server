@@ -35,8 +35,7 @@ class Auth0Controller < ApplicationController
 
 
   def logout
-    session.delete(:authenticated_email)
-    cookies.delete(:authenticated_email_cookie)
+    cookies.delete(:authenticated_email)
     # todo: track return url
     redirect_to root_path
   end

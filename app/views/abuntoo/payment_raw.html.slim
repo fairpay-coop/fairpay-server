@@ -16,7 +16,10 @@ table border=1
     td
       b Reward(s) Selected
     td
-      = offer[:name]
+      - if offer
+        = offer[:name]
+      - else
+        | None
   tr
     td
       b Shipping Address

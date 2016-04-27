@@ -10,7 +10,7 @@ h3.title Payment Complete
 = render 'pay/receipt', transaction: transaction
 
 - profile = transaction[:payor]
-- unless profile[:has_user]
+- unless profile[:has_user] || auth0_signed_in
   br
   br
   b You may assign a password for faster checkouts:

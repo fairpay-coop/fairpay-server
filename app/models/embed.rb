@@ -272,9 +272,12 @@ class Embed < ActiveRecord::Base
     correlation_id = params[:correlation_id]
     auth_token = params[:auth_token]
     authenticated_email = params[:authenticated_email]
-    if email.blank? && authenticated_email.present?
+
+    authenticated_profile = resolve_authenticated_profile(params)
+
+    if email.blank? && authenticated_profile.present?
       puts "using auth0 authenticted email"
-      email = authenticated_email
+      email = authenticated_profile.email
     end
 
     if email.present?
@@ -283,9 +286,8 @@ class Embed < ActiveRecord::Base
       raise "email required"  unless step1_email_optional
     end
 
-    if auth_token.present?
-      auth_user = User.find_by(auth_token: auth_token)
-      profile_authenticated = auth_user&.profile&.email == email
+    if authenticated_profile
+      profile_authenticated = authenticated_profile.email == email
     else
       profile_authenticated = false
     end

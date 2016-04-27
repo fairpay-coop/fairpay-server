@@ -17,7 +17,9 @@ form id="step1_form" onsubmit="return handleStep1()"
 
   = hidden_field_tag :authenticity_token, form_authenticity_token
   = hidden_field_tag :embed_uuid, embed[:uuid]
-  = hidden_field_tag :authenticated_email, auth0_user&.email, id: :authenticated_email
+  = hidden_field_tag :authenticated_email, auth0_authenticated_email, id: :authenticated_email
+  /= "authenticated_email: #{auth0_authenticated_email}"
+  br
 
   - profile = @data[:authenticated_profile] || {}
 
@@ -76,31 +78,8 @@ form id="step1_form" onsubmit="return handleStep1()"
   input id="step1Submit" type="submit" value="Next"
 
 
-/script src="https://cdn.auth0.com/js/lock-9.0.min.js"
-/
-//javascript:
-//
-//  var lock = new Auth0Lock('7hoTB8QL1yquIQQc4UBTuDZlhwIMjHz5', 'fairpay.auth0.com');
-//
-//
-//  function signin() {
-//    console.log("signin");
-//    lock.show({
-//        callbackURL: 'http://jfedev.fairpay.coop:3000/auth/auth0/callback'
-//      , responseType: 'code'
-//      , authParams: {
-//        scope: 'openid profile'
-//      }
-//    });
-//  }
-
-/button onclick="window.signin();"
-/  |Login
-
-
-
-/script src="http://code.jquery.com/jquery-1.11.3.min.js"
-/script src="/js/fairpayapi.js?v=2"
+script src="http://code.jquery.com/jquery-1.11.3.min.js"
+script src="/js/fairpayapi.js?v=2"
 
 javascript:
 
@@ -144,6 +123,7 @@ javascript:
   }
 
   function handleStep1() {
+    console.log("handleStep1");
     var data = {};
     var form = document.getElementById("step1_form");
     FairPayApi.copyFormValues(data, form, ['embed_uuid', 'name', 'email', 'recurrence', 'mailing_list', 'description', 'memo', 'return_url', 'correlation_id', 'auth_token']);
