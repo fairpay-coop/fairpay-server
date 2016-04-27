@@ -92,7 +92,8 @@ class Offer < ActiveRecord::Base
   end
 
   class Entity < Grape::Entity
-    expose :uuid, :name, :label, :kind, :kind_label, :minimum_contribution
+    expose :uuid, :name, :label, :kind, :kind_label, :minimum_contribution, :expiry_date
+    expose :summary, :details, :financial_value
     expose :remaining, :limit, :availability, :allocated
     expose :provided_by, :provider_website, :redeemable_in, :ships_to, :shipping_address_needed
   end

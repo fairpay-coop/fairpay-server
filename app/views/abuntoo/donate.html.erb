@@ -69,7 +69,7 @@
                           <% end %>
                         </p>
                         <p>
-                          <%= offer[:description] %>
+                          <%= offer[:details].html_safe %>
                           <!--Reward Description. This is the DIN Next Light font.  The squares to the left are check boxes that allow for multiple selections.  Rewards on this list should be in the same order as the rewards shown on the home page, and this paragraph is the same as the description on each individual pop-up. 335 max characters for this paragraph.-->
                         </p>
                         <% if offer[:ships_to] %>
