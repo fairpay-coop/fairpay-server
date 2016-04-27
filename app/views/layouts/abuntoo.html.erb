@@ -96,7 +96,7 @@
   var lock = new Auth0Lock('7hoTB8QL1yquIQQc4UBTuDZlhwIMjHz5', 'fairpay.auth0.com');
   function signin() {
     lock.show({
-      callbackURL: 'http://jfedev.fairpay.coop:3000/auth/auth0/callback'
+      callbackURL: '<%=base_url%>/auth/auth0/callback'
       , responseType: 'code'
       , authParams: {
         scope: 'openid profile'
