@@ -1,8 +1,11 @@
-  <div class="row">
-      <div class="col-md-12" id="headingSection">
-      <h1 class="mainTagline">Bring Art Back to John Muir Elementary School</h1>
-      <h3 class="mainSubline">A Community-Based Fundraiser in Collaboration with Haight Street Art Center</h3>
-      </div>
+<%
+   embed = @data[:embed]
+   campaign = embed[:campaign]
+%>
+
+<div class="row">
+    <%= render 'campaign_heading', campaign: campaign %>
+
       <div class="col-md-8">
           <section>
               <!-- MAIN SECTION -->
@@ -57,26 +60,9 @@
 
       <div class="col-md-4">
           <aside>
-            <%
-               embed = @data[:embed]
-               campaign = embed[:campaign]
-               pcnt = campaign[:financial_pcnt]
-            %>
-              <a href="/donate" class="btn btn-default btnC1">Donate</a>
-              <div class="donateCounter">
-                <div class="donateNumberCounter">
-                    <h6><span>$<%= format_amount(campaign[:financial_total],0) %></span> of</h6>
-                    <h5>$<%= format_amount(campaign[:financial_goal],0) %></h5>
-                </div>
-                <div class="progress">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="<%= pcnt %>" aria-valuemin="0" aria-valuemax="100" style="width: <%=pcnt%>%;">
-                    <%= pcnt %>%
-                  </div>
-                </div>
-                <p class="donorCount"><%= campaign[:supporter_total] %> DONORS</p>
-                <hr>
-                <p class="locationDonation"><i class="fa fa-map-marker"></i>    San Francisco, CA</p>
-              </div>
+            <a href="/donate" class="btn btn-default btnC1">Donate</a>
+
+            <%= render 'campaign_progress', campaign: campaign%>
 
             <%
                campaign[:offers].each do |offer|

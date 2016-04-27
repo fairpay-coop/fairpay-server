@@ -1,0 +1,20 @@
+<%
+   # assumed param:
+   #   campaign = embed[:campaign]
+
+   pcnt = campaign[:financial_pcnt]
+%>
+<div class="donateCounter">
+  <div class="donateNumberCounter">
+    <h6><span>$<%= format_amount(campaign[:financial_total],0) %></span> of</h6>
+    <h5>$<%= format_amount(campaign[:financial_goal],0) %></h5>
+  </div>
+  <div class="progress">
+    <div class="progress-bar" role="progressbar" aria-valuenow="<%= pcnt %>" aria-valuemin="0" aria-valuemax="100" style="width: <%=pcnt%>%;">
+      <%= pcnt %>%
+    </div>
+  </div>
+  <p class="donorCount"><%= campaign[:supporter_total] %> DONORS</p>
+  <hr>
+  <p class="locationDonation"><i class="fa fa-map-marker"></i>    San Francisco, CA</p>
+</div>

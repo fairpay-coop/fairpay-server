@@ -1,12 +1,22 @@
-  <div class="row">
-      <div class="col-md-12" id="headingSection">
-      <h1 class="mainTagline">Bring Art Back to John Muir Elementary School</h1>
-      <h3 class="mainSubline">A Community-Based Fundraiser in Collaboration with Haight Street Art Center</h3>
-      </div>
+<%
+   embed = @data[:embed]
+   campaign = embed[:campaign]
+%>
+
+<div class="row">
+    <%= render 'campaign_heading', campaign: campaign %>
       <div class="col-md-8">
           <section id="donateSection">
               <!-- MAIN SECTION -->
+            <form id="step1_form" onsubmit="return handleStep1()">
+
               <div class="row">
+                <div id="errorMessage" style="display: none;"></div>
+
+                <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+                <%= hidden_field_tag :embed_uuid, embed[:uuid] %>
+                <%= hidden_field_tag :authenticated_email, auth0_authenticated_email, id: :authenticated_email %>
+
                 <div class="col-md-6">
                   <h3>My Contribution Today:</h3>
                 </div>
@@ -21,7 +31,7 @@
                     <option value="500">$500</option>
                   </select>
                   <p id="donateNote">Minimum donation $5.  Please give more if you're able to! </p>
-                  <a href="payments.html" class="btnC2 floatL">Next</a>
+                  <a href="#" class="btnC2 floatL" onclick="$(this).closest('form').submit(); return false;">Next</a>
                   <div class="clearB"></div>
                 </div>
               </div>
@@ -35,68 +45,83 @@
               <div class="row">
                 <div class="col-md-12">
                   <div class="donateGift">
-                    <a href="#" class="checkMark"><i class="fa fa-check-circle-o" aria-hidden="true"></i></a>
+                    <a class="checkMark">
+                      <%= check_box_tag :chosen_offer_none, :true %>
+                    </a>
                     <h6>No Gift</h6>
                     <div class="clearB"></div>
                   </div>
 
-                  <div class="donateGift">
-                    <a href="#" class="checkMark"><i class="fa fa-check-circle-o" aria-hidden="true"></i></a>
-                    <h6>"Sacred Economics" by Charles Eisenstein</h6>
-                    <h5>$45</h5>
-                    <div class="clearB"></div>
-                    <p class="donateFrom"><span>from</span> Cecilia Tom <a href="#">www.mywebsite.com</a></p>
-                    <p>Reward Description. This is the DIN Next Light font.  The squares to the left are check boxes that allow for multiple selections.  Rewards on this list should be in the same order as the rewards shown on the home page, and this paragraph is the same as the description on each individual pop-up. 335 max characters for this paragraph.</p>
-                    <a href="#" class="donateGiftShipsto">ships to all 50 states</a>
-                    <a href="#" class="donateGifyRedeem">redeemable in Oakland, CA</a>
-                    <div class="clearB"></div>
-                  </div>
+                  <%
+                     campaign[:offers].each do |offer|
+                  %>
+                      <div class="donateGift">
+                        <a class="checkMark">
+                          <%= check_box_tag :chosen_offer_uuid, offer[:uuid] %>
+                        </a>
+                        <h6><%= offer[:name] %></h6>
+                        <h5>$<%= format_amount(offer[:minimum_contribution],0) %></h5>
+                        <div class="clearB"></div>
+                        <p class="donateFrom"><span>from</span> <%= offer[:provided_by] %> <a href="#">www.mywebsite.com</a></p>
+                        <p>Reward Description. This is the DIN Next Light font.  The squares to the left are check boxes that allow for multiple selections.  Rewards on this list should be in the same order as the rewards shown on the home page, and this paragraph is the same as the description on each individual pop-up. 335 max characters for this paragraph.</p>
+                        <a href="#" class="donateGiftShipsto">ships to all 50 states</a>
+                        <a href="#" class="donateGifyRedeem">redeemable in Oakland, CA</a>
+                        <div class="clearB"></div>
+                      </div>
 
-                  <div class="donateGift">
-                    <a href="#" class="checkMark"><i class="fa fa-check-circle-o" aria-hidden="true"></i></a>
-                    <h6>Disneyland Tickets</h6>
-                    <h5>$105</h5>
-                    <div class="clearB"></div>
-                    <p class="donateFrom"><span>from</span> Cecilia Tom <a href="#">www.mywebsite.com</a></p>
-                    <p>Reward Description. This is the DIN Next Light font.  The squares to the left are check boxes that allow for multiple selections.  Rewards on this list should be in the same order as the rewards shown on the home page, and this paragraph is the same as the description on each individual pop-up. 335 max characters for this paragraph.</p>
-                    <a href="#" class="donateGiftShipsto">ships to all 50 states</a>
-                    <a href="#" class="donateGifyRedeem">redeemable in Oakland, CA</a>
-                    <div class="clearB"></div>
-                  </div>
+                  <%
+                     end
+                  %>
 
-                  <div class="donateGift">
-                    <a href="#" class="checkMark"><i class="fa fa-check-circle-o" aria-hidden="true"></i></a>
-                    <h6>Amazon Gift Card</h6>
-                    <h5>$40</h5>
-                    <div class="clearB"></div>
-                    <p class="donateFrom"><span>from</span> Cecilia Tom <a href="#">www.mywebsite.com</a></p>
-                    <p>Reward Description. This is the DIN Next Light font.  The squares to the left are check boxes that allow for multiple selections.  Rewards on this list should be in the same order as the rewards shown on the home page, and this paragraph is the same as the description on each individual pop-up. 335 max characters for this paragraph.</p>
-                    <a href="#" class="donateGiftShipsto">ships to all 50 states</a>
-                    <a href="#" class="donateGifyRedeem">redeemable in Oakland, CA</a>
-                    <div class="clearB"></div>
-                  </div>
+                  <!--<div class="donateGift">-->
+                    <!--<a href="#" class="checkMark"><i class="fa fa-check-circle-o" aria-hidden="true"></i></a>-->
+                    <!--<h6>"Sacred Economics" by Charles Eisenstein</h6>-->
+                    <!--<h5>$45</h5>-->
+                    <!--<div class="clearB"></div>-->
+                    <!--<p class="donateFrom"><span>from</span> Cecilia Tom <a href="#">www.mywebsite.com</a></p>-->
+                    <!--<p>Reward Description. This is the DIN Next Light font.  The squares to the left are check boxes that allow for multiple selections.  Rewards on this list should be in the same order as the rewards shown on the home page, and this paragraph is the same as the description on each individual pop-up. 335 max characters for this paragraph.</p>-->
+                    <!--<a href="#" class="donateGiftShipsto">ships to all 50 states</a>-->
+                    <!--<a href="#" class="donateGifyRedeem">redeemable in Oakland, CA</a>-->
+                    <!--<div class="clearB"></div>-->
+                  <!--</div>-->
+
+                  <!--<div class="donateGift">-->
+                    <!--<a href="#" class="checkMark"><i class="fa fa-check-circle-o" aria-hidden="true"></i></a>-->
+                    <!--<h6>Disneyland Tickets</h6>-->
+                    <!--<h5>$105</h5>-->
+                    <!--<div class="clearB"></div>-->
+                    <!--<p class="donateFrom"><span>from</span> Cecilia Tom <a href="#">www.mywebsite.com</a></p>-->
+                    <!--<p>Reward Description. This is the DIN Next Light font.  The squares to the left are check boxes that allow for multiple selections.  Rewards on this list should be in the same order as the rewards shown on the home page, and this paragraph is the same as the description on each individual pop-up. 335 max characters for this paragraph.</p>-->
+                    <!--<a href="#" class="donateGiftShipsto">ships to all 50 states</a>-->
+                    <!--<a href="#" class="donateGifyRedeem">redeemable in Oakland, CA</a>-->
+                    <!--<div class="clearB"></div>-->
+                  <!--</div>-->
+
+                  <!--<div class="donateGift">-->
+                    <!--<a href="#" class="checkMark"><i class="fa fa-check-circle-o" aria-hidden="true"></i></a>-->
+                    <!--<h6>Amazon Gift Card</h6>-->
+                    <!--<h5>$40</h5>-->
+                    <!--<div class="clearB"></div>-->
+                    <!--<p class="donateFrom"><span>from</span> Cecilia Tom <a href="#">www.mywebsite.com</a></p>-->
+                    <!--<p>Reward Description. This is the DIN Next Light font.  The squares to the left are check boxes that allow for multiple selections.  Rewards on this list should be in the same order as the rewards shown on the home page, and this paragraph is the same as the description on each individual pop-up. 335 max characters for this paragraph.</p>-->
+                    <!--<a href="#" class="donateGiftShipsto">ships to all 50 states</a>-->
+                    <!--<a href="#" class="donateGifyRedeem">redeemable in Oakland, CA</a>-->
+                    <!--<div class="clearB"></div>-->
+                  <!--</div>-->
+
                 </div>
               </div>
+
+            </form>
+
           </section>
       </div>
 
       <div class="col-md-4">
           <aside>
-              <div class="donateCounter">
-                <div class="donateNumberCounter">
-                    <h6><span>$2,713</span> of</h6>
-                    <h5>$10,000</h5>
-                </div>
-                <div class="progress">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
-                    30%
-                  </div>
-                </div>
-                <p class="donorCount">19 DONORS</p>
-                <hr>
-                <p class="locationDonation"><i class="fa fa-map-marker"></i>    San Francisco, CA</p>
-              </div>
-              <img id="sideBarPwrdImg" src="images/pwrdAbuntoo.png" alt="Powered by Abuntoo" class="img-responsive">
+            <%= render 'campaign_progress', campaign: campaign%>
+
+            <img id="sideBarPwrdImg" src="images/pwrdAbuntoo.png" alt="Powered by Abuntoo" class="img-responsive">
         <div id="accordion">  
           <h3>What is Abuntoo?</h3>
           <div>
@@ -148,3 +173,187 @@
           </aside>
       </div>
   </div>
+
+<script>
+
+  //FairPayApi.setEndpoint('http://localhost:3000');
+  //FairPayApi.setApiKey('abuntoo');
+  //FairPayApi.setEmbedUuid('VJ7iA5cQg');
+
+  function handleSignin() {
+    var data = {};
+    var form = document.getElementById("step1_form");
+    FairPayApi.copyFormValues(data, form, ['email', 'password']);
+    if (validateSigninData(data)) {
+      FairPayApi.signin(data, handleSigninResponse);
+    }
+    return false;
+  }
+
+  function handleSigninResponse(data) {
+    console.log('signin response: ' + JSON.stringify(data));
+    if (data.result) {
+      var token = data.result;
+      //document.getElementById('auth_token');
+      $("#auth_token").val(token);
+      $("#password_block").hide();
+      FairPayApi.profile(token, handleProfileResponse);
+    } else if (data.error) {
+      showError(data.error.message);
+    }
+  }
+
+  function handleProfileResponse(data) {
+    console.log('profile response: ' + JSON.stringify(data));
+    if (data.result) {
+      console.log('name: ' + data.result.name);
+      $("#name").val(data.result.name);
+    } else if (data.error) {
+      showError(data.error.message);
+    }
+  }
+
+  function handleStep1() {
+    console.log("handleStep1");
+    var data = {};
+    var form = document.getElementById("step1_form");
+    FairPayApi.copyFormValues(data, form, ['embed_uuid', 'name', 'email', 'recurrence', 'mailing_list', 'description', 'memo', 'return_url', 'correlation_id', 'auth_token']);
+    data.amount = resolveAmount();
+    data.offer_uuid = resolveOfferUuid();
+    //alert('data: ' + JSON.stringify(data));
+
+    if (validateStep1Data(data)) {
+      console.log('beforfe submitStep1');
+      FairPayApi.submitStep1(data, handleStep1Response);
+    }
+    return false;
+  }
+
+  function handleStep1Response(data) {
+    console.log('step1 response: ' + JSON.stringify(data));
+    if (data.result) {
+      //var status = data.result.status;
+      //$('#errorMessage').html('');      //var linkUrl = data.result.statusLink;
+      var authenticated_email = $("#authenticated_email").val();
+      console.log("authenticated email: " + authenticated_email);
+      if (authenticated_email == '') {
+        console.log("signin needed");
+        window.signin();
+      } else if (data.result.next_step_url) {
+        window.location = data.result.next_step_url;
+      }
+    } else if (data.error) {
+      showError(data.error.message);
+    }
+  }
+
+  function showError(message) {
+    $('#errorMessage').show();
+    $('#errorMessage').html(message);
+    //$('#errorStack').html('<pre>' + data.error.stack + '</pre>');
+  }
+
+  function hideError(message) {
+    $('#errorMessage').hide();
+    $('#errorMessage').html('');
+  }
+  function resolveAmount() {
+    var amount = $( "#donateSelectBox" ).val();
+    console.log("select box amount: " + amount);
+    if (amount && amount > 0) {
+      return amount;
+    }
+
+    var assigned_amount = number_field_val('assigned_amount');
+    var entered_amount = number_field_val('entered_amount');
+    var amount_chosen_count = $("input[name=chosen_amount]:checked").length;
+    var chosen_amount = $("input[name=chosen_amount]:checked").val();
+    //if (amount_chosen_count > 0) {
+    //  alert("chosen_amount: " + chosen_amount);
+    //}
+    if (assigned_amount > 0) {
+      return assigned_amount;
+    } else if (entered_amount > 0) {
+      return entered_amount;
+    } else if (amount_chosen_count > 0) {
+      return chosen_amount;
+    } else {
+      return 0;
+    }
+  }
+
+  function resolveOfferUuid() {
+    var chosen = $("input[name=chosen_offer_uuid]:checked").val();
+    if (chosen && chosen != null) {
+      return chosen;
+    } else {
+      var assigned = field_val('assigned_offer_uuid', null);
+      return assigned;
+    }
+  }
+
+  function validateStep1Data(data) {
+    if (data['amount'] == 0) {
+      showError("Please enter an amount");
+      return false;
+    }
+    //if (!validatePresent(data['email'], 'an Email')) {
+    //  return false;
+    //}
+    return true;
+  }
+
+  function validateSigninData(data) {
+    if (!validatePresent(data['email'], 'an Email')) {
+      return false;
+    }
+    if (!validatePresent(data['password'], 'a Password')) {
+      return false;
+    }
+    return true;
+  }
+  //todo: factor this over to fairpayapi.js
+  function validatePresent(value, field_description) {
+    if (value == undefined || value == null || value.length == 0) {
+      showError("Please enter " + field_description);
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  //function validateStep1Form() {
+  //  var assigned_amount = number_field_val('assigned_amount');
+  //  var entered_amount = number_field_val('entered_amount');
+  //  var amount_chosen_count = $("input[name=chosen_amount]:checked").length;
+  //  //var amount = $('#step1Amount').val();
+  //  //if (amount_chosen == 0 && (amount == null || amount == "")) {
+  //  //  alert("Please enter an amount");
+  //  //  return false;
+  //  //}
+  //  if (assigned_amount == 0 && entered_amount == 0 && amount_chosen_count == 0) {
+  //    alert("Please enter an amount");
+  //    return false;
+  //  }
+  //  var email = $('#email').val();
+  //  if (email == null || email == "") {
+  //    alert("Please enter an email");
+  //    return false;
+  //  }
+  //  return true;
+  //}
+
+  function number_field_val(name) {
+    return Number(field_val(name, 0));
+  }
+
+  function field_val(name, default_value) {
+    var field_spec = 'input[name="' + name + '"]';
+    var raw = $(field_spec).val(); // confirm if this statement is always safe
+    //alert(name + " raw val: " + raw);
+    var val = raw ? raw : default_value;
+    //alert(name + " val: " + val);
+    return val;
+  }
+
+</script>
