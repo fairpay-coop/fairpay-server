@@ -1,15 +1,16 @@
 - embed = @data[:embed]
 - transaction = @data[:transaction]
 - profile_authenticated = @data[:authenticated_profile].present?
-/- dwolla_service = merchant_config.payment_service
 
-tr
-  td style="padding: 10px;"
-    div class="labelEnc" style="height: 150px"
+div class="col-md-12"
+
+div class="col-md-5"
+    div class="labelEnc" style="height: 120px"
       b Dwolla (e-check service)
       br
       | Transaction Fee: $0.00
-  td style="padding: 10px;"
+
+div class="col-md-7"
     - unless payment_config[:has_dwolla_auth]
       - if payment_config[:dwolla_flow] == 'prompt_existing'
         form id="dwolla_user_form"
@@ -27,7 +28,7 @@ tr
             = " No"
           div id="dwolla_auth" style="display: none;"
             /= link_to "Provide Dwolla Authorization", "/dwolla/auth?t=#{transaction[:uuid]}"
-            = link_to "Authorize", "/dwolla/auth?t=#{transaction[:uuid]}", class: "btnC2 submitBTN", style: "width: 200px;"
+            = link_to "Authorize", "/dwolla/auth?t=#{transaction[:uuid]}", class: "btnC2 dwollaAuthorizeBTN", style: "width: 200px;"
             /a href="/dwolla/auth?t=#{transaction[:uuid]}" class="btnC2 submitBTN" style="width: 200px;"
             /  |Authorize
             br

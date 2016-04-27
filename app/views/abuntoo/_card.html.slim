@@ -4,10 +4,12 @@ script src="http://code.jquery.com/jquery-1.11.3.min.js"
 - profile_authenticated = @data[:authenticated_profile].present?
 - saved_payment_source = payment_config[:saved_payment_source]
 
-/|athenticated_profile: #{@data[:authenticated_profile].to_json}
+  /|athenticated_profile: #{@data[:authenticated_profile].to_json}
 
-tr
-  td width='40%' style="padding: 10px;"
+
+div class="col-md-12"
+
+div class="col-md-5"
     div class="labelEnc" style="height: 420px"
       b Debit/Credit Card (#{payment_config[:kind_name]})
       br
@@ -18,7 +20,7 @@ tr
         br
         |(depends on card type)
 
-  td style="padding: 10px;"
+div class="col-md-7"
     div id="errorMessage"
 
     form id="card_form" onsubmit="return handleCard()"
@@ -50,13 +52,6 @@ tr
       / todo: dynamic hide display of below form
       div id="card_fields"
 
-        /input type="text" id="card_holder" name="card_holder" value="" placeholder="Card Holder First & Last Name" size=30
-        /input type="text" id="card_number" name="card_number" value="" placeholder="Card #"  size=30
-        /input type="text" name="card_mmyy" value="" placeholder="Exp. MMYY" size=6
-        /=<> ''
-        /input type="text" name="card_cvv" value="" placeholder="CVV (Security Code)" size="10"
-        /input type="text" name="billing_zip" value="" placeholder="Billing Zip" size="8"
-
         input type="text" id="card_holder" name="card_holder" placeholder="First & Last Name" style="margin-top: 18px;"
         input type="text" id="card_number" name="card_number" placeholder="Card #"
         input type="text" name="card_mmyy" placeholder="Exp.  MM / YY" id="input10"
@@ -70,9 +65,6 @@ tr
             |Securely save payment info for fast future checkouts.  You can manage your payment settings in your donor profile.
       a class="btnC2 submitBTN" style="width: 180px;" onclick="$(this).closest('form').submit(); return false;"
         |Pay with Card
-      /input id="step2_submit" type="submit" value="Pay with Card"
-
-
 
 
 /br

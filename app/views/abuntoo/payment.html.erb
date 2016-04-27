@@ -64,11 +64,11 @@ None
 
                 <%= render "fee_allocation", embed: embed, transaction: transaction %>
 
-                <table border=0 style="border-spacing: 5px;">
-                  <% @data[:payment_configs].each do |payment_config| %>
-                      <%= render payment_config[:form_name], payment_config: payment_config, data: @data %>
-                  <% end %>
-                </table>
+                <%# card_config = @data[:payment_configs].find{|pc|pc[:form_name] == 'card'} %>
+                <%#= render 'card', payment_config: card_config, data: @data %>
+                <% @data[:payment_configs].each do |payment_config| %>
+                    <%= render payment_config[:form_name], payment_config: payment_config, data: @data %>
+                <% end %>
 
               	<div class="col-md-12">
               		<!--<hr>-->

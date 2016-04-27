@@ -487,13 +487,18 @@ footer {
     margin-left: 20px;
     margin-right: 40px;
 }
+.dwollaAuthorizeBTN {
+  margin-top: 5px;
+  margin-left: 20px;
+  margin-right: 40px;
+}
 .addressBTN {
   margin-top: -5px;
   margin-left: 20px;
   margin-right: 40px;
 }
 .paypalBTN {
-  margin-top: -15px;
+  margin-top: 5px;
   margin-left: 20px;
   margin-right: 40px;
 }

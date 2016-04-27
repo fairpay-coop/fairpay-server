@@ -1,13 +1,13 @@
-tr
-  td style="padding: 10px;"
-    /style="height: 50px"
+div class="col-md-12"
+div class="col-md-5"
     div class="labelEnc"
       b PayPal
       br
       - embed = @data[:embed]
       - transaction = @data[:transaction]
       | Transaction Fee: #{payment_config[:card_fee_str]}
-  td style="padding: 10px;"
+
+div class="col-md-7"
     /= link_to "Pay via PayPal", "/paypal/checkout?t=#{transaction[:uuid]}"
     a href="/paypal/checkout?t=#{transaction[:uuid]}" class="btnC2 paypalBTN"
       img src="images/paypal.png" alt="Paypal"
