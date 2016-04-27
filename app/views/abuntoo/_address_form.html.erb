@@ -1,0 +1,36 @@
+<%# expected params: data: @data %>
+<div class="col-md-5">
+  <div class="labelEnc" style="height: 330px;">Enter a Shipping Address if any of your selected rewards require shipping. U.S. only.</div>
+</div>
+
+<div class="col-md-7" id="payInputSection">
+  <div id="errorMessage" style="display: none;"></div>
+
+  <%
+     embed = data[:embed]
+     transaction = data[:transaction]
+     address = data[:address] || {}
+     profile = data[:authenticated_profile] || {}
+  %>
+
+  <form id="address_form" onsubmit="return handleAddress()">
+
+    <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+    <%= hidden_field_tag :embed_uuid, embed[:uuid] %>
+    <%= hidden_field_tag :transaction_uuid, transaction[:uuid] %>
+
+    <input type="text" name="first_name" placeholder="First Name" id="input_first_name" value="<%=address[:first_name]%>"/>
+    <input type="text" name="last_name" placeholder="Last Name" id="input_last_name" value="<%=address[:last_name]%>"/>
+    <input type="text" name="street_address" placeholder="Street Address 1" id="input4" value="<%=address[:street_address]%>"/>
+    <input type="text" name="extended_address" placeholder="Street Address 2" id="input4" value="<%=address[:extended_address]%>"/>
+    <input type="text" name="locality" placeholder="City" id="input5" value="<%=address[:locality]%>"/>
+    <input type="text" name="region" placeholder="CA" id="input5" value="<%=address[:region]%>"/>
+    <input type="text" name="postal_code" placeholder="Zip" id="input7" value="<%=address[:postal_code]%>"/>
+
+    <!--<input id="addressSubmit" type="submit" value="Next"/>-->
+    <a class="btnC2 addressBTN" onclick="$(this).closest('form').submit(); return false;">
+      Next
+    </a>
+  </form>
+</div>
+
