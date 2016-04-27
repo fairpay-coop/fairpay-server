@@ -29,3 +29,8 @@
 
 # ide files
 .idea
+
+# other misc
+nohup.out
+setenv
+start.sh
