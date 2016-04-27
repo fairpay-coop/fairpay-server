@@ -184,13 +184,15 @@ class Embeds < Grape::API
         address_data = ActiveSupport::HashWithIndifferentAccess.new(sliced)
         transaction = embed.submit_address(transaction_uuid, address_data)
 
-        #todo: should perhaps return the full transaction data here
+        #todo: should perhaps return the full transaction data here, or use a different entity render def
         result = {
             status: transaction.status,
             paid_amount: transaction.paid_amount,
             estimated_fee: transaction.estimated_fee,
             redirect_url: transaction.finished_url,
-            next_step_url: transaction.next_step_url
+            next_step_url: transaction.next_step_url,
+            next_step: transaction.next_step,
+            capture_address_on_payment_page: transaction.capture_address_on_payment_page
         }
         puts "submit addr - result: #{result}"
         wrap_result result

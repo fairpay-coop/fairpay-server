@@ -187,10 +187,6 @@ class Transaction < ActiveRecord::Base
     self.update!(address_captured: true)
   end
 
-  def needs_address
-    (has_offer_needing_ship_address || embed.capture_address.present?)  && ! self.address_captured
-  end
-
   def has_offer_needing_ship_address
     resolve_offers.each do |offer|
       return true  if offer.shipping_address_needed.present?
@@ -454,13 +450,27 @@ class Transaction < ActiveRecord::Base
     if completed
       :finished
     else
-      if needs_address && embed.capture_address.present?  #todo: need cleaner way to distinguish standalone flow
+      if needs_address && ! capture_address_on_payment_page
         :address
       else
         :payment
       end
     end
   end
+
+  def capture_address
+    has_offer_needing_ship_address || embed.capture_address.present?
+  end
+
+  def capture_address_on_payment_page
+    #todo: need cleaner way to distinguish standalone flow
+    has_offer_needing_ship_address
+  end
+
+  def needs_address
+    capture_address && ! self.address_captured
+  end
+
 
   def entity
     Entity.new(self)
@@ -475,7 +485,7 @@ class Transaction < ActiveRecord::Base
     expose :profile_authenticated
     expose :resolve_offer, using: Offer::Entity, as: :offer   # can remove once usages migrated to offers
     expose :resolve_offers, using: Offer::Entity, as: :offers # returns a list
-    expose :needs_address
+    expose :needs_address, :capture_address, :capture_address_on_payment_page
     expose :next_step
     # used by 'thanks' view
     expose :payment_type_display

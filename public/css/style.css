@@ -459,6 +459,10 @@ footer {
     border-radius: 8px;
     margin-bottom: 20px;
 }
+#input_first_name, #input_last_name {
+  display: inline-block !important;
+  width: 48% !important;
+}
 #input5, #input6, #input7 {
   display: inline-block !important;
   width: 32% !important;
@@ -482,6 +486,11 @@ footer {
 .submitBTN {
     margin-left: 20px;
     margin-right: 40px;
+}
+.addressBTN {
+  margin-top: -5px;
+  margin-left: 20px;
+  margin-right: 40px;
 }
 .paypalBTN {
   margin-top: -15px;
