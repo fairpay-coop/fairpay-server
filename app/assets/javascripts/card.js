@@ -73,10 +73,8 @@ function handleEstimateFeeResponse(data) {
 //$("#card_form").submit(handleCard);
 
 function handleCard() {
-  console.log('handleCard - agreed terms:' + agreedToTerms());
-  if ( ! agreedToTerms ) {
-    alert('Please agree to terms before proceeding');
-    scrollToTag('#paymentAgree', -30);
+  console.log('handleCard');
+  if ( ! validateAgreedToTerms() ) {
     return false;
   }
   var form = document.getElementById("card_form");
@@ -89,8 +87,29 @@ function handleCard() {
   return false;
 }
 
+function validateAgreedToTerms() {
+  console.log('agreedToTerms:' + agreedToTerms());
+  if ( agreedToTerms() ) {
+    return true;
+  } else {
+    $("#agreeTermsNotice").show();
+    scrollToBottom();
+    return false;
+  }
+}
+
+function scrollToBottom() {
+  $(window).scrollTop($(document).height());
+}
+
+
 function agreedToTerms() {
-  $('input[type=checkbox][name=agree_to_terms]').is(':checked')
+  var terms_field = $('input[type=checkbox][name=agree_to_terms]');
+  if (terms_field == undefined) {
+    console.log('agree_to_terms field missing');
+    return false;
+  }
+  return terms_field.is(':checked');
 }
 
 function validateCardFields(data) {

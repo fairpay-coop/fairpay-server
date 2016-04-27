@@ -9,6 +9,6 @@ div class="col-md-5"
 
 div class="col-md-7"
     /= link_to "Pay via PayPal", "/paypal/checkout?t=#{transaction[:uuid]}"
-    a href="/paypal/checkout?t=#{transaction[:uuid]}" class="btnC2 paypalBTN"
+    a href="/paypal/checkout?t=#{transaction[:uuid]}" class="btnC2 paypalBTN" onclick="return validateAgreedToTerms();"
       img src="images/paypal.png" alt="Paypal"
 

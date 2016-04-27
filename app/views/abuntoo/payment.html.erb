@@ -73,8 +73,14 @@ None
               	<div class="col-md-12">
               		<!--<hr>-->
                   <!--<p id="paymentTerms">-->
+                  <br>
+
+                  <div id="agreeTermsNotice" style="display: none">
+                    <h4 style="color: #E82C58;">
+                      Please agree to terms before proceeding
+                    </h4>
+                  </div>
                   <p id="paymentAgree">
-                    <br>
                     <%= check_box_tag :agree_to_terms, :true %>
                     By submitting a payment via this form, you acknowledge that you agree to our
                     <%= link_to 'Terms of Service', terms_path, target: '_blank' %>

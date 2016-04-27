@@ -28,7 +28,7 @@ div class="col-md-7"
             = " No"
           div id="dwolla_auth" style="display: none;"
             /= link_to "Provide Dwolla Authorization", "/dwolla/auth?t=#{transaction[:uuid]}"
-            = link_to "Authorize", "/dwolla/auth?t=#{transaction[:uuid]}", class: "btnC2 dwollaAuthorizeBTN", style: "width: 200px;"
+            = link_to "Authorize", "/dwolla/auth?t=#{transaction[:uuid]}", class: "btnC2 dwollaAuthorizeBTN", style: "width: 200px;", onclick: "return validateAgreedToTerms();"
             /a href="/dwolla/auth?t=#{transaction[:uuid]}" class="btnC2 submitBTN" style="width: 200px;"
             /  |Authorize
             br
