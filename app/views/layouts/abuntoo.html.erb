@@ -42,23 +42,15 @@
           <a class="navbar-brand" href="/">BRINGARTBACK</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="/">Home</a></li>
-            <li><a href="#">Story</a></li>
-            <li><a href="#">Gallery</a></li>
-            <li><a href="#">Donors</a></li>
-
-            <li>
-              <% if auth0_signed_in %>
-                <%= auth0_profile.name %>
-                <button onclick="location.href='/auth/logout';">Logout</button>
-                &nbsp;
-              <% else %>
-                <button onclick="window.signin();">Login</button>
-              <% end %>
-            </li>
-
+          <ul class="nav pull-right navbar-nav">
+          <% if auth0_signed_in %>
+              <li><span>[Logged in as <%= auth0_profile.name %>]</span></li>
+              <li><a onclick="location.href='/auth/logout';">Logout</a></li>
+          <% else %>
+              <li><a onclick="window.signin();">Login</a></li>
+          <% end %>
           </ul>
+
         </div><!--/.nav-collapse -->
       </div>
     </nav>
