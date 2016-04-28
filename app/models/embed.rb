@@ -469,4 +469,10 @@ class Embed < ActiveRecord::Base
   # end
 
 
+  def self.resolve_from_host(host)
+    puts "resolve from host: #{host}"
+    head = host.split('.').first
+    resolve(head, required: false)
+  end
+
 end

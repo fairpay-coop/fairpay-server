@@ -1,4 +1,5 @@
 class PaypalService < BasePaymentService
+  include ApplicationHelper
 
   DEFAULT_CONFIG = {
       mode: ENV['PAYPAL_MODE'],
@@ -63,9 +64,9 @@ class PaypalService < BasePaymentService
     @api
   end
 
-  def base_url
-    @base_url || ENV['BASE_URL']
-  end
+  # def base_url
+  #   @base_url || ENV['BASE_URL']
+  # end
 
   # def return_url(transaction_uuid)
   #   "#{base_url}/paypal/complete_payment?t=#{transaction_uuid}"

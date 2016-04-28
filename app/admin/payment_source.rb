@@ -6,7 +6,9 @@ ActiveAdmin.register PaymentSource do
   index do
     selectable_column
     id_column
-    column :profile
+    column :profile do |item|
+      link_to item.profile.email
+    end
     column :kind
     column :source_key
     column :updated_at
@@ -16,7 +18,7 @@ ActiveAdmin.register PaymentSource do
 
   form do |f|
     f.inputs do
-      f.input :profile, as: :select, collection: Profile.pluck(:name, :id)
+      f.input :profile, as: :select, collection: Profile.pluck(:email, :id)
 
       f.input :kind, as: :select, collection: MerchantConfig.kinds.map { |key,name| [name, key] }
       f.input :source_key

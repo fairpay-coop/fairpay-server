@@ -17,8 +17,10 @@ module UuidAssignable
     end
 
     # fetches instance by either uuid or internal name.  if list provided just return first value
-    def resolve(identifier_raw, required:true)
+    def resolve(identifier_raw, required: true)
       return nil  if identifier_raw.blank? && !required
+      raise "#{self.name} unable to resolve - empty identifier"  if required && identifier_raw.blank?
+
       identifier = identifier_raw.split(',').first  # parse out first value if comma separated
       #todo: be smart about existance of 'internal_name', for now assume not called unless exists
       result = by_uuid(identifier) || find_by_internal_name(identifier)

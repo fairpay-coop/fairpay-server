@@ -4,21 +4,28 @@ class AbuntooController < PayController
   layout 'abuntoo'
 
   def index
-    uuid = resolve_embed_uuid
-    embed = Embed.find_by_uuid(uuid)
-    raise "embed data not found for STANDALONE_EMBED_UUID: #{uuid}"  unless embed
+    embed = resolve_embed(params)
+    return no_context  unless embed
+
     embed_params = {} # not relevant for now
     @data = hashify( embed.embed_data(embed_params) )
   end
 
+  def no_context
+    render 'welcome/no_context', layout: 'application'
+  end
+
   def donate
-    embed_uuid = resolve_embed_uuid #params[:uuid]
+    embed = resolve_embed(params)
+    return no_context  unless embed
+
+    # embed_uuid = resolve_embed_uuid #params[:uuid]
     puts "current user: #{current_user}"
 
     embed_params = params.permit(:amount, :description, :return_url, :correlation_id, :offer) #, :uuid)
     embed_params[:session_data] = resolve_session_data
 
-    embed = Embed.resolve(embed_uuid)
+    # embed = Embed.resolve(embed_uuid)
     @data = hashify( embed.embed_data(embed_params) )
     # @data[:auth_token] = session_auth_token
     puts "embed data: #{@data}"
@@ -32,6 +39,9 @@ class AbuntooController < PayController
   end
 
   def payment
+    embed = resolve_embed(params)
+    return no_context  unless embed
+
     # embed = Embed.by_uuid(params[:uuid])
     transaction = Transaction.by_uuid(params[:transaction_uuid])
     raise "invalid transaction id: #{params[:transaction_uuid]}" unless transaction #todo confirm provisional status
@@ -59,6 +69,9 @@ class AbuntooController < PayController
   end
 
   def thanks
+    embed = resolve_embed(params)
+    return no_context  unless embed
+
     # @embed = Embed.by_uuid(params[:uuid])
     @transaction = Transaction.by_uuid(params[:transaction_uuid])
     # resolved_session_data = resolve_session_data(params)
@@ -92,8 +105,13 @@ class AbuntooController < PayController
 
   protected
 
-  def resolve_embed_uuid
-    ENV['STANDALONE_EMBED_UUID']
+  def resolve_embed(params)
+    result = TenantState.current_embed
+    unless result
+      uuid = params[:uuid] || ENV['STANDALONE_EMBED_UUID']
+      result = Embed.resolve(uuid, required: false)
+    end
+    result
   end
 
 end
