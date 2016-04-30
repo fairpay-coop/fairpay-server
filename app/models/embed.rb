@@ -27,6 +27,7 @@ class Embed < ActiveRecord::Base
   attr_data_field :description
   attr_data_field :return_url
   attr_data_field :capture_address   # list of address type: mailing, billing, shipping.  if present, then capture specified full addresses for payor
+  attr_data_field :theme
 
   # if assigned present option on 'finished' view to provide preauthorization to automatically charge saved payment information once per specified interval.
   # subfields: interval_count, interval_units, interval_description
@@ -388,6 +389,11 @@ class Embed < ActiveRecord::Base
     campaign&.available_offers
   end
 
+  # base path to use for layout and rendered views
+  def resolve_theme
+    theme || 'default'
+  end
+
 
   def entity
     Entity.new(self)
@@ -400,6 +406,7 @@ class Embed < ActiveRecord::Base
     # expose :payment_configs_data, as: :payment_configs
     expose :campaign, using: Campaign::Entity
     expose :payee, using: Profile::Entity
+    expose :resolve_theme, as: :theme
 
     # expose :offers, using: Offer::Entity
   end

@@ -5,7 +5,7 @@
 %>
 
 <div class="row">
-    <%= render 'campaign_heading', campaign: campaign %>
+    <%= render view_path('campaign_heading', embed), campaign: campaign %>
       <div class="col-md-8">
           <section id="donateSection">
               <!-- MAIN SECTION -->
@@ -125,8 +125,8 @@
 
       <div class="col-md-4">
           <aside>
-            <%= render 'campaign_progress', campaign: campaign %>
-            <%= render 'abuntoo_sidebar' %>
+            <%= render view_path('campaign_progress', embed), campaign: campaign %>
+            <%= render view_path('abuntoo_sidebar', embed) %>
           </aside>
       </div>
   </div>

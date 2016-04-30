@@ -7,15 +7,10 @@ h3.title Payment Complete
 /todo: factor out shared code with widget
 
 
-= render 'pay/receipt', transaction: transaction
-
-/- return_url = @embed.get_data_field(:return_url)
-/- if return_url
-/  br
-/  link_to "Return to #{@embed.profile.name} website", return_url
+= render view_path('receipt', embed), transaction: transaction, embed: embed
 
 - profile = transaction[:payor]
-- unless profile[:has_user]
+- unless profile[:has_user] || auth0_signed_in
   br
   br
   b You may assign a password for faster checkouts:
@@ -33,7 +28,6 @@ h3.title Payment Complete
     input type="submit" name="commit" value="Submit" class="button is-primary"
   br
 
-- if campaign
-  br
-  = render 'pay/campaign_progress', campaign: campaign
-
+/- if campaign
+/  br
+/  = render 'pay/campaign_progress', campaign: campaign

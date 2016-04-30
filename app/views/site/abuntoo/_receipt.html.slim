@@ -10,7 +10,7 @@
 /|,
 /=< transaction.payee.email
 /br
-= render 'pay/payor_payee', transaction: transaction
+= render view_path('payor_payee', embed), transaction: transaction
 
 - if transaction[:description].present?
   |Description: #{transaction[:description]}

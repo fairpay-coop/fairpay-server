@@ -4,7 +4,7 @@
 %>
 
 <div class="row">
-    <%= render 'campaign_heading', campaign: campaign %>
+    <%= render view_path('campaign_heading', embed), campaign: campaign %>
 
       <div class="col-md-8">
           <section>
@@ -62,7 +62,7 @@
           <aside>
             <a href="/donate" class="btn btn-default btnC1">Donate</a>
 
-            <%= render 'campaign_progress', campaign: campaign%>
+            <%= render view_path('campaign_progress', embed), campaign: campaign%>
 
             <%
                campaign[:offers].each do |offer|

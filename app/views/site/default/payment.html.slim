@@ -4,7 +4,9 @@
 h1.title = embed[:name]
 / - Step 2"
 
-= render 'payor_payee', transaction: transaction
+/= render 'payor_payee', transaction: transaction
+= render view_path('payor_payee', embed), transaction: transaction
+
 /|Payee: #{@transaction.payee.name}
 /br
 
@@ -51,7 +53,7 @@ br
 hr
 
 - for payment_config in @data[:payment_configs]
-  = render payment_config[:form_name], payment_config: payment_config, data: @data
+  = render view_path(payment_config[:form_name], embed), payment_config: payment_config, data: @data
   hr
 
 

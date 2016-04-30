@@ -1,0 +1,69 @@
+/|Payor:
+/b
+/  =< transaction.payor.name
+/|,
+/=< transaction.payor.email
+/br
+/|Payee:
+/b
+/  =< transaction.payee.name
+/|,
+/=< transaction.payee.email
+/br
+= render view_path('payor_payee', embed), transaction: transaction
+
+- if transaction[:description].present?
+  |Description: #{transaction[:description]}
+  br
+
+- memo = transaction[:memo]
+- if memo.present?
+  |Memo: #{memo}
+  br
+
+- if transaction[:base_amount] != transaction[:paid_amount]
+  |Base Amount: $
+  b
+    = ApplicationHelper.format_amount(transaction[:base_amount])
+  br
+|Paid Amount: $
+b
+  = ApplicationHelper.format_amount(transaction[:paid_amount])
+br
+br
+
+|Payment Method: #{transaction[:payment_type_display]}
+br
+|Transaction Fee: $#{ApplicationHelper.format_amount(transaction[:estimated_fee])}
+br
+- if transaction[:estimated_fee] > 0
+  |Fee Allocation: #{transaction[:fee_allocation_label]}
+  / ($#{format_amount(transaction.allocated_fee)})
+  br
+|Transaction Id: #{transaction[:uuid]}
+br
+|Status: #{transaction[:status]}
+br
+
+- recurring = transaction[:recurring_payment]
+- if recurring
+  br
+  |Recurring:
+  b
+    =< recurring[:interval_display]
+  br
+  - if recurring[:next_date]
+    |Next Payment: #{recurring[:next_date]}
+    br
+
+  br
+  |To see recurring payment status or to cancel go:
+  b
+    =< link_to 'here', recurring[:status_url]
+  br
+
+- return_url = transaction[:return_url]
+- if return_url
+  br
+  = link_to "Return to #{transaction[:payee][:name]} website", return_url
+  br

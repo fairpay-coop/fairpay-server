@@ -8,7 +8,9 @@ br
 
 - campaign = embed[:campaign]
 - if campaign.present?
-  = render 'pay/campaign_progress', campaign: campaign
+  / todo: factor out a 'themed_render()' helper method
+  /= render "site/#{@theme}/campaign_progress", campaign: campaign
+  = render view_path('campaign_progress', embed), campaign: campaign
 
 div id="errorMessage" style="display: none;"
 

@@ -9,6 +9,18 @@ module ApplicationHelper
   end
 
 
+  def view_path(tail, embed, base: 'site')
+    "#{base}/#{resolve_theme(embed)}/#{tail}"
+  end
+
+  def resolve_theme(embed)
+    if embed.is_a?(Embed)
+      embed.resolve_theme
+    else
+      # assume in hash format
+      embed[:theme]
+    end
+  end
 
   def amount_param(params, attr)
     puts "amount param - params: #{params.inspect}"

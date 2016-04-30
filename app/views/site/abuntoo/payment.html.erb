@@ -6,7 +6,7 @@
 %>
 
 <div class="row">
-  <%= render 'campaign_heading', campaign: campaign %>
+  <%= render view_path('campaign_heading', embed), campaign: campaign %>
 
       <div class="col-md-8">
           <section id="paymentSection">
@@ -52,7 +52,7 @@ None
               	</div>
 
                 <% if transaction[:capture_address] %>
-                  <%= render 'address_form', data: @data %>
+                  <%= render view_path('address_form', embed), data: @data %>
                 <% end %>
 
               </div>
@@ -62,12 +62,12 @@ None
               		<h5>Payment Choice - Select ONE Method</h5>
               	</div>
 
-                <%= render "fee_allocation", embed: embed, transaction: transaction %>
+                <%= render view_path("fee_allocation", embed), embed: embed, transaction: transaction %>
 
                 <%# card_config = @data[:payment_configs].find{|pc|pc[:form_name] == 'card'} %>
                 <%#= render 'card', payment_config: card_config, data: @data %>
                 <% @data[:payment_configs].each do |payment_config| %>
-                    <%= render payment_config[:form_name], payment_config: payment_config, data: @data %>
+                    <%= render view_path(payment_config[:form_name], embed), payment_config: payment_config, data: @data %>
                 <% end %>
 
               	<div class="col-md-12">
@@ -100,8 +100,8 @@ None
 
       <div class="col-md-4">
           <aside>
-            <%= render 'campaign_progress', campaign: campaign%>
-            <%= render 'abuntoo_sidebar' %>
+            <%= render view_path('campaign_progress', embed), campaign: campaign%>
+            <%= render view_path('abuntoo_sidebar', embed) %>
           </aside>
       </div>
   </div>

@@ -1,7 +1,7 @@
 class AbuntooController < PayController
   include ApplicationHelper
 
-  layout 'abuntoo'
+  layout 'site/abuntoo/application'
 
   def index
     embed = resolve_embed(params)
@@ -9,6 +9,13 @@ class AbuntooController < PayController
 
     embed_params = {} # not relevant for now
     @data = hashify( embed.embed_data(embed_params) )
+    themed_render(embed, params)
+  end
+
+  def themed_render(embed, params)
+    @theme = embed.resolve_theme
+    puts "themed render path: #{@theme}/#{params[:action]}"
+    render "site/#{@theme}/#{params[:action]}", layout: "site/#{@theme}/application"
   end
 
   def no_context
@@ -33,9 +40,8 @@ class AbuntooController < PayController
     if params[:json]
       render json: @data
     else
-      @data
+      themed_render(embed, params)
     end
-    render 'donate_raw'  if params[:raw]
   end
 
   def payment
@@ -63,9 +69,8 @@ class AbuntooController < PayController
     if params[:json]
       render json: @data
     else
-      @data
+      themed_render(embed, params)
     end
-    render 'payment_raw'  if params[:raw]
   end
 
   def thanks
@@ -86,7 +91,7 @@ class AbuntooController < PayController
     if params[:json]
       render json: @data
     else
-      @data
+      themed_render(embed, params)
     end
   end
 
@@ -98,9 +103,13 @@ class AbuntooController < PayController
   end
 
   def terms
+    embed = resolve_embed(params)
+    themed_render(embed, params)
   end
 
   def privacy
+    embed = resolve_embed(params)
+    themed_render(embed, params)
   end
 
   protected
