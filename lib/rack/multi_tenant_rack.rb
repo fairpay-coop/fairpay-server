@@ -14,6 +14,11 @@ class TenantState
   def self.current_embed
     Thread.current[:current_embed]
   end
+
+  def self.has_implied_embed
+    # note, may need to adjust this if 'current_embed' later used to hold path_info derived state
+    Thread.current[:current_embed].present?
+  end
 end
 
 module Rack

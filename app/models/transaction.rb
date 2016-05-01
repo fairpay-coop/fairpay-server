@@ -92,22 +92,29 @@ class Transaction < ActiveRecord::Base
     end
   end
 
-  #todo: figure out best way to factor out these two different url patterns
   def finished_url
-    # "#{base_url}/pay/#{embed.uuid}/thanks/#{uuid}"
-    "#{base_url}/thanks/#{uuid}"
+    resolve_url('thanks')
   end
 
+  #todo: rename this
   def step2_url
-    # "#{base_url}/pay/#{embed.uuid}/step2/#{uuid}"
-    "#{base_url}/payment/#{uuid}"
+    resolve_url('payment')
   end
 
   def address_url
-    "#{base_url}/pay/#{embed.uuid}/address/#{uuid}"
+    resolve_url('address')
   end
 
+  protected
+  def resolve_url(view)
+    if TenantState.has_implied_embed
+      "#{base_url}/#{view}/#{uuid}"
+    else
+      "#{base_url}/site/#{embed.uuid}/#{view}/#{uuid}"
+    end
+  end
 
+  public
   def card_fee_range
     embed.card_payment_service.calculate_fee(self)
   end

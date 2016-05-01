@@ -1,7 +1,7 @@
-class AbuntooController < PayController
+class SiteController < ApplicationController
   include ApplicationHelper
 
-  layout 'site/abuntoo/application'
+  layout 'site/default/application'
 
   def index
     embed = resolve_embed(params)
@@ -12,17 +12,13 @@ class AbuntooController < PayController
     themed_render(embed, params)
   end
 
-  def themed_render(embed, params)
-    @theme = embed.resolve_theme
-    puts "themed render path: #{@theme}/#{params[:action]}"
-    render "site/#{@theme}/#{params[:action]}", layout: "site/#{@theme}/application"
-  end
-
   def no_context
     render 'welcome/no_context', layout: 'application'
   end
 
+  #todo: need more generic action name
   def donate
+    #todo: factor this pattern to a 'before_method' list
     embed = resolve_embed(params)
     return no_context  unless embed
 
@@ -36,6 +32,27 @@ class AbuntooController < PayController
     @data = hashify( embed.embed_data(embed_params) )
     # @data[:auth_token] = session_auth_token
     puts "embed data: #{@data}"
+
+    #todo: factor out this pattern
+    if params[:json]
+      render json: @data
+    else
+      themed_render(embed, params)
+    end
+  end
+
+  def address
+    embed = resolve_embed(params)
+    return no_context  unless embed
+
+    transaction = Transaction.by_uuid(params[:transaction_uuid])
+    # resolved_session_data = resolve_session_data(params)
+
+    raise "invalid transaction id: #{params[:transaction_uuid]}" unless transaction #todo confirm provisional status
+
+    session[:current_url] = transaction.step2_url
+
+    @data = hashify( transaction.step2_data )
 
     if params[:json]
       render json: @data
@@ -77,13 +94,11 @@ class AbuntooController < PayController
     embed = resolve_embed(params)
     return no_context  unless embed
 
-    # @embed = Embed.by_uuid(params[:uuid])
     @transaction = Transaction.by_uuid(params[:transaction_uuid])
     # resolved_session_data = resolve_session_data(params)
     # used to redisplay after signup
     session[:current_url] = @transaction.finished_url
 
-    # embed = Embed.by_uuid(params[:uuid])
     transaction = Transaction.by_uuid(params[:transaction_uuid])
 
     @data = hashify( transaction.step2_data )  #todo: consider different view of data
@@ -99,7 +114,9 @@ class AbuntooController < PayController
     @embed = Embed.by_uuid(params[:uuid])
     @transaction = Transaction.by_uuid(params[:transaction_uuid])
     @data = hashify( @transaction.step2_data )  #todo: consider different view of data
-    render 'pay/merchant_receipt'
+    # render 'pay/merchant_receipt'
+    #todo: figure out a way automatically fall back to default for individual actions
+#    themed_render(embed, params)
   end
 
   def terms
@@ -114,6 +131,12 @@ class AbuntooController < PayController
 
   protected
 
+  def themed_render(embed, params)
+    @theme = embed.resolve_theme
+    puts "themed render path: #{@theme}/#{params[:action]}"
+    render "site/#{@theme}/#{params[:action]}", layout: "site/#{@theme}/application"
+  end
+
   def resolve_embed(params)
     result = TenantState.current_embed
     unless result
@@ -121,6 +144,17 @@ class AbuntooController < PayController
       result = Embed.resolve(uuid, required: false)
     end
     result
+  end
+
+  # return the simple hosted flow equivalent to what would be stored in the widget js cookie data
+  def resolve_session_data
+    auth_token = current_user&.ensure_persisted_auth_token
+    puts "resolve - auth_token from session: #{auth_token}"
+    {
+      # email: session[:email],
+      # authenticated_user: current_user
+      auth_token: auth_token
+    }
   end
 
 end

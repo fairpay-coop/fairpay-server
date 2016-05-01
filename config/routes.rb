@@ -24,62 +24,57 @@ Rails.application.routes.draw do
 
 
   # Landing page
-  root 'abuntoo#index'
+  root 'site#index'
   # todo: better factor these routes defs
-  get 'terms', to: 'abuntoo#terms', as: :terms
-  get 'privacy', to: 'abuntoo#privacy', as: :privacy
-  get 'donate', to: 'abuntoo#donate', as: :donate
-  get 'donate/:uuid', to: 'abuntoo#donate'
-  get 'payment/:transaction_uuid', to: 'abuntoo#payment'
-  get 'thanks/:transaction_uuid', to: 'abuntoo#thanks'
-  get 'merchant_receipt/:transaction_uuid' => 'abuntoo#merchant_receipt'
+  get 'terms', to: 'site#terms', as: :terms
+  get 'privacy', to: 'site#privacy', as: :privacy
+  get 'donate', to: 'site#donate', as: :donate
+  get 'donate/:uuid', to: 'site#donate'
+  get 'payment/:transaction_uuid', to: 'site#payment'
+  get 'thanks/:transaction_uuid', to: 'site#thanks'
+  get 'merchant_receipt/:transaction_uuid' => 'site#merchant_receipt'
+
+  get  'site/:uuid' => 'site#index'
+  get  'site/:uuid/address/:transaction_uuid' => 'site#address'
+  get  'site/:uuid/payment/:transaction_uuid' => 'site#payment'
+  get  'site/:uuid/thanks/:transaction_uuid' => 'site#thanks'
+  get  'site/:uuid/merchant_receipt/:transaction_uuid' => 'site#merchant_receipt'
+
+  #todo: move these to 'site' urls
+  get  'recurring/:uuid/cancel' => 'recurring#cancel'
+  get  'recurring/:uuid' => 'recurring#status'
 
 
   get '/welcome', to: 'welcome#index'
   get '/test', to: 'welcome#test'
 
+  # todo: this this still used??
   get  'widget/:uuid', to: 'pay#widget'
 
-  get   '/api/v1/embed/:uuid', to: 'embed#widget_data'
-  get   '/api/v1/embed/:uuid/estimate_fee' => 'embed#estimate_fee'
-
-  # need better names for these actions
-  post  '/api/v1/embed/:uuid/step1', to: 'embed#step1'
-  post  '/api/v1/embed/:uuid/step2', to: 'embed#step2'
-  # temp get method matchers until cross-site iframe post supported
-  get  '/api/v1/embed/:uuid/step1', to: 'embed#step1'
-  get  '/api/v1/embed/:uuid/step2', to: 'embed#step2'
-
-  get  '/api/v1/embed/:uuid/update_fee_allocation', to: 'embed#update_fee_allocation'
-  get  '/api/v1/embed/:uuid/send_dwolla_info', to: 'embed#send_dwolla_info'
+  # get   '/api/v1/embed/:uuid', to: 'embed#widget_data'
+  # get   '/api/v1/embed/:uuid/estimate_fee' => 'embed#estimate_fee'
+  #
+  # # need better names for these actions
+  # post  '/api/v1/embed/:uuid/step1', to: 'embed#step1'
+  # post  '/api/v1/embed/:uuid/step2', to: 'embed#step2'
+  # # temp get method matchers until cross-site iframe post supported
+  # get  '/api/v1/embed/:uuid/step1', to: 'embed#step1'
+  # get  '/api/v1/embed/:uuid/step2', to: 'embed#step2'
+  #
+  # get  '/api/v1/embed/:uuid/update_fee_allocation', to: 'embed#update_fee_allocation'
+  # get  '/api/v1/embed/:uuid/send_dwolla_info', to: 'embed#send_dwolla_info'
 
 
   get  '/dwolla/auth', to: 'dwolla#auth'
   get  '/dwolla/oauth_complete', to: 'dwolla#oauth_complete'
   get  '/dwolla/make_payment', to: 'dwolla#make_payment'
 
-
-  get  'pay/paypal' => 'pay#paypal'
-  # get  'paypal/:action', :controller => 'paypal'
+  # get  'pay/paypal' => 'pay#paypal'
   get  'paypal/checkout' => 'paypal#checkout', as: :paypal_checkout
   get  'paypal/complete_payment' => 'paypal#complete_payment', as: :paypal_complete_payment
+  # get  'pay/:uuid/update_fee_allocation/:transaction_uuid' => 'pay#update_fee_allocation'
+  # get  'pay/:uuid/send_dwolla_info/:transaction_uuid' => 'pay#send_dwolla_info'
 
-  get  'pay/:uuid' => 'pay#step1'
-  # post 'pay/:uuid/step1' => 'pay#step1_post'
-  get  'pay/:uuid/address/:transaction_uuid' => 'pay#address'
-  get  'pay/:uuid/step2/:transaction_uuid' => 'pay#step2'
-  # post 'pay/:uuid/step2' => 'pay#step2_post'  #still used by dwolla payment. todo: migrate to api call
-  # get  'pay/:uuid/pay_via_dwolla/:transaction_uuid' => 'pay#pay_via_dwolla'
-
-  get  'pay/:uuid/update_fee_allocation/:transaction_uuid' => 'pay#update_fee_allocation'
-  get  'pay/:uuid/send_dwolla_info/:transaction_uuid' => 'pay#send_dwolla_info'
-
-  get  'pay/:uuid/thanks/:transaction_uuid' => 'pay#thanks'
-  get  'pay/:uuid/merchant_receipt/:transaction_uuid' => 'pay#merchant_receipt'
-
-
-  get  'recurring/:uuid/cancel' => 'recurring#cancel'
-  get  'recurring/:uuid' => 'recurring#status'
   get  'system/perform_pending' => 'recurring#perform_all_pending'
 
 
