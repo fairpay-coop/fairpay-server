@@ -66,6 +66,7 @@ class Campaign < ActiveRecord::Base
   class Entity < Grape::Entity
     expose :name, :financial_total, :supporter_total, :financial_goal, :financial_pcnt
     expose :offers, using: Offer::Entity
+    expose :summary, :details
   end
 
 end

@@ -13,6 +13,16 @@ module ApplicationHelper
     "#{base}/#{resolve_theme(embed)}/#{tail}"
   end
 
+  # either render a referenced partial or an html blob
+  def render_content(content, embed)
+    if content.starts_with?('partial:')
+      partial = content.sub('partial:', '')
+      render view_path("content/#{partial}", embed), embed: embed
+    else
+      content.html_safe
+    end
+  end
+
   def resolve_theme(embed)
     if embed.is_a?(Embed)
       embed.resolve_theme
