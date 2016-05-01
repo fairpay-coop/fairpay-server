@@ -56,7 +56,11 @@ module DataFieldable
   end
 
   def data_json=(text)
-    self.data = JSON.parse(text)
+    if text.present?
+      self.data = JSON.parse(text)
+    else
+      self.data = {}
+    end
     puts "assigned data: #{data}"
   end
 

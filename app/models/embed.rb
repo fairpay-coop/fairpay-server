@@ -415,7 +415,8 @@ class Embed < ActiveRecord::Base
     expose :resolve_theme, as: :theme
     expose :resolve_headline, as: :headline
     expose :subheadline, :page_title
-
+    # values needed for client-side auth0 login link
+    expose :auth0_config_data, as: :auth0_config
     # expose :offers, using: Offer::Entity
   end
 
@@ -483,6 +484,26 @@ class Embed < ActiveRecord::Base
   #   nil
   # end
 
+  def auth0_config
+    # todo: support multiple user realms and auth0 provider configs
+    return @auth0_config  if defined?(@auth0_config)
+    @auth0_config = MerchantConfig.where(kind: 'auth0').first
+  end
+
+  def auth0_config_data
+    config = auth0_config
+    if config
+      config.indifferent_data.slice(:client_id, :domain)
+    end
+  end
+
+  def auth0_client_id
+    auth0_config&.get_data_field(:client_id)
+  end
+
+  def auth0_domain
+    auth0_config&.get_data_field(:domain)
+  end
 
   def self.resolve_from_host(host)
     puts "resolve from host: #{host}"

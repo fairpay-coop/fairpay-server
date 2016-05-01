@@ -2,6 +2,7 @@ class MerchantConfig < ActiveRecord::Base
   include DataFieldable
   include ApplicationHelper   # had been used for format_amount
 
+  #todo: should probably rename this to 'ServiceConfig' or 'ModuleConfig'
 
   # create_table :merchant_configs do |t|
   #   t.references :profile, index: true, foreign_key: true
@@ -22,7 +23,8 @@ class MerchantConfig < ActiveRecord::Base
       active_merchant: 'Active Merchant',
       dwolla: 'Dwolla',
       paypal: 'PayPal',
-      mailchimp: 'MailChimp'
+      mailchimp: 'MailChimp',
+      auth0: 'Auth0'
   }
 
   def self.kinds

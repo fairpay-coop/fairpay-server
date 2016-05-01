@@ -1,3 +1,8 @@
+# data specific to authentication.
+# note, should probably be named 'Identity'
+# todo: associate a user with a 'Realm' which can partition between authentication providers
+# and logical sets of users
+
 class User < ActiveRecord::Base
 
   # add_column :users, :auth_token, :string, index: true
