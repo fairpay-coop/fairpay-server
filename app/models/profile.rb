@@ -9,13 +9,14 @@ class Profile < ActiveRecord::Base
   # add_column :profiles, :first_name, :string
   # add_column :profiles, :last_name, :string
   # add_column :profiles, :data, :json
+  # add_reference :profiles, :realm, index: true, foreign_key: true
 
 
   has_many :merchant_configs
   has_many :embeds
   has_many :payment_sources
   has_many :addresses
-  # belongs_to :dwolla_token
+  belongs_to :realm
 
 
   def display_name
@@ -27,11 +28,11 @@ class Profile < ActiveRecord::Base
     User.find_by(email: email)
   end
 
-  def self.find_or_create(email: nil, name: email)
-    result = Profile.find_by(email: email)
+  def self.find_or_create(realm, email, name: email)
+    result = Profile.find_by(realm: realm, email: email)
     unless result
       name = email  unless name.present?  # don't require 'name' as the api level, default to email
-      result = Profile.create!(email: email, name: name)
+      result = Profile.create!(realm: realm, email: email, name: name)
     end
     result
   end

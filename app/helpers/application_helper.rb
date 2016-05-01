@@ -74,7 +74,8 @@ module ApplicationHelper
     authenticated_email = session_data ? session_data[:authenticated_email] : nil
     if authenticated_email
       # handle the flow with an auth0 authenticated session
-      return Profile.find_or_create(email: authenticated_email)
+      realm = TenantState.realm
+      return Profile.find_or_create(realm, authenticated_email)
     else
       # the api auth token flow
       auth_token = session_data ? session_data[:auth_token] : nil
@@ -108,7 +109,8 @@ module ApplicationHelper
   def auth0_user
     email = auth0_authenticated_email
     if email
-      user = User.find_or_create(email: email)
+      realm = TenantState.realm
+      user = User.find_or_create(realm, email)
       unless user
       end
     end
@@ -116,7 +118,8 @@ module ApplicationHelper
 
   def auth0_profile
     email = auth0_authenticated_email
-    Profile.find_or_create(email: email)  if email
+    realm = TenantState.realm
+    Profile.find_or_create(realm, email)  if email
   end
 
   def auth0_authenticated_email

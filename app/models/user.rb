@@ -7,12 +7,14 @@ class User < ActiveRecord::Base
 
   # add_column :users, :auth_token, :string, index: true
   # add_column :users, :auth_token_created_at, :datetime  - note, not yet used
+  # add_reference :users, :realm, index: true, foreign_key: true
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
+  belongs_to :realm
 
   before_save :ensure_auth_token
 
@@ -36,15 +38,32 @@ class User < ActiveRecord::Base
     Profile.find_by(email: email)
   end
 
+  def self.realm_find(realm, email)
+    User.find_by(realm: realm, email: email)
+  end
 
-  def self.find_or_create(email: nil)
-    result = User.find_by(email: email)
+  def self.find_or_create(realm, email)
+    result = realm_find(realm, email)
     unless result
-      result = User.create!(email: email)
+      result = User.create!(realm: realm, email: email)
     end
     result
   end
 
+  # devise hook
+  def self.find_for_database_authentication(warden_conditions)
+    puts "warden conditions: #{warden_conditions}"
+    email = warden_conditions[:email]
+    result = realm_find(TenantState.realm, email)
+    puts "find for auth - result: #{result}"
+    result
+  end
+
+  def self.new_with_session(params, session)
+    puts "new with session - params: #{params}, session: #{session}"
+    params[:realm_id] = TenantState.realm.id
+    new(params)
+  end
 
   class Entity < Grape::Entity
     expose :id, :email

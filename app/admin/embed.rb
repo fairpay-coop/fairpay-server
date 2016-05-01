@@ -1,11 +1,12 @@
 ActiveAdmin.register Embed do
 
-  permit_params :profile_id, :campaign_id, :name, :internal_name, :kind, :data_json, :disabled
+  permit_params :profile_id, :campaign_id, :name, :internal_name, :kind, :data_json, :disabled, :realm_id
 
 
   index do
     selectable_column
     id_column
+    column :realm
     column :uuid
     column :profile
     column :campaign
@@ -17,9 +18,13 @@ ActiveAdmin.register Embed do
     actions
   end
 
+  filter :realm
+  filter :profile
+  filter :name
 
   form do |f|
     f.inputs do
+      f.input :realm, as: :select, collection: Realm.pluck(:name, :id)
       f.input :profile, as: :select, collection: Profile.pluck(:name, :id)
       f.input :campaign, as: :select, collection: Campaign.pluck(:name, :id)
 

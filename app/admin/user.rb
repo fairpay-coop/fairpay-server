@@ -13,12 +13,14 @@ ActiveAdmin.register User do
 #   permitted
 # end
 
-  permit_params :email, :password, :password_confirmation, :auth_token
+  permit_params :email, :realm_id
+  #:password, :password_confirmation, :auth_token,
 
 
-  index do
+    index do
     selectable_column
     id_column
+    column :realm
     column :email
     column :current_sign_in_at
     column :sign_in_count
@@ -26,6 +28,7 @@ ActiveAdmin.register User do
     actions
   end
 
+  filter :realm
   filter :email
   filter :current_sign_in_at
   filter :sign_in_count
@@ -33,10 +36,11 @@ ActiveAdmin.register User do
 
   form do |f|
     f.inputs "Admin Details" do
+      f.input :realm, as: :select, collection: Realm.pluck(:name, :id)
       f.input :email
-      f.input :password
-      f.input :password_confirmation
-      f.input :auth_token
+      # f.input :password
+      # f.input :password_confirmation
+      # f.input :auth_token
     end
     f.actions
   end

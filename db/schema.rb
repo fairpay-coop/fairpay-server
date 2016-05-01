@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160409203005) do
+ActiveRecord::Schema.define(version: 20160501212947) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -149,10 +149,12 @@ ActiveRecord::Schema.define(version: 20160409203005) do
     t.string   "internal_name"
     t.boolean  "disabled",      default: false, null: false
     t.integer  "campaign_id"
+    t.integer  "realm_id"
   end
 
   add_index "embeds", ["campaign_id"], name: "index_embeds_on_campaign_id", using: :btree
   add_index "embeds", ["profile_id"], name: "index_embeds_on_profile_id", using: :btree
+  add_index "embeds", ["realm_id"], name: "index_embeds_on_realm_id", using: :btree
   add_index "embeds", ["uuid"], name: "index_embeds_on_uuid", using: :btree
 
   create_table "merchant_configs", force: :cascade do |t|
@@ -218,6 +220,16 @@ ActiveRecord::Schema.define(version: 20160409203005) do
     t.string   "first_name"
     t.string   "last_name"
     t.json     "data"
+    t.integer  "realm_id"
+  end
+
+  add_index "profiles", ["realm_id"], name: "index_profiles_on_realm_id", using: :btree
+
+  create_table "realms", force: :cascade do |t|
+    t.string   "name"
+    t.string   "internal_name"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
   create_table "recurring_payments", force: :cascade do |t|
@@ -284,9 +296,11 @@ ActiveRecord::Schema.define(version: 20160409203005) do
     t.datetime "updated_at",                          null: false
     t.string   "auth_token"
     t.datetime "auth_token_created_at"
+    t.integer  "realm_id"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+  add_index "users", ["realm_id"], name: "index_users_on_realm_id", using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
   add_foreign_key "addresses", "profiles"
@@ -294,11 +308,13 @@ ActiveRecord::Schema.define(version: 20160409203005) do
   add_foreign_key "campaigns", "profiles"
   add_foreign_key "embeds", "campaigns"
   add_foreign_key "embeds", "profiles"
+  add_foreign_key "embeds", "realms"
   add_foreign_key "merchant_configs", "profiles"
   add_foreign_key "offers", "campaigns"
   add_foreign_key "offers", "profiles"
   add_foreign_key "payment_sources", "merchant_configs"
   add_foreign_key "payment_sources", "profiles"
+  add_foreign_key "profiles", "realms"
   add_foreign_key "recurring_payments", "transactions", column: "master_transaction_id"
   add_foreign_key "transactions", "embeds"
   add_foreign_key "transactions", "merchant_configs"
@@ -308,4 +324,5 @@ ActiveRecord::Schema.define(version: 20160409203005) do
   add_foreign_key "transactions", "profiles", column: "payor_id"
   add_foreign_key "transactions", "recurring_payments"
   add_foreign_key "transactions", "transactions", column: "parent_id"
+  add_foreign_key "users", "realms"
 end

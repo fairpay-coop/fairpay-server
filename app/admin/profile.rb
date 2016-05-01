@@ -3,7 +3,7 @@ ActiveAdmin.register Profile do
 # See permitted parameters documentation:
 # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
 
-  permit_params :name, :first_name, :last_name, :email, :phone, :data_json
+  permit_params :name, :first_name, :last_name, :email, :phone, :data_json, :realm_id
 
 #
 # or
@@ -17,15 +17,20 @@ ActiveAdmin.register Profile do
   index do
     selectable_column
     id_column
+    column :realm
     column :name
     column :email
     actions
   end
 
+  filter :realm
+  filter :email
+
 
   form do |f|
     f.inputs do
       # f.input :user, as: :select, collection: User.pluck(:email, :email)
+      f.input :realm, as: :select, collection: Realm.pluck(:name, :id)
       f.input :name
       f.input :first_name
       f.input :last_name

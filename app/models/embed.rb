@@ -12,9 +12,11 @@ class Embed < ActiveRecord::Base
   #   t.string :name
   #   t.string :internal_namae
   # add_column :embeds, :disabled, :boolean, default: false, null: false  #todo: replace this with a 'status'?
+  # add_reference :embeds, :realm, index: true, foreign_key: true
 
   belongs_to :profile   # perhaps rename this to payee
   belongs_to :campaign
+  belongs_to :realm
 
   attr_data_field :payment_types
   attr_data_field :mailing_list
@@ -285,7 +287,7 @@ class Embed < ActiveRecord::Base
 
     if email.present?
       if email != '_deferred_'
-        payor = Profile.find_or_create(email: email, name: name)
+        payor = Profile.find_or_create(resolve_realm, email, name: name)
       else
         puts "email capture deferred"
       end
@@ -483,6 +485,10 @@ class Embed < ActiveRecord::Base
   # else
   #   nil
   # end
+
+  def resolve_realm
+    realm || Realm.default
+  end
 
   def auth0_config
     # todo: support multiple user realms and auth0 provider configs

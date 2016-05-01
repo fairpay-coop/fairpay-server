@@ -1,6 +1,6 @@
 class Auth0Controller < ApplicationController
 
-  layout 'abuntoo'
+  layout 'site/default/application'
 
   def callback
     puts "auth0 callback - params: #{params}, request: #{request}"
@@ -18,7 +18,8 @@ class Auth0Controller < ApplicationController
     puts "info: #{info}"
     email = info[:email]
     name = info[:name]
-    Profile.find_or_create(email: email, name: name)
+    realm = TenantState.realm
+    Profile.find_or_create(realm, email, name: name)
     # session[:authenticated_email] = email
     # note, need to use raw cookies to share state between api and rails controllers
     cookies[:authenticated_email] = {value: email, path: '/'}
@@ -30,7 +31,10 @@ class Auth0Controller < ApplicationController
 
   def failure
     puts "auth0 failure - params: #{params}"
+    # assumes embed determined by hostname
     @error_msg = request.params['message']
+    embed = TenantState.current_embed
+    themed_render(embed, params)
   end
 
 

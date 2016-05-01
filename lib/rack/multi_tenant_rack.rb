@@ -1,4 +1,5 @@
 class TenantState
+  # todo: remove 'current_' from these method names
   def self.current_host= host
     Thread.current[:current_host] = host
   end
@@ -13,6 +14,10 @@ class TenantState
 
   def self.current_embed
     Thread.current[:current_embed]
+  end
+
+  def self.realm
+    current_embed&.resolve_realm || Realm.default
   end
 
   def self.has_implied_embed
