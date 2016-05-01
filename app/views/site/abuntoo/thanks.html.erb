@@ -1,0 +1,33 @@
+<%
+   embed = @data[:embed]
+   campaign = embed[:campaign]
+   transaction = @data[:transaction]
+%>
+
+<div class="col-md-8">
+  <section id="donateSection">
+    <p style="font-size: 1.2em; font-weight: bold; font-style: italic; color: #EE6383; ">
+    Yay!
+    </p>
+    <p style="font-weight: bold;">
+      Donation Confirmation #: <%=transaction[:uuid]%>
+    </p>
+    <p>
+      Thank you for sharing your abundance today.  An email confirmation has been sent to
+      <%=transaction[:payor][:email]%>.
+      Questions? Please contact us at donations@abuntoo.com.
+    </p>
+  </section>
+</div>
+
+<div class="col-md-4">
+  <aside>
+    <p style="font-size: 1.2em; font-weight: bold; text-align: center;">
+      !!!!!!!!!  Thank You  !!!!!!!!!
+    </p>
+    <hr>
+    <%= render view_path('campaign_progress', embed), campaign: campaign %>
+    <%= render view_path('abuntoo_sidebar', embed) %>
+  </aside>
+</div>
+
