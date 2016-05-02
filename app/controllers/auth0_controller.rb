@@ -1,6 +1,6 @@
 class Auth0Controller < ApplicationController
 
-  layout 'site/default/application'
+  # layout 'default/site/application'
 
   def callback
     puts "auth0 callback - params: #{params}, request: #{request}"
@@ -29,13 +29,14 @@ class Auth0Controller < ApplicationController
     redirect_to url
   end
 
-  def failure
-    puts "auth0 failure - params: #{params}"
-    # assumes embed determined by hostname
-    @error_msg = request.params['message']
-    embed = TenantState.current_embed
-    themed_render(embed, params)
-  end
+  # note: moved to site_controller
+  # def failure
+  #   puts "auth0 failure - params: #{params}"
+  #   # assumes embed determined by hostname
+  #   @error_msg = request.params['message']
+  #   embed = TenantState.current_embed
+  #   themed_render(embed, params)
+  # end
 
 
   def logout

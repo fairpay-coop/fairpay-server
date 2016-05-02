@@ -8,16 +8,27 @@ module ApplicationHelper
     TenantState.current_host || ENV['BASE_URL']
   end
 
-
-  def view_path(tail, embed, base: 'site')
-    "#{base}/#{resolve_theme(embed)}/#{tail}"
+  # return path to theme's view if exists, otherwise default view
+  def view_path(tail, embed, subpath: 'site', with_fallback: true)
+    # "#{base}/#{resolve_theme(embed)}/#{tail}"
+    theme = resolve_theme(embed)
+    if with_fallback
+      # allow fall back to default view if themed view doesn't exists for current action
+      # beware, this is pretty hacked. should figure out a cleaner solution here
+      theme_spec = "#{Rails.root}/app/views/#{theme}/#{subpath}/*#{tail}.*"
+      puts "theme spec: #{theme_spec} - glob count: #{Dir.glob(theme_spec).size}"
+      base_path = Dir.glob(theme_spec).present? ? theme : 'default'
+    else
+      base_path = theme
+    end
+    "#{base_path}/#{subpath}/#{tail}"
   end
 
   # either render a referenced partial or an html blob
   def render_content(content, embed)
     if content.starts_with?('partial:')
       partial = content.sub('partial:', '')
-      render view_path("content/#{partial}", embed), embed: embed
+      render view_path("content/#{partial}", embed, with_fallback: false), embed: embed
     else
       content.html_safe
     end

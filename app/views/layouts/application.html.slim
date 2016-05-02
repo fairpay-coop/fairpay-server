@@ -1,14 +1,15 @@
+// beware, this file is not expected to be used
+//  superceeded by: default/layouts/application.html.slim
+
 doctype html
 html
   head
     meta content=("text/html; charset=UTF-8") http-equiv="Content-Type" /
-    title FairpayServer
     = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true
     = javascript_include_tag 'application', 'data-turbolinks-track' => true
     = csrf_meta_tags
   body
     p.notice= notice
     p.alert= alert
-    = render partial: 'layouts/navbar.html.slim'
     .container
       = yield

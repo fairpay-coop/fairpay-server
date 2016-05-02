@@ -1,7 +1,7 @@
 class SiteController < ApplicationController
   include ApplicationHelper
 
-  layout 'site/default/application'
+  # layout 'site/default/application'
 
   def index
     embed = resolve_embed(params)
@@ -116,7 +116,7 @@ class SiteController < ApplicationController
     @data = hashify( @transaction.step2_data )  #todo: consider different view of data
     # render 'pay/merchant_receipt'
     #todo: figure out a way automatically fall back to default for individual actions
-#    themed_render(embed, params)
+    themed_render(embed, params)
   end
 
   def terms
@@ -129,12 +129,20 @@ class SiteController < ApplicationController
     themed_render(embed, params)
   end
 
+  def auth_failure
+    puts "auth0 failure - params: #{params}"
+    # assumes embed determined by hostname
+    @error_msg = request.params['message']
+    embed = TenantState.current_embed
+    themed_render(embed, params)
+  end
+
   protected
 
-  def themed_render(embed, params)
+  def themed_render(embed, params, layout: 'application')
     @theme = embed.resolve_theme
-    puts "themed render path: #{@theme}/#{params[:action]}"
-    render "site/#{@theme}/#{params[:action]}", layout: "site/#{@theme}/application"
+    path = view_path(params[:action], embed)
+    render path, layout: "#{Rails.root}/app/views/#{@theme}/layouts/#{layout}"
   end
 
   def resolve_embed(params)

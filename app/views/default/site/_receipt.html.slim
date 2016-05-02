@@ -1,4 +1,4 @@
-= render 'site/default/payor_payee', transaction: transaction
+= render 'default/site/payor_payee', transaction: transaction
 
 - if transaction[:description].present?
   |Description: #{transaction[:description]}
@@ -50,7 +50,7 @@ br
     =< link_to 'here', recurring[:status_url]
   br
 
-- unless mode && mode == :email
+- unless defined?(mode) && mode == :email
   - return_url = transaction[:return_url]
   - if return_url
     br
