@@ -61,8 +61,13 @@ class User < ActiveRecord::Base
 
   def self.new_with_session(params, session)
     puts "new with session - params: #{params}, session: #{session}"
-    params[:realm_id] = TenantState.realm.id
+    realm = TenantState.realm
+    email = params[:email]
+    Profile.find_or_create(realm, email)  # gurantee associated profile record exists
+    params[:realm_id] = realm.id
     new(params)
+
+
   end
 
   class Entity < Grape::Entity

@@ -1,16 +1,4 @@
-/|Payor:
-/b
-/  =< transaction.payor.name
-/|,
-/=< transaction.payor.email
-/br
-/|Payee:
-/b
-/  =< transaction.payee.name
-/|,
-/=< transaction.payee.email
-/br
-= render view_path('payor_payee', embed), transaction: transaction
+= render 'site/default/payor_payee', transaction: transaction
 
 - if transaction[:description].present?
   |Description: #{transaction[:description]}
@@ -62,8 +50,9 @@ br
     =< link_to 'here', recurring[:status_url]
   br
 
-- return_url = transaction[:return_url]
-- if return_url
-  br
-  = link_to "Return to #{transaction[:payee][:name]} website", return_url
-  br
+- unless mode && mode == :email
+  - return_url = transaction[:return_url]
+  - if return_url
+    br
+    = link_to "Return to #{transaction[:payee][:name]} website", return_url
+    br

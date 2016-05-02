@@ -10,7 +10,7 @@ b = transaction.embed.display_name
 br
 br
 
-= render 'pay/payor_payee', transaction: @data[:transaction]
+= render 'site/default/payor_payee', transaction: @data[:transaction]
 
 - if transaction.description.present?
   |Description: #{transaction.description}
