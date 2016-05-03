@@ -6,10 +6,10 @@ class PaymentNotifier < ApplicationMailer
     @transaction = transaction
     @data = hashify( transaction.step2_data )
     handler = transaction.theme_handler
-    @from = handler.email_from
+    from = handler.email_from
     subject = handler.payor_receipt_subject
     # subject = "Payment Receipt - #{@transaction.payee.name}"
-    mail( to: @transaction.payor.email, subject: subject,
+    mail( to: @transaction.payor.email, from: from, subject: subject,
           template_path: template_path('receipt', transaction.embed) )
   end
 
@@ -17,10 +17,10 @@ class PaymentNotifier < ApplicationMailer
     @transaction = transaction
     @data = hashify( transaction.step2_data )
     handler = transaction.theme_handler
-    @from = handler.email_from
+    from = handler.email_from
     subject = handler.payee_receipt_subject
     # subject = "Payment Received - #{@transaction.payor.name}"
-    mail( to: @transaction.payee.email, subject: subject,
+    mail( to: @transaction.payee.email, from: from, subject: subject,
     template_path: template_path('receipt', transaction.embed) )
   end
 
@@ -28,10 +28,10 @@ class PaymentNotifier < ApplicationMailer
     @transaction = transaction
     @data = hashify( transaction.step2_data )
     handler = transaction.theme_handler
-    @from = handler.email_from
+    from = handler.email_from
     subject = handler.dwolla_info_subject
     # subject = "More about Dwolla"
-    mail( to: @transaction.payor.email, subject: subject,
+    mail( to: @transaction.payor.email, from: from, subject: subject,
           template_path: template_path('receipt', transaction.embed) )
   end
 
