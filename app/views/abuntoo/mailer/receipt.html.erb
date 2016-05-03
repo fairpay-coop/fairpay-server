@@ -1,0 +1,67 @@
+<%
+  transaction = @data[:transaction]
+  embed = @data[:embed]
+%>
+<%
+#<p>
+#  Subject: Abuntoo Donation Receipt  transaction[:reference_number]  <br>
+#  From: donations@abuntoo.com <br/>
+#</p>
+%>
+<p>
+  Dear <%= transaction[:payor][:name] %>,  <%# todo: make sure first name is split out %>
+</p>
+<p>
+  Thank you for sharing your abundance today with your generous donation to the
+  <b>&quot;<%= embed[:headline] %>&quot;</b>.
+  At Abuntoo, we are proud to be of service by connecting you to worthy causes and wonderful
+  thank-you gifts provided by the local business community.  Please save this email for your records,
+  and refer to your confirmation # should you need to contact us for any reason.
+</p>
+<p>
+  The Abuntoo Team
+</p>
+<br/>
+<br/>
+<p>
+  -----------------<br/>
+  Donor Name: <%= transaction[:payor][:name] %><br/>
+  Donation Amount: $<%= ApplicationHelper.format_amount(transaction[:base_amount]) %><br/>
+  Recipient: <%= transaction[:payee][:name] %>, a 501(c)(3) organization<br/>
+  Federal Tax ID #: <%= transaction[:payee][:tax_id] %><br/>
+</p>
+<p>
+  For your donation today, you have opted to receive the following thank-you gift(s).
+  The estimated fair market value of each gift, if applicable, is shown below.
+  (We exclude goods or services that are not available for sale, or certain vouchers that have no cash or commercial value.)
+  Your donation in excess of the fair market value of items received is tax-deductible to the extent allowed by law.
+</p>
+<%
+   offers = transaction[:offers]
+   if offers.present?
+     offers.each do |offer|
+%>
+<p>
+<b><%= offer[:name] %></b><br/>
+Fair Market Value:
+  <% if offer[:financial_value].present? %>
+      $<%= ApplicationHelper.format_amount(offer[:financial_value]) %><br/>
+  <% else %>
+      n/a
+  <% end %>
+<br/>
+Redemption: <%= offer[:redemption_details] %>
+</p>
+    <%
+       end
+       else
+    %>
+<p><b>No Gift</b></p>
+<%
+   end
+%>
+<br/>
+<br/>
+<p>
+  Todo: Footer with Abuntoo info including Twitter, FB, website etc.
+</p>

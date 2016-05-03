@@ -33,6 +33,7 @@ class Offer < ActiveRecord::Base
   attr_data_field :redeemable_in
   attr_data_field :ships_to
   attr_data_field :shipping_address_needed
+  attr_data_field :redemption_details
 
   after_initialize :assign_uuid
 
@@ -96,6 +97,7 @@ class Offer < ActiveRecord::Base
     expose :summary, :details, :financial_value
     expose :remaining, :limit, :availability, :allocated
     expose :provided_by, :provider_website, :redeemable_in, :ships_to, :shipping_address_needed
+    expose :redemption_details
   end
 
 end

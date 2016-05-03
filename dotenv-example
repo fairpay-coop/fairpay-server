@@ -32,6 +32,8 @@ SMTP_DOMAIN=fairpay.coop
 SMTP_ADDRESS=smtp.sendgrid.net
 SMTP_PORT=587
 
+MAILER_DEFAULT_FROM=system@fairpay.coop
+
 
 
 # used to generate fully qualified urls from service tier

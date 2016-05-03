@@ -399,6 +399,14 @@ class Embed < ActiveRecord::Base
     theme || 'default'
   end
 
+  def theme_handler
+    theme_class.new(self)
+  end
+
+  def theme_class
+    "#{resolve_theme.camelize}Theme".constantize
+  end
+
   def resolve_headline
     headline || name
   end

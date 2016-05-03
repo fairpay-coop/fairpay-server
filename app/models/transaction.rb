@@ -77,6 +77,10 @@ class Transaction < ActiveRecord::Base
   #   get_data_field(:memo)
   # end
 
+  # A more friendly reference number to provide to end users
+  def reference_number
+    uuid  #todo: allocate a unique 6 digit number when transaction completed
+  end
 
   def amount
     paid_amount || base_amount
@@ -479,6 +483,11 @@ class Transaction < ActiveRecord::Base
   end
 
 
+  def theme_handler
+    embed.theme_class.new(nil, self)
+  end
+
+
   def entity
     Entity.new(self)
   end
@@ -499,6 +508,7 @@ class Transaction < ActiveRecord::Base
     expose :memo, :estimated_fee
     expose :resolve_return_url, as: :return_url
     expose :recurring_payment, using: RecurringPayment::Entity
+    expose :reference_number
 
     #todo: figure out better way to automatically represent decimal values as json numbers
     def base_amount

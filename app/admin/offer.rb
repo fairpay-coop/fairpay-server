@@ -1,6 +1,11 @@
 ActiveAdmin.register Offer do
 
-  permit_params :uuid, :internal_name, :name, :summary, :details, :profile_id, :campaign_id, :kind, :status, :data_json, :financial_value, :limit, :allocated, :expiry_date, :minimum_contribution, :contribution_interval_count, :contribution_interval_units
+  permit_params :uuid, :internal_name, :name, :summary, :details, :profile_id, :campaign_id, :kind, :status,
+                :financial_value, :limit, :allocated, :expiry_date, :minimum_contribution,
+                :contribution_interval_count, :contribution_interval_units,
+                :provided_by, :provider_website, :redeemable_in, :ships_to, :shipping_address_needed,
+                :redemption_details
+  #:data_json,
 
 
   index do
@@ -29,7 +34,7 @@ ActiveAdmin.register Offer do
       f.input :status
       f.input :summary
       f.input :details
-      f.input :data_json, as: :text
+      # f.input :data_json, as: :text
 
       f.input :financial_value
       f.input :limit
@@ -38,6 +43,13 @@ ActiveAdmin.register Offer do
       f.input :minimum_contribution
       f.input :contribution_interval_count #todo: select options
       f.input :contribution_interval_units
+
+      f.input :provided_by
+      f.input :provider_website
+      f.input :redeemable_in
+      f.input :ships_to
+      f.input :shipping_address_needed, as: :boolean
+      f.input :redemption_details, as: :text
 
     end
     f.actions

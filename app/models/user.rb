@@ -27,7 +27,6 @@ class User < ActiveRecord::Base
     auth_token
   end
 
-
   def ensure_auth_token
     if auth_token.blank?
       self.auth_token = generate_auth_token

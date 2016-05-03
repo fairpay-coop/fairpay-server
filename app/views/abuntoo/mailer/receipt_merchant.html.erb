@@ -1,0 +1,56 @@
+<%
+   transaction = @data[:transaction]
+   payor = transaction[:payor]
+%>
+<p>
+  Subject: Abuntoo Donation Received - Please Thank Donor!
+</p>
+<p>
+  Dear <%= transaction[:payee][:name] %>,
+</p>
+<p>
+  Woohoo!  Today we received a contribution of
+  $<%= ApplicationHelper.format_amount(transaction[:base_amount]) %>
+  on behalf of your organization.
+</p>
+<p>
+  Here's the donor's information:
+</p>
+<p>
+  <%= payor[:name] %><br>
+  <%= payor[:email] %>
+  <%# todo address if available %>
+</p>
+<p>
+  We do our disbursements on the 3rd & 18th of each month.  We use Dwolla
+  <a href="http://www.dwolla.com">www.dwolla.com</a>, a free service for money transfer between businesses.
+  If you don't already have a Dwolla account, you will be prompted to create one when we send you the funds.
+</p>
+<p>
+  Please acknowledge the donor for the full amount and issue a tax receipt according to your own procedures.
+  The donor understands that the donation does not confer any membership privileges or benefits, but that you
+  may choose to extend them at your discretion.
+</p>
+<p>
+  The amount that you will receive from each donation will be net of Abuntoo's fee of 3.5% and Stripe's
+  credit card transaction fees of 2.9% + 30 cents.  We advise you to book these fees as a fundraising expense.
+</p>
+<p>
+  We envision Abuntoo to be a booster rocket to your own fundraising efforts.  Please tell the world
+  about <a href="http://www.abuntoo.io">www.abuntoo.io</a>, and <a href="https://twitter.com/abuntoo">follow</a>
+  and “<a href="https://www.facebook.com/abuntoo">Like</a>” us on social media.  Abuntoo is pioneering
+  a collaborative model of fundraising and we hope you'd help galvanize those among your donor base who
+  are business owners to offer incentives to generate support for the non-profit community while promoting
+  themselves.  In addition, we love exploring creative ways to partner up for specific events or campaigns.
+  Give a holler any time!
+</p>
+<p>
+  Let's grow the Gift Economy together.
+</p>
+<p>
+  In abundance,
+</p>
+<p>
+  Cecilia<br/>
+  Founder & CEO
+</p>
