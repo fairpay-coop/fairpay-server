@@ -12,15 +12,18 @@ Rails.application.routes.draw do
   get '/auth/failure', to: 'site#auth_failure'
   get '/auth/logout', to: 'auth0#logout', as: :logout
 
-  devise_for :admin_users, ActiveAdmin::Devise.config
-  ActiveAdmin.routes(self)
+  # devise_for :admin_users, ActiveAdmin::Devise.config
+  # ActiveAdmin.routes(self)
 
   # devise_for :users
 
-  devise_for :users, controllers: {
-      sessions: 'users/sessions',
-      registrations: 'users/registrations'
-  }
+  devise_for :users, ActiveAdmin::Devise.config
+
+  # devise_for :users, ActiveAdmin::Devise.config, controllers: {
+  #     sessions: 'users/sessions',
+  #     registrations: 'users/registrations'
+  # }
+  ActiveAdmin.routes(self)
 
 
   # Landing page

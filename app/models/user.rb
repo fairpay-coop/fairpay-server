@@ -4,6 +4,7 @@
 # and logical sets of users
 
 class User < ActiveRecord::Base
+  rolify
 
   # add_column :users, :auth_token, :string, index: true
   # add_column :users, :auth_token_created_at, :datetime  - note, not yet used

@@ -1,0 +1,2 @@
+class RealmPolicy < ApplicationPolicy
+end

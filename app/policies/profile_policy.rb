@@ -1,0 +1,2 @@
+class ProfilePolicy < ApplicationPolicy
+end

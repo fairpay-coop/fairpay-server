@@ -1,5 +1,7 @@
 class Realm < ActiveRecord::Base
 
+  resourcify  # rolify hook
+
   # create_table :realms do |t|
   #   t.string :name
   #   t.string :internal_name

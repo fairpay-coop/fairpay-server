@@ -1,0 +1,2 @@
+class EmbedPolicy < ApplicationPolicy
+end

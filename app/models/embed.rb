@@ -3,6 +3,9 @@ class Embed < ActiveRecord::Base
   include UuidAssignable
   include ApplicationHelper
 
+  resourcify  # rolify hook
+
+
   # create_table :embeds do |t|
   #   t.string :uuid, index: true
   #   t.references :profile, index: true, foreign_key: true

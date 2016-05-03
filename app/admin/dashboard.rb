@@ -30,4 +30,9 @@ ActiveAdmin.register_page "Dashboard" do
     #   end
     # end
   end # content
+
+  def index
+    authorize :dashboards, :index?
+  end
+
 end

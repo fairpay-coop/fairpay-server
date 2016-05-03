@@ -51,8 +51,10 @@ gem 'unicorn'
 # Use Bulma as html/css foundation
 gem "bulma-rails", github: 'farmisen/bulma-rails'
 
-# Use devise for authentication
+# Use authentication and authorization
 gem 'devise'
+gem 'pundit'
+gem 'rolify'
 
 # auth0
 gem 'omniauth', '~> 1.3.1'

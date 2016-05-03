@@ -1,0 +1,2 @@
+class MerchantConfigPolicy < ApplicationPolicy
+end
