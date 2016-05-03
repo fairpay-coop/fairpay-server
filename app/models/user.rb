@@ -34,8 +34,13 @@ class User < ActiveRecord::Base
     end
   end
 
+  #todo: revisit profile association
   def profile
-    Profile.find_by(email: email)
+    Profile.find_by(email: email, realm_id: realm_id)
+  end
+
+  def profile_id
+    Profile.where(email: email, realm_id: realm_id).pluck.first
   end
 
   def self.realm_find(realm, email)
@@ -74,6 +79,26 @@ class User < ActiveRecord::Base
     expose :id, :email
   end
 
+  #
+  # access helpers
+  #
+
+  def is_super_admin?
+    has_role? :superadmin
+  end
+
+  def is_realm_admin?
+    roles.where(name: :admin, resource_type: 'Realm').present?
+  end
+
+  def is_embed_owner?
+    roles.where(name: :owner, resource_type: 'Embed').present? || profile&.embeds.present?
+      #Embed.count(profile_id: profile_id) > 0
+  end
+
+  def is_owner?(embed)
+    has_role?(:owner, embed) || profile_id == embed.profile_id
+  end
 
   private
 

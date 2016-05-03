@@ -25,7 +25,6 @@ class Campaign < ActiveRecord::Base
   #   t.integer :supporter_pledges  # count of people who have made soft pledges
   #   t.timestamps null: false
 
-
   belongs_to :profile
 
   has_many :embeds
@@ -34,6 +33,16 @@ class Campaign < ActiveRecord::Base
 
   after_initialize :assign_uuid
 
+  #todo: add realm directly to campaign
+
+  def realm
+    embed&.realm
+  end
+
+  # todo: clean up primary embed associated with campaign
+  def embed
+    embeds.first
+  end
 
   def display_name
     name

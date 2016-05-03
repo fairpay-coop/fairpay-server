@@ -24,7 +24,7 @@ class ApplicationPolicy
   end
 
   def update?
-    create?
+    show?
   end
 
   def edit?
@@ -36,7 +36,7 @@ class ApplicationPolicy
   end
 
   def destroy_all?
-    update?
+    user.has_role? :superadmin  #todo need to understand this better
   end
 
   def scope

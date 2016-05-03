@@ -37,6 +37,13 @@ class Offer < ActiveRecord::Base
 
   after_initialize :assign_uuid
 
+  def realm
+    campaign&.realm
+  end
+
+  def embed
+    campaign&.embed
+  end
 
   def display_name
     name
