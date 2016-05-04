@@ -38,9 +38,10 @@ ActiveAdmin.register User do
     f.inputs "Admin Details" do
       f.input :realm, as: :select, collection: Realm.pluck(:name, :id)
       f.input :email
-      # f.input :password
-      # f.input :password_confirmation
-      # f.input :auth_token
+
+      f.input :password
+      f.input :password_confirmation
+      f.input :auth_token
     end
     f.actions
   end
