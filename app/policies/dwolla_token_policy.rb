@@ -1,0 +1,2 @@
+class DwollaTokenPolicy < ApplicationPolicy
+end

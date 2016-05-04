@@ -47,6 +47,9 @@ class Address < ActiveRecord::Base
     kind.to_sym
   end
 
+  def realm
+    profile&.realm
+  end
 
 
   def entity

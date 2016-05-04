@@ -1,0 +1,2 @@
+class BinbaseOrgPolicy < ApplicationPolicy
+end
