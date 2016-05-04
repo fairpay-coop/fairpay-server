@@ -12,6 +12,19 @@ class SiteController < ApplicationController
     themed_render(embed, params)
   end
 
+  # def index2
+  #   embed = resolve_embed(params)
+  #   return no_context  unless embed
+  #
+  #   embed_params = {} # not relevant for now
+  #   @data = hashify( embed.embed_data(embed_params) )
+  #   # themed_render(embed, params)
+  #
+  #   render 'abuntoo/site/index2', layout: nil
+  #
+  # end
+
+
   def no_context
     render 'welcome/no_context', layout: 'application'
   end

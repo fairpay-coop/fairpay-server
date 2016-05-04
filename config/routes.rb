@@ -28,6 +28,7 @@ Rails.application.routes.draw do
 
   # Landing page
   root 'site#index'
+  # get  'index2' => 'site#index2'
   # todo: better factor these routes defs
   get 'terms', to: 'site#terms', as: :terms
   get 'privacy', to: 'site#privacy', as: :privacy
