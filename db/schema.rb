@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160503204452) do
+ActiveRecord::Schema.define(version: 20160504133829) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -120,10 +120,12 @@ ActiveRecord::Schema.define(version: 20160503204452) do
     t.integer  "supporter_pledges", default: 0,   null: false
     t.datetime "created_at",                      null: false
     t.datetime "updated_at",                      null: false
+    t.integer  "realm_id"
   end
 
   add_index "campaigns", ["internal_name"], name: "index_campaigns_on_internal_name", using: :btree
   add_index "campaigns", ["profile_id"], name: "index_campaigns_on_profile_id", using: :btree
+  add_index "campaigns", ["realm_id"], name: "index_campaigns_on_realm_id", using: :btree
   add_index "campaigns", ["uuid"], name: "index_campaigns_on_uuid", using: :btree
 
   create_table "dwolla_tokens", force: :cascade do |t|
@@ -324,6 +326,7 @@ ActiveRecord::Schema.define(version: 20160503204452) do
   add_foreign_key "addresses", "profiles"
   add_foreign_key "addresses", "profiles", column: "organization_id"
   add_foreign_key "campaigns", "profiles"
+  add_foreign_key "campaigns", "realms"
   add_foreign_key "embeds", "campaigns"
   add_foreign_key "embeds", "profiles"
   add_foreign_key "embeds", "realms"

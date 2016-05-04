@@ -77,6 +77,10 @@ class Transaction < ActiveRecord::Base
   #   get_data_field(:memo)
   # end
 
+  def realm
+    embed&.realm
+  end
+
   # A more friendly reference number to provide to end users
   def reference_number
     uuid  #todo: allocate a unique 6 digit number when transaction completed

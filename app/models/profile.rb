@@ -14,6 +14,7 @@ class Profile < ActiveRecord::Base
 
   has_many :merchant_configs
   has_many :embeds
+  has_many :campaigns
   has_many :payment_sources
   has_many :addresses
   belongs_to :realm

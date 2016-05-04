@@ -91,13 +91,34 @@ class User < ActiveRecord::Base
     roles.where(name: :admin, resource_type: 'Realm').present?
   end
 
-  def is_embed_owner?
-    roles.where(name: :owner, resource_type: 'Embed').present? || profile&.embeds.present?
-      #Embed.count(profile_id: profile_id) > 0
+  # the realm for which this user is an admin
+  def admined_realm
+    id = admined_realm_id
+    id ? Realm.find(id) : nil
   end
 
-  def is_owner?(embed)
-    has_role?(:owner, embed) || profile_id == embed.profile_id
+  def admined_realm_id
+    roles.where(name: :admin, resource_type: 'Realm').first&.resource_id
+  end
+
+  #todo: consider simplifying this to only rely on role or only on profile
+
+  def owned_embed_ids
+    roles.where(name: :owner, resource_type: 'Embed').pluck(:resource_id) + profile.embed_ids
+  end
+
+  def owned_campaign_ids
+    roles.where(name: :owner, resource_type: 'Campaign').pluck(:resource_id) + profile.campaign_ids
+  end
+
+  def is_embed_owner?
+    roles.where(name: :owner, resource_type: ['Embed','Campaign']).present? || profile&.embeds.present?
+  end
+
+  # will work for Embed or Campaign records
+  def is_owner?(record)
+    return true  if record.is_a?(Profile) && record.id = profile_id  #todo: do some duck typing here
+    has_role?(:owner, record) || profile_id == record&.profile_id
   end
 
   private
