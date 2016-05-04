@@ -2,12 +2,6 @@
   transaction = @data[:transaction]
   embed = @data[:embed]
 %>
-<%
-#<p>
-#  Subject: Abuntoo Donation Receipt  transaction[:reference_number]  <br>
-#  From: donations@abuntoo.com <br/>
-#</p>
-%>
 <p>
   Dear <%= transaction[:payor][:name] %>,  <%# todo: make sure first name is split out %>
 </p>
