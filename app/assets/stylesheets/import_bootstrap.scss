@@ -1,9 +1,10 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
 
-body {
-  padding-top: 70px;
-}
+// this was pushing down the abuntoo layout. need to figure out better way to co-exist styles.
+//body {
+//  padding-top: 70px;
+//}
 
 
 .navbar-nav > li > span {
