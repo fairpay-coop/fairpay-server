@@ -14,7 +14,7 @@ ActiveAdmin.register User do
 # end
 
   permit_params :email, :realm_id
-  #:password, :password_confirmation, :auth_token,
+  # :password, :password_confirmation, :auth_token,
 
 
     index do
@@ -39,9 +39,9 @@ ActiveAdmin.register User do
       f.input :realm, as: :select, collection: Realm.pluck(:name, :id)
       f.input :email
 
-      f.input :password
-      f.input :password_confirmation
-      f.input :auth_token
+      # f.input :password
+      # f.input :password_confirmation
+      # f.input :auth_token
     end
     f.actions
   end
