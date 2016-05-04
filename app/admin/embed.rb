@@ -1,6 +1,9 @@
 ActiveAdmin.register Embed do
 
   permit_params :profile_id, :campaign_id, :name, :internal_name, :kind, :data_json, :disabled, :realm_id
+                # :payment_types, :mailing_list, :recurrence, :suggested_amounts, :fee_allocations,
+                # :capture_memo, :consider_this, :amount, :description, :return_url, :capture_address,
+                # :theme, :headline, :subheadline, :page_title, :request_preauthorization
 
 
   index do
@@ -31,6 +34,24 @@ ActiveAdmin.register Embed do
       # f.input :kind, as: :select, collection: Embed.kinds.map { |key,name| [name, key] }
       f.input :name
       f.input :internal_name
+
+      #todo: friendly edit of these fields
+      # f.input :payment_types
+      # f.input :mailing_list
+      # f.input :recurrence
+      # f.input :suggested_amounts
+      # f.input :fee_allocations
+      # f.input :capture_memo, as: :boolean
+      # f.input :consider_this
+      # f.input :amount
+      # f.input :description
+      # f.input :return_url
+      # f.input :capture_address   # list of address type: mailing, billing, shipping.  if present, then capture specified full addresses for payor
+      # f.input :theme
+      # f.input :headline
+      # f.input :subheadline
+      # f.input :page_title   # html head title tag
+      # f.input :request_preauthorization, as: :boolean
 
       f.input :data_json, as: :text
 

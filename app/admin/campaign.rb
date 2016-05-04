@@ -1,10 +1,14 @@
 ActiveAdmin.register Campaign do
 
-  permit_params :uuid, :internal_name, :name, :summary, :details, :profile_id, :kind, :status, :data_json, :starting_date, :closing_date, :financial_goal, :financial_minimum, :financial_total, :financial_pledges, :supporter_goal, :supporter_minimum, :supporter_total, :supporter_pledges
+  permit_params :uuid, :internal_name, :name, :summary, :details, :profile_id, :kind, :status, :data_json,
+                :starting_date, :closing_date, :financial_goal, :financial_minimum, :financial_total,
+                :financial_pledges, :supporter_goal, :supporter_minimum, :supporter_total, :supporter_pledges,
+                :realm_id
 
   index do
     selectable_column
     id_column
+    column :realm
     column :name
     column :profile
     column :financial_goal
@@ -39,6 +43,8 @@ ActiveAdmin.register Campaign do
 
   form do |f|
     f.inputs do
+      f.input :realm, as: :select, collection: Realm.pluck(:name, :id)
+
       f.input :profile, as: :select, collection: Profile.pluck(:name, :id)
       f.input :kind  #, as: :select, collection: Campaign.kinds.map { |key,name| [name, key] }
       f.input :name
