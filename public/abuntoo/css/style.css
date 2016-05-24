@@ -1,5 +1,16 @@
+@font-face {
+    font-family: DIN Light Regular;
+    src: url(../fonts/din-light-font.otf);
+}
+@font-face {
+    font-family: Emilys Candy;
+    src: url(../fonts/EmilysCandy-Regular.ttf);
+}
 main {
   margin-top: 100px;
+}
+p {
+  font-weight: 200;
 }
 h1 {
   font-size: 40px;
@@ -16,6 +27,25 @@ h6 {
 a {
   color: #E82C58;
   text-decoration: none !important;
+}
+a:focus, a:hover {
+    color: #23527c;
+}
+.noColorBoldLinks {
+  color: inherit;
+  font-weight: bold;
+}
+.blueLinksAbuntoo {
+  color: #6383ee;
+}
+.fontBlack {
+  color: black;
+}
+.fontItalic {
+  font-style: italic;
+}
+.textCenter {
+  text-align: center;
 }
 .clearB {
   clear: both;
@@ -62,12 +92,19 @@ a {
   font-family: Helvetica;
   font-weight: bold;
   line-height: 1;
+  font-size: 38px;
+}
+.mainTagline a {
+  color: #EE6383;
 }
 .mainSubline {
   color: #707070;
   text-align: center;
-  font-family: sans-serif;
+  font-family: 'DIN Light Regular';
   font-weight: normal;
+  max-width: 800px;
+  margin: 0;
+  margin-left: 122px;
   line-height: 1;
 }
 .mainSectionMenu {
@@ -79,7 +116,7 @@ a {
 }
 .mainSectionMenu li {
   display: inline-block;
-  min-width: 125px;
+  min-width: 22.4%;
   padding-bottom: 10px;
   margin-right: 22px;
   border-bottom: 6px solid rgba(201, 238, 99, 1);
@@ -101,24 +138,31 @@ a {
   padding: 10px;
 }
 .btnC1:hover, .btnC1:active, .btnC1:focus, .btnC1:visited {
-  color: white !important;
-  background-color: #E8486D !important;
+  background-color: #E82C58 !important;
   border-color: white !important;
 }
 .progress-bar {
   background: rgba(201, 238, 99, 1);
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  color: rgba(201, 238, 99, 1);
 }
 .progress {
   background: rgba(112, 112, 112, 1);
   border-radius: 0;
   border: none;
   margin-bottom: 10px;
+  height: 9px !important;
+  box-shadow: none;
 }
 .donateCounter {
+  width: 90%;
+  margin: 0 auto;
+  display: block;
   margin-top: 25px;
 }
 .donateCounter hr {
-  border-bottom: 2px solid rgba(204, 204, 204, 1);
+  border-bottom: 1px solid rgba(204, 204, 204, 1);
   margin-top: 10px;
   margin-bottom: 15px;
 }
@@ -151,6 +195,7 @@ a {
   background: #E8E8E7;
   padding: 12px 20px;
   margin-top: 20px;
+  cursor: pointer;
 }
 .rewardHelp {
   color: #EE6383;
@@ -172,7 +217,7 @@ a {
   line-height: 1.2;
   margin: 0;
   margin-top: 20px;
-  font-family: georgia;
+  font-family: 'DIN Light Regular';
   font-weight: 100;
   font-size: 18px;
   text-align: left;
@@ -180,13 +225,13 @@ a {
 .rewardSubline {
   line-height: 1.2;
   margin: 10px 0;
-  font-family: sans-serif;
+  font-family: 'DIN Light Regular';
   font-weight: 100;
   font-size: 15px;
   text-align: left;
 }
 .donorRewardBox hr {
-  border-bottom: 2px solid rgba(238, 99, 131, 1);
+  border-bottom: 1px solid rgba(238, 99, 131, 1);
   margin-bottom: 10px;
   margin-top: 10px;
 }
@@ -220,7 +265,8 @@ a {
 #shareBlockSection {
   background: #171717;
   padding: 15px;
-  margin-top: 25px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .topFeeds {
@@ -228,7 +274,7 @@ a {
   background: #EE8863;
   color: white;
   margin-bottom: 10px;
-  font-family: georgia;
+  font-family: Georgia;
   font-size: 18px;
 }
 .topFeedBlue {
@@ -236,9 +282,6 @@ a {
 }
 .topFeedPink {
   background: #EE6383;
-}
-.sectionAEnc {
-  min-height: 370px;
 }
 .sectionBEnc {
   min-height: 180px;
@@ -250,23 +293,30 @@ a {
 }
 .footerCopyright {
   color: black;
-  font-size: 15px;
+  font-size: 18px;
   text-align: center;
+  
 }
 footer {
-  background: #DEF5A1;
+  background: #DEF5A1 !important;
   padding: 40px 0;
   margin-top: 60px;
+  font-family: 'DIN Light Regular'
+}
+footer a {
+  font-weight: bold;
 }
 .bottomMenu {
   color: black;
   padding: 0;
-  text-align: center;
+  text-align: left;
+  max-width: 410px;
+  margin-left: 383px;
 }
 .bottomMenu li {
   display: inline-block;
-  margin-right: 10px;
-  font-size: 15px;
+  margin-right: 14px;
+  font-size: 14px;
 }
 .bottomMenu li a {
   text-decoration: none;
@@ -275,27 +325,18 @@ footer {
 .bottomMenu .social {
   font-size: 22px;
 }
-
-.termsPage p {
-  font-family: Helvetica;
-  font-size: 20px;
-  color: black;
-  line-height: 1.2
-}
 .termsPage h3 {
-  font-family: Helvetica;
+  font-family: 'Din Light Regular';
   font-size: 22px;
-  color: darkgrey;
-  font-weight: 400;
-  margin: 35px 0;
-  margin-bottom: 20px;
+  color: rgb(112, 112, 112);
+  font-weight: bold;
+  margin: 28px 0;
 }
-.termsPage h6 {
-  font-family: Georgia;
-  font-size: 20px;
-  color: #EE6383;
-  font-weight: 600;
-  font-style: italic;
+.termsPage p {
+  font-size: 18px;
+  font-family: Helvetica;
+  font-weight: lighter;
+  margin: 20px 0;
 }
 .taglineTerms {
   font-family: georgia;
@@ -304,19 +345,53 @@ footer {
   font-weight: 600;
 }
 .termModify {
-  font-size: 17px;
+  font-size: 15px;
+  color: darkgrey !important;
+}
+.privacyPage h3 {
+  font-family: 'Din Light Regular';
+  font-size: 22px;
+  color: rgb(112, 112, 112);
+  font-weight: bold;
+  margin: 28px 0;
+}
+.privacyPage h6 {
+  margin: 0;
+  font-family: Georgia;
+  font-size: 20px;
+  color: rgb(238, 99, 131);
+  margin-bottom: -18px;
+  font-weight: bold;
+  font-style: italic;
+}
+.privacyPage p {
+  font-size: 18px;
+  font-family: Helvetica;
+  font-weight: lighter;
+  margin: 20px 0;
+}
+.taglinePrivacy {
+  font-family: georgia;
+  font-size: 25px;
+  color: #6383EE;
+  font-weight: 600;
+}
+.privacyModify {
+  font-size: 15px;
   color: darkgrey !important;
 }
 #donateSection, #paymentSection {
   background: #F2FBD8;
   padding: 30px;
-  font-family: Arial;
+  font-family: 'Din Light Regular';
 }
 #donateSection h3 {
   margin: 0;
   line-height: 1;
   font-family: georgia;
   font-style: italic;
+      margin-top: 8px;
+    margin-left: 40px;
 }
 #donateSection #donateSelectBox{
     background: none;
@@ -325,21 +400,28 @@ footer {
     border: 1px solid black;
     border-radius: 0 !important;
     background-color: #EEF6D7;
-    -webkit-appearance: none;
     padding: 5px;
     text-align: center;
-    width: 60px;
+    width: 70px;
+    outline: none;
+    font-family: Georgia;
 }
-
+#donateSection #donateSelectBoxCurrency {
+  display: inline-block;
+  font-size: 22px;
+  margin: 0 auto;
+  margin-right: 5px;
+  font-family: Georgia;
+}
 #donateCurrency {
   font-size: 20px;
   margin-right: 2px;
 }
-
 #donateNote {
   margin-top: 10px;
   font-family: georgia;
   font-style: italic;
+  margin-left: 18px;
 }
 .btnC2 {
     border-radius: 50px;
@@ -348,13 +430,13 @@ footer {
     border: solid rgba(228, 76, 119, 1) 0px;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6), inset 0 -1px 1px rgba(255, 255, 255, 0.75);
     color: white;
-    padding: 12px;
+    padding: 10px;
     display: block;
     width: 120px;
     text-align: center;
     margin-top: 20px;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 22px;
     font-weight: bold;
 }
 #giftProposal {
@@ -369,7 +451,7 @@ footer {
 .donateGift {
   padding: 20px 0;
   border-bottom: 2px solid rgba(238, 99, 131, 1);
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   margin-left: 40px;
 }
 .donateGift h6{
@@ -377,6 +459,8 @@ footer {
   float: left;
   margin: 0;
   line-height: 1;
+  font-family: 'DIN Light Regular';
+  font-weight: bold;
 }
 .donateGift h5{
   font-size: 18px;
@@ -392,6 +476,12 @@ footer {
   margin: 0;
   margin-top: 2px;
   margin-bottom: 20px;
+  font-family: 'DIN Light Regular';
+  font-weight: bold;
+}
+.donateGift p {
+  font-family: 'DIN Light Regular';
+  font-weight: bold;
 }
 .donateGift .donateFrom span{
   font-style: italic;
@@ -401,6 +491,10 @@ footer {
 }
 .donateGift .donateGifyRedeem {
   float: right;
+}
+.donateGift a {
+  font-family: 'DIN Light Regular';
+  font-weight: bold;
 }
 .checkMark {
     position: absolute;
@@ -417,11 +511,18 @@ footer {
   background: #ECECEC;
   outline: none;
   border: none;
+  font-family: 'Din Light Regular';
+  font-weight: bold;
 }
 .ui-accordion .ui-accordion-content {
   background: #ECECEC;
   padding: 15px;
   border: none;
+}
+.ui-accordion-content p {
+  font-family: 'Din Light Regular';
+  font-size: 17px;
+  color: gray;
 }
 #sideBarPwrdImg {
   margin: 40px auto;
@@ -443,6 +544,8 @@ footer {
   border: 1px solid #CCCCCC;
   font-weight: normal;
   text-align: left;
+  font-family: 'DIN Light Regular';
+  font-weight: bold;
 }
 #paymentSection input {
     display: block;
@@ -454,6 +557,7 @@ footer {
     padding: 15px;
     border-radius: 8px;
     margin-bottom: 20px;
+    font-family: georgia !important;
 }
 #paymentSection textarea {
     display: block;
@@ -465,6 +569,7 @@ footer {
     padding: 15px;
     border-radius: 8px;
     margin-bottom: 20px;
+    font-family: georgia !important;
 }
 #input_first_name, #input_last_name {
   display: inline-block !important;
@@ -477,8 +582,8 @@ footer {
 .authorizeBTN {
     margin-bottom: 16px;
     margin-left: 20px;
-    margin-right: 40px;
-    margin-top: 10px;
+    margin-top: 14px;
+    width: 188px;
 }
 #input10, #input11 {
     display: inline-block !important;
@@ -489,6 +594,11 @@ footer {
     width: 20px;
     font-size: 20px;
     margin: 0;
+    float: left;
+}
+#paymentAgree span {
+    float: right;
+    width: 93%;
 }
 .submitBTN {
     margin-left: 20px;
@@ -505,14 +615,492 @@ footer {
   margin-right: 40px;
 }
 .paypalBTN {
-  margin-top: 5px;
-  margin-left: 20px;
-  margin-right: 40px;
+  width: 160px;
+  margin-top: 62px;
+  /*JE todo*/
+  /*margin-top: 5px;*/
+  /*margin-left: 20px;*/
+  /*margin-right: 40px;*/
 }
 hr {
   border-bottom: 1px solid rgba(204, 204, 204, 1);
 }
 #paymentTerms {
   font-size: 12px;
+  /*JE todo display: inline-block;*/
+}
+.donorBox {
+    border: 3px solid rgba(255, 255, 255, 1);
+    background-color: rgba(99, 201, 238, 0.1);
+    border-radius: 0;
+    box-shadow: -0.26px 0.97px 4px 0px rgba(0,0,0,0.6);
+    padding: 8px;
+    height: 230px;
+}
+.avatarDonor {
+    width: 70px;
+    float: left;
+}
+.titleDonor {
+    float: left;
+    margin-left: 2px;
+}
+.titleDonor i {
+  font-size: 22px;
+}
+.titleDonor h5{
+    font-size: 18px;
+    text-align: left;
+    font-weight: bold;
+    font-family: georgia;
+    color: #C1153D;
+    margin: 0;
+    margin-top: 10px;
+}
+.titleDonor ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 25px;
+}
+.titleDonor ul a {
+    color: #999999;
+}
+.titleDonor ul li {
+    display: inline-block;
+    margin-right: 6px;
+}
+.donorBox p {
+    margin-top: 8px;
+    font-family: 'Din Light Regular';
+}
+.donorBox p span{
+    font-weight: bold;
+    font-size: 16px;
+}
+.margTop {
+    margin-top: 30px;
+
+}
+.joinSignin h5#headingSection{
+    font-family: georgia;
+    margin-bottom: 30px;
+}
+.joinSignin h5#subHead {
+    font-weight: normal;
+    font-size: 20px;
+    line-height: 1.4;
+    margin: 0;
+    font-family: 'Din Light Regular';
+}
+.btnC3 {
+    background-color: #0065A9;
+    transition: border-color 0.4s ease 0s, background-color 0.4s ease 0s;
+    border: solid rgba(228, 76, 119, 1) 0px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6), inset 0 -1px 1px rgba(255, 255, 255, 0.75);
+    color: white;
+    padding: 18px;
+    display: block;
+    width: 120px;
+    text-align: center;
+    margin: 0 auto;
+    margin-top: 30px;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+    width: 70%;
+    border-radius: 4px;
+}
+.btnC3:hover {
+    background: #E82C58;
+    color: white;
+}
+.invertBtnC3 {
+    background: #E82C58;
+}
+.invertBtnC3:hover {
+    background: #0065A9;
+}
+.orSign {
+  font-family: georgia;
+  font-size: 18px;
+  font-weight: normal;
+  text-align: center;
+  margin: 28px 0;
+}
+.joinSignInput {
+  margin-top: 40px;
+}
+.joinSignin input {
+    width: 70%;
+    padding: 18px;
+    margin: 0 auto;
+    display: block;
+    outline: none;
+    font-family: georgia;
+    text-transform: lowercase;
+    border: 1px solid rgb(197, 197, 197);
+}
+.joinSignInput h5 {
+  margin-top: 25px;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1.4;
+  font-family: 'Din Light Regular';
+}
+.navbar-brand {
+  padding: 0;
+}
+.navbar-nav li, .navbar-nav a  {  
+  height: 100%;
+}
+.navbar-nav a  {  
+  padding-bottom: 0 !important;
+  padding-top: 5px !important;
+}
+.navbar {
+  min-height: 54px !important;
+}
+.navbar-nav {
+  padding-top: 12px;
+}
+.navbar-right {
+  padding-top: 0;
+}
+.btnC1, .btnC2, .btnC3 {
+  text-transform: lowercase;
+}
+.donateBTN {
+    padding: 15px 22px;
+    font-size: 20px;
+    background: #e82c58;
+    width: 91%;
+    margin: 0 auto;
+    display: block;
+}
+.donateBTN:hover  {
+    color: #23527c;
+}
+.mainPageFrame {
+    height: 325px;
+    margin-bottom: 10px;
+}
+.shareBox h3 {
+  color: white;
   display: inline-block;
+  font-size: 16px;
+  float: left;
+  margin: 0;
+  margin-top: 10px;
+
+}
+.shareBox {
+  margin-bottom: 10px;
+  float: right;
+}
+.shareBoxDonate {
+  margin-bottom: 10px;
+  width: 91%;
+  background: rgba(0, 0, 0, 1);
+  border-radius: 5px;
+  float: none;
+  margin: 0 auto;
+  padding: 7px 15px;
+}
+.shareBox ul {
+list-style: none;
+padding: 0;
+margin: 0;
+width: 150px;
+display: inline-block;
+margin-left: 20px;
+}
+.shareBox li {
+display: inline-block;
+margin-right: 10px;
+}
+/*.gallery {*/
+/*margin: 0 auto -60px;*/
+/*}*/
+.gallery .img-responsive {
+margin-bottom: 0px;
+}
+footer, .footer-push {
+min-height: 65px;
+background-color: #f5f5f5;
+}
+.social-icons {
+margin-right: 15px;
+font-size: 40px;
+line-height: 75px;
+}
+.grid-custom .col-sm-6,
+.grid-custom .col-xs-6,
+.grid-custom .col-xs-12,
+.grid-custom .col-sm-3 {
+padding:5px;
+}
+.lastFeedMainPage {
+  min-height: 186px;
+}
+@media screen and (max-width: 1100px) {
+  .mainSectionMenu li {
+  display: block;
+  width: 95%;
+  padding-bottom: 10px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+
+  }
+}
+@media screen and (max-width: 1000px) {
+  .mainSubline {
+    text-align: center;
+    margin: 0 auto;
+  }
+}
+@media screen and (max-width: 1200px) {
+  .mainSubline {
+    margin-left: 0px;
+  }
+}
+.storyTitle {
+  background: #FCE7E0;
+  border-bottom: none;
+  padding: 10px;
+  padding-left: 15px;
+  margin-bottom: 2px;
+  margin-top: 0;
+}
+.ls-wrapper {
+  clear: both;
+  overflow: auto;
+  position: relative;
+  background: #FCE7E0;
+}
+.panel-wrapper {
+  background: #FCE7E0;
+  padding: 0 45px;
+}
+.ls-nav a {
+    background: #F1D5CC;
+}
+.ls-nav .current a {
+    background: #FCE7E0;
+}
+.ls-responsive .ls-nav-right-arrow {
+    right: 3px;
+    top: 80px;
+    background: url('../images/right-arrow.svg');
+}
+.ls-responsive .ls-nav-left-arrow {
+    left: 3px;
+    top: 80px;
+    background: url('../images/left-arrow.svg');
+    transform: rotate(180deg);
+}
+#main-slider {
+}
+.ls-nav {
+  border-top: 2px solid white;
+}
+.sliderBox {
+  display: block;
+  height: 300px
+}
+.sliderBox img {
+  float: left;
+  width: 58%;
+  height: 300px;
+}
+.sliderBox p {
+  color: #707070;
+  text-align: left;
+  float: right;
+  width: 38%;
+  font-family: Helvetica;
+  font-weight: 100;
+  height: 300px;
+  margin: 0;
+  padding: 10px 0;
+  text-overflow: clip;
+  font-size: 19px;
+  line-height: 1.2;
+}
+.sliderBox .title {
+  display: none;
+}
+.ls-nav ul li a {
+  font-weight: bold;
+  color: #EE6383;
+  font-size: 50px;
+  margin: 0;
+  line-height: 0.5;
+  background: #FCE7E0;
+}
+.ls-nav ul { 
+  text-align: center;
+}
+.ls-nav ul .current a {
+    color: white;
+}
+.ls-nav a:hover {
+    background: #E82C58;
+    color: white;
+    text-shadow: none;
+}
+#paymentSection #input6 {
+    display: block;
+    width: 100%;
+    background: transparent;
+    box-shadow: none !important;
+    outline: none;
+    border: 1px solid rgba(204, 204, 204, 1);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    height: 51px;
+}
+.labelEnc span {
+  font-weight: normal;
+}
+.publicNav {
+  margin-top: 13px;
+  color: #6383ee;
+  font-size: 19px;
+  font-family: 'Emilys Candy'; 
+  margin-right: 20px;
+  cursor: pointer;
+}
+.centerDonorText {
+  text-align: center;
+  margin-top: 30px !important;
+  font-family: Georgia !important;
+}
+.centerDonorText span{
+  font-weight: bold;
+}
+.storyBorderMainP {
+  border-bottom: 5px solid black;
+  margin: 5px 0;
+}
+.btnC1 .btnC2 .btnC3 .btnC4 {
+  font-family: Helvetica;
+  font-weight: bold;
+}
+#summaryPaymentSectionTop input {
+  width: 49%;
+  display: inline-block;
+}
+#summaryPaymentSectionTop input:nth-of-type(2) {
+  margin-left: 5px;
+}
+#paymentSectionFirstRow {
+  margin-top: 50px;
+}
+#paymentSectionFirstRow h5:nth-of-type(1) {
+  margin-top: 16px;
+}
+#paymentAnonyCheck p {
+  font-family: 'Din Light Regular';
+  display: inline-block;
+}
+#paymentAnonyCheck input {
+  display: inline-block;
+  width: 22px;
+  font-size: x-large;
+}
+.dwollaChecksPaymentSection input{
+  display: inline-block !important;
+  width: 22px !important;
+  font-size: x-large;
+  margin-bottom: 2px !important;
+}
+.dwollaChecksPaymentSection span{
+  line-height: 2.4;
+}
+.dwollaChecksPaymentSection p {
+  min-height: 92px;
+}
+.dwollaChecksPaymentSection .dwollaNoEmailConfirm {
+    margin-left: 23px;
+    line-height: 1.2;
+    font-family: Georgia;
+    font-style: italic;
+    color: #6383EE;
+    display: block;
+}
+#paymentTerms input {
+    display: inline-block;
+    width: 22px;
+    font-size: x-large;
+}
+.confirmationCounter {
+    border-top: 10px solid rgba(201, 238, 99, 1);
+    padding-top: 25px;
+    margin-top: 0;
+}
+.thankYouConfirmation {
+    width: 90%;
+    margin: 0 auto;
+    display: block;
+    margin-bottom: 7px;
+    font-family: Georgia;
+    letter-spacing: 2.6px;
+    text-align: center;
+}
+#confirmationSection {
+  background: #F2FBD8;
+  padding: 30px;
+  font-family: 'Din Light Regular';
+}
+#confirmationYay {
+  color: #EE6383;
+  font-family: Georgia;
+  font-weight: bold;
+  font-style: italic;
+}
+#confirmationNumber {
+  font-weight: bold;
+  margin: 20px auto;
+  margin-top: 12px;
+}
+#confirmationSection p{
+  font-size: 20px;
+  line-height: 1.3;
+}
+#confirmationSection hr {
+  border-bottom: 4px solid rgba(204, 204, 204, 1);
+}
+.confirmMwBTN {
+  margin-top: 0;
+  background: rgba(232, 44, 88, 1);
+  width: 145px;
+}
+.confirmMwText {
+  margin-top: 13px;
+}
+.donorMwEnc {
+  margin-bottom: 20px;
+}
+.shareBoxConfirm {
+  width: 145px;
+  border-radius: 50px;
+  margin: 0;
+  padding: 15px 15px;
+}
+.shareBoxConfirm img {
+  width: 24px;
+}
+.shareBoxConfirm li {
+  margin-right: 2px;
+}
+.shareBoxConfirm ul {
+  margin-left: 0;
+  width: 100%;
+  text-align: center;
+}
+.headingSectionLeftA .mainTagline ,  .headingSectionLeftA .mainSubline {
+  text-align: left;
+  margin-left: 0;
 }
