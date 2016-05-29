@@ -48,7 +48,8 @@
                   <%
                      campaign[:offers].each do |offer|
                   %>
-                      <div class="donateGift" id="<%= offer[:uuid] %>">
+                      <a class="anchor" id="<%= offer[:uuid] %>"></a>
+                      <div class="donateGift">
                         <a class="checkMark">
                           <%= check_box_tag :chosen_offer_uuid, offer[:uuid], false, class: 'offer', 'data-min-contrib': offer[:minimum_contribution], id: "chosen_offer_uuid_#{offer[:uuid]}" %>
                         </a>
