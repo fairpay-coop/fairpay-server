@@ -38,3 +38,8 @@ MAILER_DEFAULT_FROM=system@fairpay.coop
 
 # used to generate fully qualified urls from service tier
 BASE_URL=http://local.fairpay.coop:3000
+
+# for importing offers from a google sheet
+GOOGLE_IMPORT_DOCUMENT_KEY=...
+GOOGLE_IMPORT_CAMPAIGN_IDENTIFIER=...
+GOOGLE_IMPORT_PROFILE_ID=13
