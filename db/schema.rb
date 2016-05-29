@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160504133829) do
+ActiveRecord::Schema.define(version: 20160528235213) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -192,6 +192,7 @@ ActiveRecord::Schema.define(version: 20160504133829) do
     t.integer  "minimum_contribution",        default: 0, null: false
     t.integer  "contribution_interval_count"
     t.string   "contribution_interval_units"
+    t.string   "sort"
   end
 
   add_index "offers", ["campaign_id"], name: "index_offers_on_campaign_id", using: :btree

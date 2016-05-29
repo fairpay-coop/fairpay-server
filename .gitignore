@@ -9,6 +9,7 @@
 
 /config/database.yml
 #/config/paypal.yml
+/config/google-config.json
 
 
 # Ignore the default SQLite database.

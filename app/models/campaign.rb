@@ -29,7 +29,7 @@ class Campaign < ActiveRecord::Base
 
   has_many :embeds
 
-  has_many :offers
+  has_many :offers, -> { order(:sort) }
 
   after_initialize :assign_uuid
 

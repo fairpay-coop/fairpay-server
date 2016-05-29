@@ -27,6 +27,7 @@ class Offer < ActiveRecord::Base
 
   belongs_to :profile
   belongs_to :campaign
+  has_many :transactions, dependent: :nullify
 
   attr_data_field :provided_by
   attr_data_field :provider_website
