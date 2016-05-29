@@ -43,8 +43,10 @@ class GoogleImport
     data = {campaign: @campaign, profile: @profile}
     @field_map.each do |col, field_name|
       value = @worksheet[row, col]
-      data[field_name] = value
-      puts "#{field_name} -> #{value}"
+      if value.present?
+        data[field_name] = value
+        puts "#{field_name} -> #{value}"
+      end
     end
     Offer.create!(data)
   end

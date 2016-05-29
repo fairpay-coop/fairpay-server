@@ -31,6 +31,9 @@ a {
 a:focus, a:hover {
     color: #23527c;
 }
+.orangeTxt {
+  color: rgb(238, 136, 99);
+}
 .noColorBoldLinks {
   color: inherit;
   font-weight: bold;
@@ -46,6 +49,9 @@ a:focus, a:hover {
 }
 .textCenter {
   text-align: center;
+}
+.textRight {
+  text-align: right;
 }
 .clearB {
   clear: both;
@@ -198,11 +204,13 @@ a:focus, a:hover {
   cursor: pointer;
 }
 .rewardHelp {
-  color: #EE6383;
-  font-size: 15px;
-  font-style: normal;
-  float: right;
-  text-decoration: none;
+    color: #EE6383;
+    font-size: 18px;
+    font-style: italic;
+    float: right;
+    text-decoration: none;
+    font-family: cursive;
+    line-height: 1;
 }
 .rewardPrice {
   line-height: 1;
@@ -311,7 +319,7 @@ footer a {
   padding: 0;
   text-align: left;
   max-width: 410px;
-  margin-left: 383px;
+  margin-left: 34.6%;
 }
 .bottomMenu li {
   display: inline-block;
@@ -348,14 +356,14 @@ footer a {
   font-size: 15px;
   color: darkgrey !important;
 }
-.privacyPage h3 {
+.faqPage h3 {
   font-family: 'Din Light Regular';
   font-size: 22px;
   color: rgb(112, 112, 112);
   font-weight: bold;
   margin: 28px 0;
 }
-.privacyPage h6 {
+.faqPage h6 {
   margin: 0;
   font-family: Georgia;
   font-size: 20px;
@@ -364,19 +372,51 @@ footer a {
   font-weight: bold;
   font-style: italic;
 }
-.privacyPage p {
+.faqPage p {
   font-size: 18px;
   font-family: Helvetica;
   font-weight: lighter;
   margin: 20px 0;
 }
-.taglinePrivacy {
+.faqPrivacy {
   font-family: georgia;
   font-size: 25px;
   color: #6383EE;
   font-weight: 600;
 }
-.privacyModify {
+.faqModify {
+  font-size: 15px;
+  color: darkgrey !important;
+}
+.faqPage h3 {
+  font-family: 'Din Light Regular';
+  font-size: 22px;
+  color: rgb(112, 112, 112);
+  font-weight: bold;
+  margin: 28px 0;
+}
+.faqPage h6 {
+  margin: 0;
+  font-family: Georgia;
+  font-size: 20px;
+  color: rgb(238, 99, 131);
+  margin-bottom: -18px;
+  font-weight: bold;
+  font-style: italic;
+}
+.faqPage p {
+  font-size: 18px;
+  font-family: Helvetica;
+  font-weight: lighter;
+  margin: 20px 0;
+}
+.taglineFaq {
+  font-family: georgia;
+  font-size: 25px;
+  color: #6383EE;
+  font-weight: 600;
+}
+.faqModify {
   font-size: 15px;
   color: darkgrey !important;
 }
@@ -413,10 +453,6 @@ footer a {
   margin-right: 5px;
   font-family: Georgia;
 }
-#donateCurrency {
-  font-size: 20px;
-  margin-right: 2px;
-}
 #donateNote {
   margin-top: 10px;
   font-family: georgia;
@@ -450,7 +486,7 @@ footer a {
 }
 .donateGift {
   padding: 20px 0;
-  border-bottom: 2px solid rgba(238, 99, 131, 1);
+  border-bottom: 1px solid rgba(238, 99, 131, 1);
   margin-bottom: 10px;
   margin-left: 40px;
 }
@@ -521,8 +557,11 @@ footer a {
 }
 .ui-accordion-content p {
   font-family: 'Din Light Regular';
-  font-size: 17px;
+  font-size: 15.4px;
   color: gray;
+}
+.ui-accordion .ui-accordion-content {
+  height: 200px;
 }
 #sideBarPwrdImg {
   margin: 40px auto;
@@ -571,13 +610,12 @@ footer a {
     margin-bottom: 20px;
     font-family: georgia !important;
 }
-#input_first_name, #input_last_name {
-  display: inline-block !important;
-  width: 48% !important;
-}
 #input5, #input6, #input7 {
   display: inline-block !important;
-  width: 32% !important;
+  width: 29% !important;
+}
+#input5 {
+  width: 40% !important;
 }
 .authorizeBTN {
     margin-bottom: 16px;
@@ -587,7 +625,7 @@ footer a {
 }
 #input10, #input11 {
     display: inline-block !important;
-    width: 49% !important;
+    width: 49.5% !important;
 }
 #paymentAgree input {
     display: inline-block;
@@ -601,33 +639,17 @@ footer a {
     width: 93%;
 }
 .submitBTN {
-    margin-left: 20px;
     margin-right: 40px;
-}
-.dwollaAuthorizeBTN {
-  margin-top: 5px;
-  margin-left: 20px;
-  margin-right: 40px;
-}
-.addressBTN {
-  margin-top: -5px;
-  margin-left: 20px;
-  margin-right: 40px;
+    width: 160px;
 }
 .paypalBTN {
-  width: 160px;
-  margin-top: 62px;
-  /*JE todo*/
-  /*margin-top: 5px;*/
-  /*margin-left: 20px;*/
-  /*margin-right: 40px;*/
+    width: 160px;
 }
 hr {
   border-bottom: 1px solid rgba(204, 204, 204, 1);
 }
 #paymentTerms {
   font-size: 12px;
-  /*JE todo display: inline-block;*/
 }
 .donorBox {
     border: 3px solid rgba(255, 255, 255, 1);
@@ -676,7 +698,6 @@ hr {
 }
 .donorBox p span{
     font-weight: bold;
-    font-size: 16px;
 }
 .margTop {
     margin-top: 30px;
@@ -768,17 +789,20 @@ hr {
   padding-top: 0;
 }
 .btnC1, .btnC2, .btnC3 {
-  text-transform: lowercase;
+    text-transform: lowercase;
+    font-family: Helvetica;
+    font-weight: bold;
 }
 .donateBTN {
-    padding: 15px 22px;
-    font-size: 20px;
+    padding: 13px 22px;
+    font-size: 22px;
     background: #e82c58;
     width: 91%;
     margin: 0 auto;
+    font-weight: bold;
     display: block;
 }
-.donateBTN:hover  {
+a.donateBTN:hover  {
     color: #23527c;
 }
 .mainPageFrame {
@@ -798,6 +822,9 @@ hr {
   margin-bottom: 10px;
   float: right;
 }
+.shareBox img {
+  width: 36px;
+}
 .shareBoxDonate {
   margin-bottom: 10px;
   width: 91%;
@@ -806,6 +833,7 @@ hr {
   float: none;
   margin: 0 auto;
   padding: 7px 15px;
+  padding-right: 0;
 }
 .shareBox ul {
 list-style: none;
@@ -813,7 +841,7 @@ padding: 0;
 margin: 0;
 width: 150px;
 display: inline-block;
-margin-left: 20px;
+margin-left: 37px;
 }
 .shareBox li {
 display: inline-block;
@@ -842,28 +870,9 @@ padding:5px;
 }
 .lastFeedMainPage {
   min-height: 186px;
+  margin-bottom: 0;
 }
-@media screen and (max-width: 1100px) {
-  .mainSectionMenu li {
-  display: block;
-  width: 95%;
-  padding-bottom: 10px;
-  margin: 0 auto;
-  margin-bottom: 20px;
 
-  }
-}
-@media screen and (max-width: 1000px) {
-  .mainSubline {
-    text-align: center;
-    margin: 0 auto;
-  }
-}
-@media screen and (max-width: 1200px) {
-  .mainSubline {
-    margin-left: 0px;
-  }
-}
 .storyTitle {
   background: #FCE7E0;
   border-bottom: none;
@@ -906,7 +915,7 @@ padding:5px;
 }
 .sliderBox {
   display: block;
-  height: 300px
+  min-height: 300px
 }
 .sliderBox img {
   float: left;
@@ -989,7 +998,7 @@ padding:5px;
   font-weight: bold;
 }
 #summaryPaymentSectionTop input {
-  width: 49%;
+  width: 44%;
   display: inline-block;
 }
 #summaryPaymentSectionTop input:nth-of-type(2) {
@@ -1059,11 +1068,19 @@ padding:5px;
   font-family: Georgia;
   font-weight: bold;
   font-style: italic;
+  padding-right: 15px;
+  padding-left: 15px;
 }
 #confirmationNumber {
   font-weight: bold;
   margin: 20px auto;
   margin-top: 12px;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+#confirmationFirstP {
+  padding-right: 15px;
+  padding-left: 15px;
 }
 #confirmationSection p{
   font-size: 20px;
@@ -1090,7 +1107,7 @@ padding:5px;
   padding: 15px 15px;
 }
 .shareBoxConfirm img {
-  width: 24px;
+  width: 32px;
 }
 .shareBoxConfirm li {
   margin-right: 2px;
@@ -1100,7 +1117,248 @@ padding:5px;
   width: 100%;
   text-align: center;
 }
-.headingSectionLeftA .mainTagline ,  .headingSectionLeftA .mainSubline {
-  text-align: left;
-  margin-left: 0;
+/*.headingSectionLeftA .mainTagline ,  .headingSectionLeftA .mainSubline {*/
+/*  text-align: left;*/
+/*  margin-left: 0;*/
+/*}*/
+#profilePage {
+  font-family: 'Din Light Regular';
+  font-size: 22px;
+}
+#profilePage .abuntooTagLine{
+    font-family: Helvetica;
+    font-weight: 600;
+    color: #707070;
+    border-top: 4px solid #707070;
+    border-bottom: 4px solid #707070;
+    padding: 7px 0;
+    text-align: center;
+    max-width: 100%;
+    margin: 0;
+    font-size: 26.7px;
+}
+.profileNav {
+    margin-top: 0;
+    background: rgba(238, 136, 99, 1);
+    width: 120px;
+    display: inline-block;
+    margin-right: 8px;
+}
+.profileNavBlue {
+  background: rgba(99, 131, 238, 1);
+}
+.sectionOneProfile {
+  margin-top: 70px;
+  min-height: 180px;
+}
+.sectionOneProfile p {
+  line-height: 1;
+}
+.sectionOneProfile p span {
+    margin-left: 50px;
+    color: black;
+}
+.sectionOneProfile .labelEncProfile {
+  width: 180px;
+}
+img.profilePStar {
+  width: 24px;
+  height: 24px;
+  margin-left: 10px;
+  margin-bottom: 10px;
+}
+.sectionTwoProfile {
+  margin-top: 30px;
+  min-height: 355px;
+}
+.sectionTwoProfile h3 {
+  font-family: Georgia;
+  font-style: italic;
+  
+}
+.sectionTwoProfile p {
+  color: rgb(160, 160, 159);
+  font-size: 20px;
+  line-height: 1.1;
+}
+.sectionTwoProfile input {
+  font-size: x-large;
+  margin-left: 6px;
+}
+.sectionThreeProfile {
+  margin-top: 30px;
+  min-height: 180px;
+}
+.sectionThreeProfile p{
+  line-height: 1;
+  color: rgb(160, 160, 159);
+}
+#profilePage .donorBox {
+  width: 250px;
+  font-size: 14px;
+  margin-right: 12px;
+}
+#profilePage .donorBox .titleDonor {
+    float: left;
+    margin-left: 10px;
+}
+.sectionFourProfile input {
+    position: absolute;
+    left: -12px;
+    margin-top: 9px;
+}
+.sectionFourProfile p {
+    color: rgb(160, 160, 159);
+    line-height: 1;
+    margin-bottom: 25px;
+}
+.sectionFourProfile {
+  min-height: 240px;
+  margin-top: 30px;
+}
+.sectionFiveProfile {
+  min-height: 240px;
+  margin-top: 30px;
+}
+.sectionFiveProfile h3{
+  font-family: Georgia;
+  margin-bottom: 25px;
+}
+.sectionFiveProfile .notificationProfile {
+  font-size: 14px;
+}
+.sectionFiveProfile p {
+  margin-bottom: 25px;
+}
+.sectionFiveProfile .profilePStar {
+  margin-bottom: 25px;
+}
+#storyNav, #galleryNav,  {
+  display: block;
+  position: relative;
+  top: -150px;
+  visibility: hidden;
+}
+.navbar-toggle .icon-bar {
+    display: block;
+    width: 28px;
+    height: 5px;
+    border-radius: 1px;
+    background-color: black;
+}
+@media screen and (max-width: 1200px) {
+  .mainSubline {
+    margin-left: 0px;
+  }
+  #summaryPaymentSectionTop input:nth-of-type(2) {
+    margin-left: 0;
+  }
+}
+@media screen and (max-width: 1100px) {
+  .mainSectionMenu li {
+  display: block;
+  width: 95%;
+  padding-bottom: 10px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+
+  }
+}
+@media screen and (max-width: 1000px) {
+  .mainSubline {
+    text-align: center;
+    margin: 0 auto;
+  }
+}
+@media screen and (max-width: 768px) {
+  .noPaddLMobile {
+    padding-left: 0;
+  }
+  .noPaddRMobile {
+    padding-right: 0;
+  }
+  .marg10Mobile {
+    margin-bottom: 10px;
+  }
+  .bottomMenu {
+    margin-left: 0;
+    text-align: center;
+  }
+  .navbar-nav li a {
+    font-size: 18px;
+    line-height: 1.5;
+    padding: 28px;
+    color: black;
+    border-bottom: 1px solid white;
+    padding-bottom: 10px !important;
+  }
+  .navbar-collapse {
+    max-height: none !important;
+  }
+  .navbar-nav li a:hover {
+    color: white;
+  }
+  .mainTagline, .mainSubline {
+    font-size: 20px;
+    text-align: left;
+  }
+  .sliderBox img, .sliderBox p {
+    float: none;
+    margin: 0 auto;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .ls-responsive .ls-nav-right-arrow, .ls-responsive .ls-nav-left-arrow{
+    top: 39%;
+  }
+  .ls-nav {
+    display: none;
+  }
+  #headingSection {
+    margin-bottom: 40px;
+  }
+  #donateSection h3 {
+    margin-left: 0;
+    margin-bottom: 10px;
+  }
+  .donorBox {
+    margin-bottom: 15px;
+  }
+  .noMargTopMobile {
+    margin-top: 0;
+  }
+  .margBot20Mobile {
+    margin-bottom: 20px;
+  }
+  #input5, #input6, #input7 {
+    display: block !important;
+    width: 100% !important;
+  }
+  #summaryPaymentSectionTop input {
+    width: 95%;
+    display: inline-block;
+}
+  #paymentAnonyCheck input {
+    margin-bottom: 0;
+  }
+  #payInputSection {
+    padding-left: 15px;
+  }
+  #input10, #input11 {
+    width: 100% !important;
+  }
+  #confirmationSection {
+    margin-bottom: 30px;
+    padding: 10px;
+  }
+  .thankYouConfirmation {
+    letter-spacing: 2px;
+  }
+}
+@media screen and (max-width: 450px) {
+ #summaryPaymentSectionTop input {
+    width: 92%;
+    display: inline-block;
+  }
 }

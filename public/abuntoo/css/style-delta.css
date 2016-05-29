@@ -1,0 +1,36 @@
+#donateCurrency {
+    font-size: 20px;
+    margin-right: 2px;
+}
+
+.submitBTN {
+    margin-left: 20px;
+    margin-right: 40px;
+}
+.dwollaAuthorizeBTN {
+    margin-top: 5px;
+    margin-left: 20px;
+    margin-right: 40px;
+}
+.addressBTN {
+    margin-top: -5px;
+    margin-left: 20px;
+    margin-right: 40px;
+}
+.paypalBTN {
+    width: 160px;
+    margin-top: 62px;
+    /*JE todo*/
+    /*margin-top: 5px;*/
+    /*margin-left: 20px;*/
+    /*margin-right: 40px;*/
+}
+
+#paymentTerms {
+    font-size: 12px;
+    /*JE todo display: inline-block;*/
+}
+
+a.plain-href {
+ color: inherit; text-decoration: inherit;
+}

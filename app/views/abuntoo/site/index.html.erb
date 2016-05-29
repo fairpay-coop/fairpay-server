@@ -14,7 +14,7 @@
 
       <div class="col-md-4">
           <aside>
-            <a href="/donate" class="btn btn-default btnC1">Donate</a>
+            <a href="/donate" class="btn btn-default btnC1 donateBTN">Donate</a>
 
             <%= render view_path('campaign_progress', embed), campaign: campaign%>
 
@@ -22,8 +22,9 @@
                campaign[:offers].each do |offer|
             %>
               <div class="donorRewardBox">
+                <a href="donate.html#<%= offer[:uuid] %>" class="plain-href">
                 <h4 class="rewardPrice">$<%= format_amount(offer[:minimum_contribution],0) %></h4>
-                <a href="#" class="rewardHelp"><i class="fa fa-info" aria-hidden="true"></i></a>
+                <span href="#" class="rewardHelp">i</span>
                 <div class="clearB"></div>
                 <h3 class="rewardTagline"><%= offer[:name] %></h3>
                 <h5 class="rewardSubline"><i>from</i> <%= offer[:provided_by] %></h5>
@@ -32,6 +33,7 @@
                 <p class="donorCount"><%= offer[:allocated] %> donor(s)</p>
                 <p class="donorStatus"><%= offer[:availability] %></p>
                 <div class="clearB"></div>
+                </a>
               </div>
             <%
                end
