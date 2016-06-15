@@ -1233,7 +1233,7 @@ img.profilePStar {
 .sectionFiveProfile .profilePStar {
   margin-bottom: 25px;
 }
-#storyNav, #galleryNav,  {
+#storyNav, #galleryNav  {
   display: block;
   position: relative;
   top: -150px;
@@ -1361,4 +1361,8 @@ img.profilePStar {
     width: 92%;
     display: inline-block;
   }
+}
+
+.a0-primary {
+  background-color: #C9EE63;
 }
