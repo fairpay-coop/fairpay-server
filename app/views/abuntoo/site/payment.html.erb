@@ -60,7 +60,9 @@ None
               		<h5>Payment Choice - Select ONE Method</h5>
               	</div>
 
-                <%= render view_path("fee_allocation", embed), embed: embed, transaction: transaction %>
+                <% if transaction[:fee_allocation_options].size > 1 %>
+                  <%= render view_path("fee_allocation", embed), embed: embed, transaction: transaction %>
+                <% end %>
 
                 <%# card_config = @data[:payment_configs].find{|pc|pc[:form_name] == 'card'} %>
                 <%#= render 'card', payment_config: card_config, data: @data %>

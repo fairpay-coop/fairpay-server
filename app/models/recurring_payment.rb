@@ -17,6 +17,7 @@ class RecurringPayment < ActiveRecord::Base
   belongs_to :master_transaction, class_name: 'Transaction'
   has_many :transactions   #todo: confirm/guarantee .last behavior
 
+  before_destroy :prune_transaction_refs
 
   after_initialize :assign_uuid
 
@@ -31,7 +32,6 @@ class RecurringPayment < ActiveRecord::Base
   # def base_url
   #   ENV['BASE_URL']
   # end
-
 
   def status_url
     "#{base_url}/recurring/#{uuid}"
@@ -157,4 +157,15 @@ class RecurringPayment < ActiveRecord::Base
     expose :next_date
     expose :status_url
   end
+
+
+  private
+
+  def prune_transaction_refs
+    transactions.each do |transaction|
+      transaction.update(recurring_payment: nil)
+    end
+  end
+
+
 end

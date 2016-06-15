@@ -44,6 +44,8 @@ class Transaction < ActiveRecord::Base
   belongs_to :recurring_payment
   belongs_to :offer
 
+  before_destroy :prune_dependent_ref
+
   # not yet used - but likely to be useful for cases like a refund
   belongs_to :parent, class_name: 'Transaction'
 
@@ -531,5 +533,16 @@ class Transaction < ActiveRecord::Base
   end
 
 
+  private
+
+  def prune_dependent_ref
+    RecurringPayment.where(master_transaction: self).each do |recurring|
+      recurring.update(master_transaction: nil)
+    end
+    Transaction.where(parent: self).each do |tran|
+      tran.update(parent: nil)
+    end
+
+  end
 
 end

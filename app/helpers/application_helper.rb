@@ -26,11 +26,13 @@ module ApplicationHelper
 
   # either render a referenced partial or an html blob
   def render_content(content, embed)
-    if content.starts_with?('partial:')
-      partial = content.sub('partial:', '')
-      render view_path("content/#{partial}", embed, with_fallback: false), embed: embed
-    else
-      content.html_safe
+    if content
+      if content.starts_with?('partial:')
+        partial = content.sub('partial:', '')
+        render view_path("content/#{partial}", embed, with_fallback: false), embed: embed
+      else
+        content.html_safe
+      end
     end
   end
 

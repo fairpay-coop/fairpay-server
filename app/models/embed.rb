@@ -508,10 +508,12 @@ class Embed < ActiveRecord::Base
   end
 
   def auth0_config_data
-    config = auth0_config
-    if config
-      config.indifferent_data.slice(:client_id, :domain)
-    end
+    # config = auth0_config
+    # if config
+    #   config.indifferent_data.slice(:client_id, :domain)
+    # end
+    # todo: clean this up
+    {client_id: ENV["AUTH0_CLIENT_ID"], domain: ENV["AUTH0_DOMAIN"]}
   end
 
   def auth0_client_id
