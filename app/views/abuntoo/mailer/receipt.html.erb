@@ -2,60 +2,97 @@
   transaction = @data[:transaction]
   embed = @data[:embed]
 %>
-<p>
-  Dear <%= transaction[:payor][:name] %>,  <%# todo: make sure first name is split out %>
-</p>
-<p>
-  Thank you for sharing your abundance today with your generous donation to the
-  <b>&quot;<%= embed[:headline] %>&quot;</b>.
-  At Abuntoo, we are proud to be of service by connecting you to worthy causes and wonderful
-  thank-you gifts provided by the local business community.  Please save this email for your records,
-  and refer to your confirmation # should you need to contact us for any reason.
-</p>
-<p>
-  The Abuntoo Team
-</p>
-<br/>
-<br/>
-<p>
-  -----------------<br/>
-  Donor Name: <%= transaction[:payor][:name] %><br/>
-  Donation Amount: $<%= ApplicationHelper.format_amount(transaction[:base_amount]) %><br/>
-  Recipient: <%= transaction[:payee][:name] %>, a 501(c)(3) organization<br/>
-  Federal Tax ID #: <%= transaction[:payee][:tax_id] %><br/>
-</p>
-<p>
-  For your donation today, you have opted to receive the following thank-you gift(s).
-  The estimated fair market value of each gift, if applicable, is shown below.
-  (We exclude goods or services that are not available for sale, or certain vouchers that have no cash or commercial value.)
-  Your donation in excess of the fair market value of items received is tax-deductible to the extent allowed by law.
-</p>
-<%
-   offers = transaction[:offers]
-   if offers.present?
-     offers.each do |offer|
-%>
-<p>
-<b><%= offer[:name] %></b><br/>
-Fair Market Value:
-  <% if offer[:financial_value].present? %>
-      $<%= ApplicationHelper.format_amount(offer[:financial_value]) %><br/>
-  <% else %>
-      n/a
-  <% end %>
-<br/>
-Redemption: <%= offer[:redemption_details] %>
-</p>
-    <%
-       end
-       else
-    %>
-<p><b>No Gift</b></p>
-<%
-   end
-%>
-<br/>
-<br/>
-<p>
-  Todo: Footer with Abuntoo info including Twitter, FB, website etc.
-</p>
+<table style="margin: 0 auto;">
+  <tr>
+    <td width="650">
+      <style type="text/css" scoped>
+        @media screen and (max-width: 500px) {
+          #mainBanner {
+            display: none;
+          }
+        }
+
+        @media screen and (min-width: 500px) {
+          #mainBannerMbl {
+            display: none;
+          }
+        }
+
+        div {
+          font-family: Helvetica;
+          line-height: 1.4;
+          font-size: 16px;
+        }
+      </style>
+      <spacer size="16"></spacer>
+      <img id="mainBanner" style="margin-top:30px;" src="http://ds9-cecilia.rapidsols.com/images/emailTop.png"
+           width="100%">
+      <img id="mainBannerMbl" style="marign-top:30px;"
+           src="http://ds9-cecilia.rapidsols.com/images/emailTopMBL.png" width="100%">
+      <spacer size="30"></spacer>
+      <div style="width: 97%;margin: 0 auto;margin-bottom: 30px;">
+        <p>Thank you for sharing your abundance
+          today!<br><br><a style="font-weight: bold;text-decoration: none; color: black;" href="#"><%= embed[:headline] %></a>
+          is grateful for your support!
+          <br>
+          <br>
+          Please save this email for your records, and refer to your confirmation number should you need to contact us
+          for any reason.</p>
+        <hr style="border: none;border-bottom:4px solid rgba(204, 204, 204, 1); margin-bottom: 30px;">
+        <p>
+        <ul style="list-style:none;padding: 0; line-height: 1.5;">
+          <li>Donor Name: <%= transaction[:payor][:name] %></li>
+          <li>Donation Amount: $<%= ApplicationHelper.format_amount(transaction[:base_amount]) %></li>
+          <li>Recipient: <%= transaction[:payee][:name] %></li>
+          <li>Federal Tax ID #: <%= transaction[:payee][:tax_id] %></li>
+        </ul>
+        </p>
+        <hr style="border: none;border-bottom:4px solid rgba(204, 204, 204, 1); margin-bottom: 38px;">
+        <p>For your donation today, you have opted to receive the following thank-you gift(s). The estimated
+          fair market value of each gift, if applicable, is shown below. (We exclude goods or services that
+          are not available for sale, or certain vouchers that have no cash or commercial value.) Your
+          donation in excess of the fair market value of items received is tax-deductible to the extent
+          allowed by law.</p>
+        <%
+          offers = transaction[:offers]
+          if offers.present?
+            offers.each do |offer|
+        %>
+          <p><strong><%= offer[:name] %></strong></p>
+          <span style="display: block;margin-left: 38px;">Fair Market Value :
+            <% if offer[:financial_value].present? %>
+              $<%= ApplicationHelper.format_amount(offer[:financial_value]) %><br/>
+                <% else %>
+                    n/a
+                <% end %>
+              </span><br>
+                Redemption: <%= offer[:redemption_details] %>
+                </p>
+            <%
+              end
+              else
+            %>
+            <p><b>No Gift</b></p>
+        <%
+          end
+        %>
+
+        <hr style="border: none;border-bottom:4px solid rgba(204, 204, 204, 1); margin-bottom: 38px;">
+        <p style="color: #E82C58; margin-left: 38px;; max-width: 350px; float: left;">
+          <strong>Abuntoo</strong><br><br>Donate to <em>any</em> charity. Enjoy a reward. Or re-gift it. Join
+          our community!<br><br><a style="text-decoration: none; color: #E82C58;"
+                                   href="http://www.abuntoo.io">www.abuntoo.io</a><br><a
+        style="text-decoration: none; color: #E82C58;" href="mailto:donations@abuntoo.com">donations@abuntoo.com</a>
+        </p>
+        <ul style="padding: 0; list-style: none;float: right;margin-top: 70px;">
+          <li style="display: inline-block; margin-right: 8px;"><a href=""><img
+          src="http://ds9-cecilia.rapidsols.com/images/fb1.png"></a></li>
+          <li style="display: inline-block; margin-right: 8px;"><a href=""><img
+          src="http://ds9-cecilia.rapidsols.com/images/twitter1.png"></a></li>
+          <li style="display: inline-block; margin-right: 8px;"><a href=""><img
+          src="http://ds9-cecilia.rapidsols.com/images/insta1.png"></a></li>
+        </ul>
+      </div>
+    </td>
+  </tr>
+</table>
