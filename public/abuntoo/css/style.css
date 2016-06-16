@@ -7,7 +7,7 @@
     src: url(../fonts/EmilysCandy-Regular.ttf);
 }
 main {
-  margin-top: 100px;
+  margin-top: 50px;
 }
 p {
   font-weight: 200;
@@ -31,8 +31,21 @@ a {
 a:focus, a:hover {
     color: #23527c;
 }
+#avatarTop img {
+    width: 26px;
+    margin-top: 10px;
+    margin-right: 15px;
+}
+#avatarTopTilt img {
+    width: 40px;
+    margin-top: 6px;
+    margin-right: 4px;
+}
 .orangeTxt {
   color: rgb(238, 136, 99);
+}
+.orangeTxtImp {
+  color: rgb(238, 136, 99) !important;
 }
 .noColorBoldLinks {
   color: inherit;
@@ -71,26 +84,12 @@ a:focus, a:hover {
 .floatR {
   float: right;
 }
-.navbar {
+.margAuto {
+  margin: 0 auto;
+}
+.navEncloser {
   background: rgba(201, 238, 99, 1);
   color: white;
-}
-.navbar-nav>li>a, .navbar-nav>.active>a,
-.navbar-nav>.active>a:focus,
-.navbar-nav>.active>a:hover,
-.navbar-brand {
-  color: white;
-}
-.navbar-nav > .open > a, .navbar-nav > .active > a {
-  background-image: none;
-  background: inherit;
-}
-.navbar-nav li a {
-  color: white;
-}
-.nav>li>a:focus, .nav>li>a:hover {
-  background: inherit;
-  color: gray;
 }
 .mainTagline {
   color: #EE6383;
@@ -355,6 +354,37 @@ footer a {
 .termModify {
   font-size: 15px;
   color: darkgrey !important;
+}
+.privacyPage h3 {
+  font-family: 'Din Light Regular';
+  font-size: 22px;
+  color: rgb(112, 112, 112);
+  font-weight: bold;
+  margin: 28px 0;
+}
+.privacyPage p {
+  font-size: 18px;
+  font-family: Helvetica;
+  font-weight: lighter;
+  margin: 20px 0;
+}
+.taglinePrivacy {
+  font-family: georgia;
+  font-size: 25px;
+  color: #6383EE;
+  font-weight: 600;
+}
+.privacyModify {
+  font-size: 15px;
+  color: darkgrey !important;
+}
+.privacyPage h6 {
+    font-family: Georgia;
+    margin-bottom: 0;
+    line-height: 0;
+    color: #EE6383;
+    font-style: italic;
+    margin-top: 35px;
 }
 .faqPage h3 {
   font-family: 'Din Light Regular';
@@ -695,9 +725,13 @@ hr {
 .donorBox p {
     margin-top: 8px;
     font-family: 'Din Light Regular';
+    line-height: 1.42857143 !important;
 }
 .donorBox p span{
     font-weight: bold;
+}
+.donorBoxActive ul li a i {
+  color: #6FC6E2;
 }
 .margTop {
     margin-top: 30px;
@@ -801,6 +835,7 @@ hr {
     margin: 0 auto;
     font-weight: bold;
     display: block;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6), inset 0 -1px 1px rgba(255, 255, 255, 0.75);
 }
 a.donateBTN:hover  {
     color: #23527c;
@@ -980,6 +1015,7 @@ padding:5px;
   font-family: 'Emilys Candy'; 
   margin-right: 20px;
   cursor: pointer;
+  margin-top: 15px;
 }
 .centerDonorText {
   text-align: center;
@@ -998,8 +1034,10 @@ padding:5px;
   font-weight: bold;
 }
 #summaryPaymentSectionTop input {
-  width: 44%;
+  width: 49%;
   display: inline-block;
+  background: white;
+  border: none;
 }
 #summaryPaymentSectionTop input:nth-of-type(2) {
   margin-left: 5px;
@@ -1017,12 +1055,10 @@ padding:5px;
 #paymentAnonyCheck input {
   display: inline-block;
   width: 22px;
-  font-size: x-large;
 }
 .dwollaChecksPaymentSection input{
   display: inline-block !important;
   width: 22px !important;
-  font-size: x-large;
   margin-bottom: 2px !important;
 }
 .dwollaChecksPaymentSection span{
@@ -1042,7 +1078,6 @@ padding:5px;
 #paymentTerms input {
     display: inline-block;
     width: 22px;
-    font-size: x-large;
 }
 .confirmationCounter {
     border-top: 10px solid rgba(201, 238, 99, 1);
@@ -1057,6 +1092,8 @@ padding:5px;
     font-family: Georgia;
     letter-spacing: 2.6px;
     text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 4px solid rgba(201, 238, 99, 1);
 }
 #confirmationSection {
   background: #F2FBD8;
@@ -1137,12 +1174,29 @@ padding:5px;
     margin: 0;
     font-size: 26.7px;
 }
+.profileExample {
+    margin: 0;
+    margin-top: 85px;
+    color: black !important;
+    font-family: Georgia !important;
+    font-style: italic !important;
+    font-size: 16px !important;
+    margin-left: -25px;
+}
 .profileNav {
     margin-top: 0;
     background: rgba(238, 136, 99, 1);
     width: 120px;
     display: inline-block;
     margin-right: 8px;
+}
+.profilePageNavMbl {
+  margin-top: 30px;
+}
+.profilePageNavMbl .profileNav {
+  width: 48%;
+  margin-right: 1.5%;
+  margin-bottom: 20px;
 }
 .profileNavBlue {
   background: rgba(99, 131, 238, 1);
@@ -1182,12 +1236,11 @@ img.profilePStar {
   line-height: 1.1;
 }
 .sectionTwoProfile input {
-  font-size: x-large;
   margin-left: 6px;
 }
 .sectionThreeProfile {
   margin-top: 30px;
-  min-height: 180px;
+  /*min-height: 180px;*/
 }
 .sectionThreeProfile p{
   line-height: 1;
@@ -1233,7 +1286,7 @@ img.profilePStar {
 .sectionFiveProfile .profilePStar {
   margin-bottom: 25px;
 }
-#storyNav, #galleryNav  {
+#storyNav, #galleryNav,  {
   display: block;
   position: relative;
   top: -150px;
@@ -1246,12 +1299,85 @@ img.profilePStar {
     border-radius: 1px;
     background-color: black;
 }
+.navbar-collapse.collapse {
+  display: block!important;
+}
+
+.navbar-nav>li, .navbar-nav {
+  float: left !important;
+}
+
+.navbar-nav.navbar-right:last-child {
+  margin-right: -15px !important;
+}
+
+.navbar-right {
+  float: right!important;
+}
+.sectionOneProfileEdit input {
+  max-width: 300px;
+}
+#sectionOneProfileEdit, #sectionThreeProfileEdit, #sectionFiveProfileEdit {
+  display: none;
+}
+#closeSectionOne, #closeSectionThree, #closeSectionFive {
+  margin-left: 40px;
+  cursor: pointer;
+}
+#closeSectionOne img, #closeSectionThree img, #closeSectionFive img {
+    width: 38px;
+    height: 38px;
+}
+#editSectionOne, #editSectionThree, #editSectionFive {
+  margin-left: 200px;
+  color: black;
+  cursor: pointer;
+}
+#sectionThreeProfileEdit input {
+  display: block;
+  width: 400px;
+}
+#sectionThreeProfileEdit textarea {
+  display: block;
+  width: 400px;
+}
+#sectionFiveProfileEdit input {
+  display: block;
+  width: 400px;
+}
+.mobileStars {
+    margin-top: 30px;
+    max-width: 115px;
+    margin: 0 auto;
+}
+.mobileStars img{
+  margin: 0 auto;
+  display: inline-block;
+}
+.donorBoxPaymentsMbl {
+  margin: 0 auto !important;
+  margin-top: 30px !important;
+}
+#accountNav, #causeNav, #socialNav, #paymentNav  {
+  display: block;
+  position: relative;
+  top: -30px;
+  visibility: hidden;
+}
 @media screen and (max-width: 1200px) {
   .mainSubline {
     margin-left: 0px;
   }
   #summaryPaymentSectionTop input:nth-of-type(2) {
     margin-left: 0;
+  }
+  #sectionOneProfileEdit input, #sectionThreeProfileEdit input, #sectionFiveProfileEdit input {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+  #closeSectionOne, #closeSectionThree, #closeSectionFive {
+    float: right;
+    
   }
 }
 @media screen and (max-width: 1100px) {
@@ -1261,8 +1387,19 @@ img.profilePStar {
   padding-bottom: 10px;
   margin: 0 auto;
   margin-bottom: 20px;
-
   }
+  #editSectionOne, #editSectionThree, #editSectionFive {
+  margin-left: 20px;
+  }
+  .sectionFourProfile input {
+      position: relative;
+      left: 0;
+      margin-top: 0;
+    }
+    .sectionFourProfile p {
+      margin: 0 auto;
+      margin-bottom: 25px;
+    }
 }
 @media screen and (max-width: 1000px) {
   .mainSubline {
@@ -1284,21 +1421,11 @@ img.profilePStar {
     margin-left: 0;
     text-align: center;
   }
-  .navbar-nav li a {
-    font-size: 18px;
-    line-height: 1.5;
-    padding: 28px;
-    color: black;
-    border-bottom: 1px solid white;
-    padding-bottom: 10px !important;
+  .mainTagline{
+    font-size: 25px;
+    text-align: left;
   }
-  .navbar-collapse {
-    max-height: none !important;
-  }
-  .navbar-nav li a:hover {
-    color: white;
-  }
-  .mainTagline, .mainSubline {
+  .mainSubline {
     font-size: 20px;
     text-align: left;
   }
@@ -1336,7 +1463,7 @@ img.profilePStar {
     width: 100% !important;
   }
   #summaryPaymentSectionTop input {
-    width: 95%;
+    width: 100%;
     display: inline-block;
 }
   #paymentAnonyCheck input {
@@ -1355,14 +1482,17 @@ img.profilePStar {
   .thankYouConfirmation {
     letter-spacing: 2px;
   }
+  .profilePageNavMbl .profileNav {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  .privacyPage h6 {
+    line-height: 1;
+}
 }
 @media screen and (max-width: 450px) {
  #summaryPaymentSectionTop input {
     width: 92%;
     display: inline-block;
   }
-}
-
-.a0-primary {
-  background-color: #C9EE63;
 }
