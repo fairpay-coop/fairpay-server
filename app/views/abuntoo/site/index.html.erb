@@ -21,7 +21,7 @@
     <%
       campaign[:offers].each do |offer|
     %>
-        <a href="donate.html#<%= offer[:uuid] %>" class="plain-href">
+        <a href="/donate#<%= offer[:uuid] %>" class="plain-href">
           <div class="donorRewardBox">
             <h4 class="rewardPrice">$<%= format_amount(offer[:minimum_contribution], 0) %></h4>
             <div class="clearB"></div>

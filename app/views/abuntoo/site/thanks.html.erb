@@ -1,33 +1,102 @@
 <%
-   embed = @data[:embed]
-   campaign = embed[:campaign]
-   transaction = @data[:transaction]
+  embed = @data[:embed]
+  campaign = embed[:campaign]
+  transaction = @data[:transaction]
+
+  pcnt = campaign[:financial_pcnt]
 %>
 
+
 <div class="col-md-8">
-  <section id="donateSection">
-    <p style="font-size: 1.2em; font-weight: bold; font-style: italic; color: #EE6383; ">
-    Yay!
-    </p>
-    <p style="font-weight: bold;">
-      Donation Confirmation #: <%=transaction[:uuid]%>
-    </p>
-    <p>
-      Thank you for sharing your abundance today.  An email confirmation has been sent to
-      <%=transaction[:payor][:email]%>.
-      Questions? Please contact us at donations@abuntoo.com.
-    </p>
+  <section id="confirmationSection">
+    <!-- MAIN SECTION -->
+    <div class="row">
+      <div class="col-md-12">
+        <h3 id="confirmationYay">Yay!</h3>
+        <p id="confirmationNumber">Donation Confirmation #: <%= transaction[:uuid] %></p>
+        <p id="confirmationFirstP">Thank you for sharing your abundance today. An email confirmation has been sent to
+          <strong><%= transaction[:payor][:email] %></strong>. Questions? Please contact us at
+          <a href="mailto:donations@abuntoo.com">donations@abuntoo.com</a>.</p>
+        <hr style="margin-left: 15px; margin-right: 15px; border-bottom: 2px solid rgba(204, 204, 204, 1);">
+
+        <div class="col-md-12">
+          <p><b>Meanwhile...</b></p>
+        </div>
+
+        <div class="col-sm-6 donorMwEnc">
+          <p class="confirmMwText">Check out our donor community: </p>
+        </div>
+        <div class="col-sm-6 donorMwEnc">
+          <a href="/donors" class="btnC2 confirmMwBTN">donors</a>
+        </div>
+        <div class="clearB"></div>
+
+        <div class="col-sm-6 donorMwEnc">
+          <p class="confirmMwText">Complete your Abuntoo Profile:</p>
+        </div>
+        <div class="col-sm-6 donorMwEnc">
+          <a href="/profile" class="btnC2 confirmMwBTN">profile</a>
+        </div>
+        <div class="clearB"></div>
+
+        <div class="col-sm-6 donorMwEnc">
+          <p class="confirmMwText">Tell the world about this campaign:</p>
+        </div>
+        <div class="col-sm-6 donorMwEnc">
+          <div class="shareBox shareBoxDonate shareBoxConfirm">
+            <ul>
+              <li><a href="#"><img src="/abuntoo/images/fb.png" alt="Share on Facebook"></a></li>
+              <li><a href="#"><img src="/abuntoo/images/twitter.png" alt="Share on Twitter"></a></li>
+              <li><a href="#"><img src="/abuntoo/images/mail.png" alt="Share via Mail"></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="clearB"></div>
+
+        <div class="col-sm-6 donorMwEnc">
+          <p class="confirmMwText">Visit Abuntoo:</p>
+        </div>
+        <div class="col-sm-6 donorMwEnc">
+          <a href="http://abuntoo.io" class="btnC2 confirmMwBTN">abuntoo.io</a>
+        </div>
+      </div>
+    </div>
   </section>
 </div>
 
 <div class="col-md-4">
   <aside>
-    <p style="font-size: 1.2em; font-weight: bold; text-align: center;">
-      !!!!!!!!!  Thank You  !!!!!!!!!
-    </p>
-    <hr>
-    <%= render view_path('campaign_progress', embed), campaign: campaign %>
-    <%= render view_path('abuntoo_sidebar', embed) %>
+    <h3 class="thankYouConfirmation">!!!!! Thank You !!!!!</h3>
+    <div class="donateCounter">
+      <div class="donateNumberCounter">
+        <h6><span>$<%= format_amount(campaign[:financial_total],0) %></span> of</h6>
+        <h5>$<%= format_amount(campaign[:financial_goal],0) %></h5>
+      </div>
+      <div class="progress">
+        <div class="progress-bar" role="progressbar" aria-valuenow="<%= pcnt %>" aria-valuemin="0" aria-valuemax="100" style="width: 27%;">
+        </div>
+      </div>
+      <p class="donorCount"><%= campaign[:supporter_total] %> DONORS <span class="floatR"><%= pcnt %>%</span><i class="clearB"></i></p>
+      <hr>
+      <p class="locationDonation"><i class="fa fa-map-marker"></i> San Francisco, CA</p>
+    </div>
+    <img id="sideBarPwrdImg" src="/abuntoo/images/pwrdAbuntoo.png" alt="Powered by Abuntoo" class="img-responsive">
+    <div id="accordion" class="hidden-xs">
+      <h3>What is Abuntoo?</h3>
+      <div>
+        <p>
+          Abuntoo is a philanthropy platform that embodies the Gift Economy in action. On
+          <a href="http://www.abuntoo.io/">Abuntoo</a>, you can donate to any non-profit and enjoy gifts from merchants eager
+          to share their offerings with you. We bring together the business and non-profit sectors in a meaningful way
+          that is delightful to the conscientious donor / consumer - you!
+        </p>
+      </div>
+      <h3>I have more questions!</h3>
+      <div>
+        <p>
+          See our <a href="/faq">FAQ</a>!
+        </p>
+      </div>
+    </div>
   </aside>
 </div>
-
