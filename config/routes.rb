@@ -31,6 +31,7 @@ Rails.application.routes.draw do
   # get  'index2' => 'site#index2'
   # todo: better factor these routes defs
   get 'terms', to: 'site#terms', as: :terms
+  get 'faq', to: 'site#faq', as: :faq
   get 'privacy', to: 'site#privacy', as: :privacy
   get 'donate', to: 'site#donate', as: :donate
   get 'donate/:uuid', to: 'site#donate'

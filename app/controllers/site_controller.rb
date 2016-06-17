@@ -137,6 +137,11 @@ class SiteController < ApplicationController
     themed_render(embed, params)
   end
 
+  def faq
+    embed = resolve_embed(params)
+    themed_render(embed, params)
+  end
+
   def privacy
     embed = resolve_embed(params)
     themed_render(embed, params)
