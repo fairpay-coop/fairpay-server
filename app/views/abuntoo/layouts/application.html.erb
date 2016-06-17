@@ -52,29 +52,29 @@
       <div class="container">
         <div class="row">
           <div class="col-md-12 noPadd">
-            <a href="index.html"><img src="/abuntoo/images/abuntoo.png" alt="Avatar" width=""></a>
+            <a href="/"><img src="/abuntoo/images/abuntoo.png" alt="Avatar" width=""></a>
             <a id="rapidsols-menu" class="floatR" href="#sidr"><img src="/abuntoo/images/hamburger-menu.png" alt="Abuntoo Menu" style="width: 45px;margin-top: 5px;"></a>
             <% if auth0_signed_in %>
                 <!--<li><span>[Logged in as <%= auth0_profile.name %>]</span></li>-->
-                <a href="profile.html" id="avatarTop"><img class="floatR visible-lg" src="/abuntoo/images/smiley.png" alt="Abuntoo Avatar"></a>
+                <a href="/profile" id="avatarTop"><img class="floatR visible-lg" src="/abuntoo/images/smiley.png" alt="Abuntoo Avatar"></a>
                 <!--<span><a class="floatR" onclick="location.href='/auth/logout';">Logout</a></span>-->
             <% end %>
 
             <div id="sidr">
                   <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="donate.html">Donate</a></li>
-                    <li><a href="index.html#galleryNav">Rewards</a></li>
-                    <li><a href="index.html#storyNav">Story</a></li>
-                    <li><a href="index.html#galleryNav">Gallery</a></li>
-                    <li><a href="donor.html">Donors</a></li>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="donate">Donate</a></li>
+                    <li><a href="/#galleryNav">Rewards</a></li>
+                    <li><a href="/#storyNav">Story</a></li>
+                    <li><a href="/#galleryNav">Gallery</a></li>
+                    <li><a href="donor">Donors</a></li>
                     <% if auth0_signed_in %>
-                    <li><a href="profile.html">Profile Settings</a></li>
+                    <li><a href="/profile">Profile Settings</a></li>
                     <li><a onclick="location.href='/auth/logout';">Log Out</a></li>
                     <% else %>
                     <li><a  onclick="window.signin();">Sign Up / Sign In</a></li>
                     <% end %>
-                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="/faq">FAQ</a></li>
                   </ul>
                 </div>
 
