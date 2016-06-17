@@ -1,43 +1,42 @@
 <%
-   embed = @data[:embed]
-   campaign = embed[:campaign]
+  embed = @data[:embed]
+  campaign = embed[:campaign]
 %>
 
-      <div class="col-md-8">
-          <section>
-            <!-- MAIN SECTION -->
-            <%= render_content(campaign[:summary], embed) %>
-            <%= render_content(campaign[:details], embed) %>
+<div class="col-md-8">
+  <section>
+    <!-- MAIN SECTION -->
+    <%= render_content(campaign[:summary], embed) %>
+    <%= render_content(campaign[:details], embed) %>
 
-          </section>
-      </div>
+  </section>
+</div>
 
-      <div class="col-md-4">
-          <aside>
-            <a href="/donate" class="btn btn-default btnC1 donateBTN">Donate</a>
+<div class="col-md-4">
+  <aside>
+    <a href="/donate" style="margin-top: 12px;" class="btn btn-default btnC1 donateBTN">Donate</a>
 
-            <%= render view_path('campaign_progress', embed), campaign: campaign%>
+    <%= render view_path('campaign_progress', embed), campaign: campaign %>
 
-            <%
-               campaign[:offers].each do |offer|
-            %>
-              <div class="donorRewardBox">
-                <a href="donate.html#<%= offer[:uuid] %>" class="plain-href">
-                <h4 class="rewardPrice">$<%= format_amount(offer[:minimum_contribution],0) %></h4>
-                <span href="#" class="rewardHelp">i</span>
-                <div class="clearB"></div>
-                <h3 class="rewardTagline"><%= offer[:name] %></h3>
-                <h5 class="rewardSubline"><i>from</i> <%= offer[:provided_by] %></h5>
-                <hr>
-                <p> <%= offer[:kind_label] %></p>
-                <p class="donorCount"><%= offer[:allocated] %> donor(s)</p>
-                <p class="donorStatus"><%= offer[:availability] %></p>
-                <div class="clearB"></div>
-                </a>
-              </div>
-            <%
-               end
-            %>
+    <%
+      campaign[:offers].each do |offer|
+    %>
+        <a href="donate.html#<%= offer[:uuid] %>" class="plain-href">
+          <div class="donorRewardBox">
+            <h4 class="rewardPrice">$<%= format_amount(offer[:minimum_contribution], 0) %></h4>
+            <div class="clearB"></div>
+            <h3 class="rewardTagline"><%= offer[:name] %></h3>
+            <h5 class="rewardSubline"><i>from</i> <%= offer[:provided_by] %></h5>
+            <hr>
+            <p><%= offer[:kind_label] %></p>
+            <p class="donorCount"><%= offer[:allocated] %> donors</p>
+            <p class="donorStatus"><%= offer[:availability] %></p>
+            <div class="clearB"></div>
+          </div>
+        </a>
+    <%
+      end
+    %>
 
-          </aside>
-      </div>
+  </aside>
+</div>
