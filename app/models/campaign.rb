@@ -71,8 +71,10 @@ class Campaign < ActiveRecord::Base
     result = []
     Transaction.where(embed: embed, status: 'completed').each do |t|
       profile = t.payor
-      #todo: confirm public profile
-      result << profile
+      #todo: confirm public profile, for now include if name has been assign from profile page
+      if profile.full_name.present?
+        result << profile
+      end
     end
     result.uniq
   end
