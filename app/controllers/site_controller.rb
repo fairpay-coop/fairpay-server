@@ -154,6 +154,15 @@ class SiteController < ApplicationController
     end
   end
 
+    def donors
+    embed = resolve_embed(params)
+    embed_params = {} # not relevant for now
+    @data = hashify( embed.embed_data(embed_params) )
+    @supporters = embed.campaign.public_supporters
+    themed_render(embed, params)
+  end
+
+
   def profile_update_params
     params.require(:profile).permit(:first_name, :last_name, :email, :phone, :postal_code, :website, :bio)
   end

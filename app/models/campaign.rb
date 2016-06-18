@@ -67,6 +67,15 @@ class Campaign < ActiveRecord::Base
     self.update!(financial_total: new_financial_total, supporter_total: new_supporter_total)
   end
 
+  def public_supporters
+    result = []
+    Transaction.where(embed: embed, status: 'completed').each do |t|
+      profile = t.payor
+      #todo: confirm public profile
+      result << profile
+    end
+    result.uniq
+  end
 
   def entity
     Entity.new(self)

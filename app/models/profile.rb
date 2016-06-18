@@ -25,9 +25,12 @@ class Profile < ActiveRecord::Base
 
 
   def display_name
-    name || ("#{first_name} #{last_name}")
+    name || full_name
   end
 
+  def full_name
+    "#{first_name} #{last_name}"
+  end
 
   def user
     User.find_by(email: email)

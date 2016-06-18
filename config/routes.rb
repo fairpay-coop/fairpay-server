@@ -41,6 +41,7 @@ Rails.application.routes.draw do
 
   get 'profile', to: 'site#profile', as: :profile
   post 'profile', to: 'site#profile_update', as: :profile_update
+  get 'donors', to: 'site#donors', as: :donors
 
   get  'site/:uuid' => 'site#index'
   get  'site/:uuid/address/:transaction_uuid' => 'site#address'

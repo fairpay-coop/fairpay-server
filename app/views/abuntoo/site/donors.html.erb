@@ -1,0 +1,81 @@
+      <div class="col-md-8">
+          <section>
+              <!-- MAIN SECTION -->
+              <div class="row hidden-xs" id="mainNav">
+                <div class="col-md-12 noPadd">
+                  <ul class="mainSectionMenu">
+                    <li><a href="/">HOME</a></li>
+                    <li><a href="/#story">STORY</a></li>
+                    <li><a href="/#gallery">GALLERY</a></li>
+                    <li style="margin-right: 0;"><a href="/donors">DONORS</a></li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="row margTop">
+
+                <%#
+                <div class="col-md-4">
+                  <div class="donorBox">
+                    <img class="avatarDonor" src="images/smiley-tilt.png">
+                    <div class="titleDonor">
+                      <h5>Jane Doe</h5>
+                      <ul>
+                        <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                        <li><a href="#"><i class="fa fa-linkedin-square" aria-hidden="true"></i></a></li>
+                        <li><a href="#"><i class="fa fa-globe" aria-hidden="true"></i></a></li>
+                      </ul>
+                    </div>
+                    <div class="clearB"></div>
+                    <p class="centerDonorText">Awesome Member<br><em>of the</em><br><span>Abuntoo Tribe</span></p>
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="donorBox">
+                    <img class="avatarDonor" src="images/smiley-tilt.png">
+                    <div class="titleDonor">
+                      <h5>Jane Doe</h5>
+                      <ul>
+                        <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                        <li><a href="#"><i class="fa fa-linkedin-square" aria-hidden="true"></i></a></li>
+                        <li><a href="#"><i class="fa fa-globe" aria-hidden="true"></i></a></li>
+                      </ul>
+                    </div>
+                    <div class="clearB"></div>
+                    <p>People can write here up to 250 characters about themselves.  E.g. they can put a quote. Or their bio. They can update this on their profile page. If this field is blank, we default to a canned message.</p>
+                  </div>
+                </div>
+                %>
+
+                <%
+                   @supporters.each do |profile|
+                %>
+
+                <div class="col-md-4">
+                  <div class="donorBox">
+                    <img class="avatarDonor" src="/abuntoo/images/smiley-tilt.png">
+                    <div class="titleDonor">
+                      <h5><%=profile.full_name%></h5>
+                      <ul>
+                        <%#
+                        <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                        <li><a href="#"><i class="fa fa-linkedin-square" aria-hidden="true"></i></a></li>
+                        %>
+                        <% if profile.website.present? %>
+                          <li><a href="<%=profile.website%>" target="_blank"><i class="fa fa-globe" aria-hidden="true"></i></a></li>
+                        <% end %>
+                      </ul>
+                    </div>
+                    <div class="clearB"></div>
+                    <p>
+                      <%=profile.bio%>
+                    </p>
+                  </div>
+                </div>
+
+                <% end %>
+
+              </div>
+          </section>
+      </div>
