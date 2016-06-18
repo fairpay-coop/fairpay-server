@@ -39,6 +39,9 @@ Rails.application.routes.draw do
   get 'thanks/:transaction_uuid', to: 'site#thanks'
   get 'merchant_receipt/:transaction_uuid' => 'site#merchant_receipt'
 
+  get 'profile', to: 'site#profile', as: :profile
+  post 'profile', to: 'site#profile_update', as: :profile_update
+
   get  'site/:uuid' => 'site#index'
   get  'site/:uuid/address/:transaction_uuid' => 'site#address'
   get  'site/:uuid/payment/:transaction_uuid' => 'site#payment'

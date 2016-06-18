@@ -132,6 +132,33 @@ class SiteController < ApplicationController
     themed_render(embed, params)
   end
 
+  def profile
+    embed = resolve_embed(params)
+    embed_params = {} # not relevant for now
+    @data = hashify( embed.embed_data(embed_params) )
+    @profile = auth0_profile
+    themed_render(embed, params)
+  end
+
+  def profile_update
+    embed = resolve_embed(params)
+    @profile = auth0_profile
+
+    if @profile.update(profile_update_params)
+      redirect_to '/profile'
+    else
+      embed_params = {} # not relevant for now
+      @data = hashify( embed.embed_data(embed_params) )
+      @profile = auth0_profile
+      themed_render(embed, params)
+    end
+  end
+
+  def profile_update_params
+    params.require(:profile).permit(:first_name, :last_name, :email, :phone, :postal_code, :website, :bio)
+  end
+
+
   def terms
     embed = resolve_embed(params)
     themed_render(embed, params)

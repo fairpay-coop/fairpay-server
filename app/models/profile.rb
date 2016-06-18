@@ -19,6 +19,10 @@ class Profile < ActiveRecord::Base
   has_many :addresses
   belongs_to :realm
 
+  attr_data_field :bio
+  attr_data_field :website
+  attr_data_field :postal_code  #todo, link profile zip to associated address
+
 
   def display_name
     name || ("#{first_name} #{last_name}")
@@ -104,15 +108,15 @@ class Profile < ActiveRecord::Base
   # end
 
   #todo: revisit
-  def first_name
-    words = name&.split(" ") || []
-    words.first
-  end
-
-  def last_name
-    words = name&.split(" ") || []
-    words.last
-  end
+  # def first_name
+  #   words = name&.split(" ") || []
+  #   words.first
+  # end
+  #
+  # def last_name
+  #   words = name&.split(" ") || []
+  #   words.last
+  # end
 
   def has_user
     user.present?
