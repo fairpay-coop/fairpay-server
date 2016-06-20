@@ -50,9 +50,11 @@
                   %>
                       <a class="anchor" id="<%= offer[:uuid] %>"></a>
                       <div class="donateGift">
-                        <a class="checkMark">
-                          <%= check_box_tag :chosen_offer_uuid, offer[:uuid], false, class: 'offer', 'data-min-contrib': offer[:minimum_contribution], id: "chosen_offer_uuid_#{offer[:uuid]}" %>
-                        </a>
+                        <% if offer[:remaining] > 0 %>
+                          <a class="checkMark">
+                            <%= check_box_tag :chosen_offer_uuid, offer[:uuid], false, class: 'offer', 'data-min-contrib': offer[:minimum_contribution], id: "chosen_offer_uuid_#{offer[:uuid]}" %>
+                          </a>
+                        <% end %>
                         <h6><%= offer[:name] %></h6>
                         <h5>$<%= format_amount(offer[:minimum_contribution],0) %></h5>
                         <div class="clearB"></div>
