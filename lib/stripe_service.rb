@@ -19,7 +19,7 @@ class StripeService < ActiveMerchantService
   end
 
   def payment_type_display
-    'Card (Stripe)'
+    'Card'
   end
 
 
