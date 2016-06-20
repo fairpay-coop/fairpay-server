@@ -56,12 +56,19 @@
             <img class="profilePStar" width="24" src="/abuntoo/images/star.svg" alt="Abuntoo">
         </div>
         <div class="sectionOneProfile" id="sectionOneProfileNon-Edit">
+          <%#
           <p class="labelEncProfile orangeTxt floatL">first name*</p>
-          <p id="p1ProfilePage" class="floatL"><%=@profile.first_name%> <span id="editSectionOne"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></span></p>
+          <p id="p1ProfilePage" class="floatL"><%=@profile.first_name% > <span id="editSectionOne"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></span></p>
           <div class="clearB"></div>
           <p class="labelEncProfile orangeTxt floatL">last name*</p>
-          <p id="p2ProfilePage" class="floatL"><%=@profile.last_name%></p>
+          <p id="p2ProfilePage" class="floatL"><%=@profile.last_name% ></p>
           <div class="clearB"></div>
+          %>
+
+          <p class="labelEncProfile orangeTxt floatL">name*</p>
+          <p id="p1ProfilePage" class="floatL"><%=@profile.name%> <span id="editSectionOne"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></span></p>
+          <div class="clearB"></div>
+
           <p class="labelEncProfile orangeTxt floatL">email*</p>
           <p id="p3ProfilePage" class="floatL"><%=@profile.email%></p>
           <div class="clearB"></div>
@@ -73,13 +80,20 @@
           <div class="clearB"></div>
         </div>
         <div class="sectionOneProfile" id="sectionOneProfileEdit">
+          <%#
           <p class="labelEncProfile orangeTxt floatL">first name*</p>
           <!--<input class="floatL" type="text" name="first_name" value="Cecilia">-->
-          <%= f.text_field :first_name %>
+          < % = f.text_field :first_name % >
           <div class="clearB"></div>
           <p class="labelEncProfile orangeTxt floatL">last name*</p>
           <!--<input class="floatL" type="text" name="last_name" value="Top">-->
-          <%= f.text_field :last_name %>
+          < % = f.text_field :last_name % >
+          %>
+
+          <p class="labelEncProfile orangeTxt floatL">name*</p>
+          <%= f.text_field :name %>
+          <div class="clearB"></div>
+
 
           <div class="clearB"></div>
           <p class="labelEncProfile orangeTxt floatL">email*</p>
@@ -167,10 +181,25 @@
           </div>
 
           <h3 class="orangeTxt">Payment Settings</h3>
-          <p id="sectionFiveProfileNon-Edit"><span id="cardStatus">card # ending in 1357, exp. MM/YY</span>
-          <span>
-              <i class="fa fa-trash" style="margin-left: 10px;" onclick="$( '#cardStatus' ).html('<i style=\'font-style: normal;color: rgb(160, 160, 159);\'>Add your card to expedite future checkouts.</i>');" aria-hidden="true"></i>
-          </span><div class="clearB"></div></p>
+          <% if @profile.saved_payment_source.present? %>
+            <p id="sectionFiveProfileNon-Edit">
+              <span id="cardStatus">
+                <!--card # ending in 1357, exp. MM/YY-->
+                card # <%=@profile.saved_payment_source.description%>
+              </span>
+              <span>
+                <!--<i class="fa fa-trash" style="margin-left: 10px;" onclick="$( '#cardStatus' ).html('<i style=\'font-style: normal;color: rgb(160, 160, 159);\'>Add your card to expedite future checkouts.</i>');" aria-hidden="true"></i>-->
+                <a href="/remove_payment_source">
+                  <i class="fa fa-trash" style="margin-left: 10px;"></i>
+                </a>
+              </span>
+              <div class="clearB"></div>
+            </p>
+          <% else %>
+            <p id="sectionFiveProfileNon-Edit">
+              <span id="cardStatus">no stored payment information</span>
+            </p>
+          <% end %>
 
           <%#
           <div id="sectionFiveProfileEdit">

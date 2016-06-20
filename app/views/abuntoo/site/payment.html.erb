@@ -2,6 +2,7 @@
    embed = @data[:embed]
    campaign = embed[:campaign]
    transaction = @data[:transaction]
+   payor = @data[:transaction][:payor]
    offer = transaction[:offer]
 %>
 
@@ -17,9 +18,18 @@
               </div>
 
               <div class="row">
-              	<div class="col-md-12">
-              		<h5>Summary</h5>
+                <div class="col-lg-3">
+              		<h5>Summary for</h5>
               	</div>
+              	<div class="col-lg-9" id="summaryPaymentSectionTop">
+                  <input type="text" name="name" value="<%=payor[:name]%>" class="inputTopPayment">
+                  <input type="email" name="email" value="<%=payor[:email]%>" class="inputTopPayment">
+              	</div>
+
+              	<div class="col-lg-12" id="paymentAnonyCheck">
+                  <p><input type="checkbox" name="anonymous" value="true">  Make this donation anonymous.  (We will not show your name on our Donor Community Page.)</p>
+              	</div>
+
 
                 <div class="col-md-5">
                   <div class="labelEnc">Donation Amount</div>

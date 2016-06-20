@@ -15,32 +15,35 @@ class Profile < ActiveRecord::Base
   has_many :merchant_configs
   has_many :embeds
   has_many :campaigns
-  has_many :payment_sources
-  has_many :addresses
+  has_many :payment_sources, dependent: :destroy
+  has_many :addresses, dependent: :destroy
   belongs_to :realm
 
   attr_data_field :bio
   attr_data_field :website
   attr_data_field :postal_code  #todo, link profile zip to associated address
 
+  before_destroy :prune_dependent_ref
+
 
   def display_name
-    name || full_name
-  end
-
-  def full_name
-    "#{first_name} #{last_name}"
+    # name || full_name
+    if first_name.present? || last_name.present?
+      "#{first_name} #{last_name}".strip
+    else
+      name
+    end
   end
 
   def user
     User.find_by(email: email)
   end
 
-  def self.find_or_create(realm, email, name: email)
+  def self.find_or_create(realm, email, name: email, first_name: nil, last_name: nil)
     result = Profile.find_by(realm: realm, email: email)
     unless result
       name = email  unless name.present?  # don't require 'name' as the api level, default to email
-      result = Profile.create!(realm: realm, email: email, name: name)
+      result = Profile.create!(realm: realm, email: email, name: name, first_name: first_name, last_name: last_name)
     end
     result
   end
@@ -88,6 +91,19 @@ class Profile < ActiveRecord::Base
     end
   end
 
+  def has_saved_payment_source?
+    saved_payment_source.present?
+  end
+
+  def remove_saved_payment_source
+    saved_payment_source.destroy
+  end
+
+  def saved_payment_source
+    # for now assume only one relevant saved payment source
+    payment_sources.first
+  end
+
 
   # def has_dwolla_auth
   #   dwolla_payment_source(autocreate:false)&.get_data_field(:account_id).present?
@@ -130,8 +146,21 @@ class Profile < ActiveRecord::Base
   end
 
   class Entity < Grape::Entity
-    expose :name, :email, :phone, :has_user
+    expose :name, :email, :phone, :has_user, :first_name, :last_name
     # expose :address, using: Address::Entity
   end
+
+
+  private
+
+  def prune_dependent_ref
+    Transaction.where(payor: self).each do |tran|
+      tran.update(payor: nil)
+    end
+    Transaction.where(payee: self).each do |tran|
+      tran.update(payee: nil)
+    end
+  end
+
 
 end

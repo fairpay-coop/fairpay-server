@@ -95,6 +95,7 @@ class SiteController < ApplicationController
     end
 
     @data = hashify( transaction.step2_data )
+    #@transaction = transaction
 
     if params[:json]
       render json: @data
@@ -154,7 +155,7 @@ class SiteController < ApplicationController
     end
   end
 
-    def donors
+  def donors
     embed = resolve_embed(params)
     embed_params = {} # not relevant for now
     @data = hashify( embed.embed_data(embed_params) )
@@ -164,9 +165,14 @@ class SiteController < ApplicationController
 
 
   def profile_update_params
-    params.require(:profile).permit(:first_name, :last_name, :email, :phone, :postal_code, :website, :bio)
+    params.require(:profile).permit(:name, :first_name, :last_name, :email, :phone, :postal_code, :website, :bio)
   end
 
+  def profile_remove_saved_payment_source
+    profile = auth0_profile
+    profile.remove_saved_payment_source
+    redirect_to '/profile'
+  end
 
   def terms
     embed = resolve_embed(params)

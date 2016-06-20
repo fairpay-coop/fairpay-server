@@ -52,7 +52,7 @@ div class="col-md-7"
       / todo: dynamic hide display of below form
       div id="card_fields"
 
-        input type="text" id="card_holder" name="card_holder" placeholder="First & Last Name" style="margin-top: 18px;"
+        input type="text" id="card_holder" name="card_holder" placeholder="First & Last Name" style="margin-top: 18px;" value="#{transaction[:payor][:name]}"
         input type="text" id="card_number" name="card_number" placeholder="Card #"
         input type="text" name="card_mmyy" placeholder="Exp.  MM / YY" id="input10"
         input type="text" name="card_cvv" placeholder="CVV (Security Code)" id="input11"

@@ -15,6 +15,8 @@ class PaymentSource < ActiveRecord::Base
   attr_data_field :description
   attr_data_field :bin
 
+  before_destroy :prune_dependent_ref
+
 
   def entity
     Entity.new(self)
@@ -27,5 +29,16 @@ class PaymentSource < ActiveRecord::Base
   def represent
     Entity.represent(self)
   end
+
+
+  private
+
+  def prune_dependent_ref
+    Transaction.where(payment_source: self).each do |tran|
+      tran.update(payment_source: nil)
+    end
+
+  end
+
 
 end

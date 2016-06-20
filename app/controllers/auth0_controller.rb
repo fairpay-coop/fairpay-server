@@ -18,8 +18,10 @@ class Auth0Controller < ApplicationController
     puts "info: #{info}"
     email = info[:email]
     name = info[:name]
+    first_name = info[:first_name]
+    last_name = info[:last_name]
     realm = TenantState.realm
-    Profile.find_or_create(realm, email, name: name)
+    Profile.find_or_create(realm, email, name: name, first_name: first_name, last_name: last_name)
     # session[:authenticated_email] = email
     # note, need to use raw cookies to share state between api and rails controllers
     cookies[:authenticated_email] = {value: email, path: '/'}

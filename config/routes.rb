@@ -41,6 +41,9 @@ Rails.application.routes.draw do
 
   get 'profile', to: 'site#profile', as: :profile
   post 'profile', to: 'site#profile_update', as: :profile_update
+  #todo: make this a post
+  get 'remove_payment_source', to: 'site#profile_remove_saved_payment_source', as: :remove_payment_source
+
   get 'donors', to: 'site#donors', as: :donors
 
   get  'site/:uuid' => 'site#index'

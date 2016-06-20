@@ -57,6 +57,7 @@ class Transaction < ActiveRecord::Base
   attr_data_field :address_captured  # boolean
   attr_data_field :profile_authenticated  # boolean flag indicated that user authenticated has been provided for this transaction and stored payment information is available
   attr_data_field :dwolla_authenticated   # true when we've just authenticated to dwolla in the context of this transaction
+  attr_data_field :anonymous   # if true, then omit this supporter from public donors view
 
   after_initialize :assign_uuid
 
