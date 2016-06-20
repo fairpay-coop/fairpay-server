@@ -29,7 +29,8 @@ class Campaign < ActiveRecord::Base
 
   has_many :embeds
 
-  has_many :offers, -> { order(minimum_contribution: :desc) }
+  # This assumes that a 'sort' field as been populated with an order appropriate for the given campaign.
+  has_many :offers, -> { order(:sort) }
 
   after_initialize :assign_uuid
 
