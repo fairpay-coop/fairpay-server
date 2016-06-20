@@ -36,6 +36,8 @@ class Embed < ActiveRecord::Base
   attr_data_field :headline
   attr_data_field :subheadline
   attr_data_field :page_title   # html head title tag
+  attr_data_field :minimum_amount   # minimum payment amount accepted
+
 
   # if assigned present option on 'finished' view to provide preauthorization to automatically charge saved payment information once per specified interval.
   # subfields: interval_count, interval_units, interval_description
@@ -421,7 +423,7 @@ class Embed < ActiveRecord::Base
   #todo: refactor most of the embed data into the entity mapping and nest an 'embed' instance into the embed_data api result
   class Entity < Grape::Entity
     expose :uuid, :name, :suggested_amounts, :currency_format, :mailing_list_enabled, :capture_memo, :consider_this, :recurrence_options,
-           :fee_allocation_options, :capture_address
+           :fee_allocation_options, :capture_address, :minimum_amount
     # expose :payment_configs_data, as: :payment_configs
     expose :campaign, using: Campaign::Entity
     expose :payee, using: Profile::Entity

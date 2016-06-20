@@ -35,6 +35,8 @@ class BaseCardService < BasePaymentService
 
       if save_payment_info
         puts "will save payment info"
+        # for now rely on client-side validation
+        # raise "Billing Zip required"  if params[:billing_zip].blank?
         number = params[:card_number]
         mmyy = params[:card_mmyy]
         bin = number[0..5]

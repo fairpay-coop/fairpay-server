@@ -1,6 +1,6 @@
 <%
    embed = @data[:embed]
-   embed[:minimum_amount] = 1
+   embed[:minimum_amount] = 5  if embed[:minimum_amount].blank?
    campaign = embed[:campaign]
 %>
 
