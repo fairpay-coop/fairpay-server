@@ -67,10 +67,17 @@ class Offer < ActiveRecord::Base
   end
 
   def availability
-    if limited
-      "#{remaining}/#{limit} avail"
+    # if limited
+    #   "#{remaining}/#{limit} avail"
+    # else
+    #   'unlimited'
+    # end
+    if !limited || remaining > 10
+      "still available"
+    elsif remaining > 0
+      "#{remaining} left"
     else
-      'unlimited'
+      "sorry, all claimed"
     end
   end
 
