@@ -77,9 +77,20 @@ function handleCard() {
   if ( ! validateAgreedToTerms() ) {
     return false;
   }
+
+  // Copy fields from top form into submit data
+  var name = $('#input_name').val();
+  var email = $('#input_email').val();
+  //var anonymous = $('#input_anonymous').val();
+  var anonymous = $('input[type=checkbox][name=anonymous]').is(':checked');
+  console.log("name: " + name + ", email: " + email + ", anon: " + anonymous);
+  $('#hidden_name').val(name);
+  $('#hidden_email').val(email);
+  $('#hidden_anonymous').val(anonymous);
+
   var form = document.getElementById("card_form");
   var data = {};
-  FairPayApi.copyFormValues(data, form, ['embed_uuid', 'transaction_uuid', 'payment_type', 'amount', 'card_number', 'card_mmyy', 'card_cvv', 'billing_zip', 'save_payment_info', 'use_payment_source']);
+  FairPayApi.copyFormValues(data, form, ['embed_uuid', 'transaction_uuid', 'payment_type', 'amount', 'card_number', 'card_mmyy', 'card_cvv', 'billing_zip', 'save_payment_info', 'use_payment_source', 'name', 'email', 'anonymous']);
   //alert('data: ' + JSON.stringify(data));
   if (validateCardFields(data)) {
     FairPayApi.submitPayment(data, handleCardResponse);

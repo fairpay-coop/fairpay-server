@@ -97,8 +97,9 @@
 
           <div class="clearB"></div>
           <p class="labelEncProfile orangeTxt floatL">email*</p>
-          <!--<input class="floatL" type="text" name="email" value="cecilia@abuntoo.com">-->
-          <%= f.text_field :email %>
+          <%#= f.text_field :email %>
+          <!--<input class="floatL" type="text" name="email" value="<%=@profile.email%>" readonly>-->
+          <p id="p3ProfilePage" class="floatL"><%=@profile.email%></p>
 
           <div class="clearB"></div>
           <p class="labelEncProfile orangeTxt floatL">mobile #</p>

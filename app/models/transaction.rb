@@ -171,7 +171,12 @@ class Transaction < ActiveRecord::Base
     self.estimated_fee = fee
     self.allocated_fee = fee * Embed.allocation_ratio(self.fee_allocation)
     self.paid_amount = self.base_amount + allocated_fee
+    self.anonymous = (params[:anonymous] == 'true')  if params[:anonymous].present?
     self.save!
+
+    if params[:name].present?
+      payor.update(name: params[:name], email: params[:email])
+    end
 
     #todo: cleanup. we don't need the fee as part of this result now
     #paid_amount,fee =

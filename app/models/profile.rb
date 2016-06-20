@@ -28,10 +28,12 @@ class Profile < ActiveRecord::Base
 
   def display_name
     # name || full_name
-    if first_name.present? || last_name.present?
+    if name.present?
+      name
+    elsif first_name.present? || last_name.present?
       "#{first_name} #{last_name}".strip
     else
-      name
+      email
     end
   end
 

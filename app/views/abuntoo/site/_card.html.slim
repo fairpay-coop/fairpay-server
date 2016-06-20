@@ -34,6 +34,10 @@ div class="col-md-7"
       input type="hidden" id="default_fee_info" value="#{card_fee_str}"
       input type="hidden" id="fee_update_enabled" value="#{payment_config[:fee_update_enabled]}"
 
+      input type="hidden" id="hidden_name" name="name"
+      input type="hidden" id="hidden_email" name="email"
+      input type="hidden" id="hidden_anonymous" name="anonymous"
+
       /- payment_source = payment_service.saved_payment_source(@transaction, autocreate:false)
       - if saved_payment_source
         - if profile_authenticated
