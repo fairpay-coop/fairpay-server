@@ -8,6 +8,7 @@ ActiveAdmin.register Transaction do
     selectable_column
     id_column
     column :uuid
+    column :reference_number
     column :payor
     column :payee
     column :base_amount
@@ -30,6 +31,7 @@ ActiveAdmin.register Transaction do
       f.input :paid_amount
       f.input :payment_type
       f.input :status
+      f.input :reference_number
       f.input :recurrence
       f.input :offer, as: :select, collection: Offer.pluck(:name, :id)
       f.input :data_json, as: :text

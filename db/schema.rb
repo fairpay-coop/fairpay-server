@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160528235213) do
+ActiveRecord::Schema.define(version: 20160620183318) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -286,6 +286,7 @@ ActiveRecord::Schema.define(version: 20160528235213) do
     t.string   "mailing_list"
     t.string   "fee_allocation"
     t.integer  "offer_id"
+    t.string   "reference_number"
   end
 
   add_index "transactions", ["offer_id"], name: "index_transactions_on_offer_id", using: :btree

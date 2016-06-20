@@ -84,11 +84,6 @@ class Transaction < ActiveRecord::Base
     embed&.realm
   end
 
-  # A more friendly reference number to provide to end users
-  def reference_number
-    uuid  #todo: allocate a unique 6 digit number when transaction completed
-  end
-
   def amount
     paid_amount || base_amount
   end
@@ -172,6 +167,7 @@ class Transaction < ActiveRecord::Base
     self.allocated_fee = fee * Embed.allocation_ratio(self.fee_allocation)
     self.paid_amount = self.base_amount + allocated_fee
     self.anonymous = (params[:anonymous] == 'true')  if params[:anonymous].present?
+    allocate_reference_number
     self.save!
 
     if params[:name].present?
@@ -539,7 +535,7 @@ class Transaction < ActiveRecord::Base
   end
 
 
-  private
+  #private
 
   def prune_dependent_ref
     RecurringPayment.where(master_transaction: self).each do |recurring|
@@ -549,6 +545,21 @@ class Transaction < ActiveRecord::Base
       tran.update(parent: nil)
     end
 
+  end
+
+  # A more friendly reference number to provide to end users
+  def allocate_reference_number
+    while true
+      candidate = generate_reference_number
+      break  if Transaction.where(reference_number: candidate).count == 0
+      puts "non-unique reference number candidate - retrying (#{candidate})"
+    end
+    self.reference_number = candidate
+  end
+
+  def generate_reference_number
+    digits = 8
+    Random.rand(10**digits).to_s.rjust(digits, '0')
   end
 
 end
