@@ -3,11 +3,13 @@ lock '3.5.0'
 
 set :rvm_ruby_version, '2.3.0'
 set :application, 'fairpay-server'
-set :repo_url, 'git@github.com:fairpay-coop/fairpay-server.git'
-
+#set :repo_url, 'git@github.com:fairpay-coop/fairpay-server.git'
 # Default branch is :master
 #set :branch, 'develop'
+
+set :repo_url, 'git@github.com:twiddlebells/abuntoo-standalone-server.git'
 set :branch, 'abuntoo'
+
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
 # Default deploy_to directory is /var/www/my_app_name
