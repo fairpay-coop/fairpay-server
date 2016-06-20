@@ -55,7 +55,7 @@ class ActiveMerchantService < BaseCardService
   def charge(transaction, params)
     card_data = payment_data(transaction, params)
     credit_card = ActiveMerchant::Billing::CreditCard.new(card_data)
-    amount_cents = transaction.amount * 100
+    amount_cents = (transaction.amount * 100).to_i
 
     # Validating the card automatically detects the card type
     if credit_card.validate.empty?
@@ -74,7 +74,7 @@ class ActiveMerchantService < BaseCardService
   end
 
   def purchase(transaction, authorization_token)   # todo: finish partial refactoring to remove separate amount & vault params
-    amount_cents = transaction.amount * 100.0
+    amount_cents = (transaction.amount * 100).to_i
     response = @gateway.purchase(amount_cents, authorization_token)
     puts "purchase response: #{response.inspect}"
     if response.success?

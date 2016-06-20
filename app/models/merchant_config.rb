@@ -52,6 +52,8 @@ class MerchantConfig < ActiveRecord::Base
         AuthorizeNetService.new(self)
       when :braintree
         BraintreeService.new(self)
+      when :stripe
+        StripeService.new(self)
       when :active_merchant
         ActiveMerchantService.new(self)
       when :paypal
@@ -83,7 +85,7 @@ class MerchantConfig < ActiveRecord::Base
 
   def card?
     # todo: this caan potentially be refactored now with service api
-    kind_sym == :authorizenet || kind_sym == :braintree || kind_sym == :active_merchant
+    kind_sym == :authorizenet || kind_sym == :braintree || kind_sym == :stripe || kind_sym == :active_merchant
   end
 
 
