@@ -26,6 +26,7 @@ class Embed < ActiveRecord::Base
   attr_data_field :recurrence #todo: rename to recurrences
   attr_data_field :suggested_amounts
   attr_data_field :fee_allocations
+  attr_data_field :suppress_fee_display
   attr_data_field :capture_memo
   attr_data_field :consider_this
   attr_data_field :amount
@@ -423,7 +424,7 @@ class Embed < ActiveRecord::Base
   #todo: refactor most of the embed data into the entity mapping and nest an 'embed' instance into the embed_data api result
   class Entity < Grape::Entity
     expose :uuid, :name, :suggested_amounts, :currency_format, :mailing_list_enabled, :capture_memo, :consider_this, :recurrence_options,
-           :fee_allocation_options, :capture_address, :minimum_amount
+           :fee_allocation_options, :capture_address, :minimum_amount, :suppress_fee_display
     # expose :payment_configs_data, as: :payment_configs
     expose :campaign, using: Campaign::Entity
     expose :payee, using: Profile::Entity

@@ -69,7 +69,11 @@ None
 
               <div class="row" id="paymentBlock">
               	<div class="col-md-12">
-              		<h5>Payment Choice - Select ONE Method</h5>
+                  <% if @data[:payment_configs].size > 1 %>
+              		  <h5>Payment Choice - Select ONE Method</h5>
+                  <% else %>
+              		  <h5>Payment</h5>
+                  <% end %>
               	</div>
 
                 <% if transaction[:fee_allocation_options].size > 1 %>
