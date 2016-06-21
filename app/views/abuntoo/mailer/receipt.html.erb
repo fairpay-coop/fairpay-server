@@ -19,7 +19,7 @@
         }
 
         div {
-          font-family: Helvetica;
+          font-family: Helvetica, sans-serif;
           line-height: 1.4;
           font-size: 16px;
         }
@@ -46,7 +46,6 @@
           <li>Recipient: <%= transaction[:payee][:name] %></li>
           <li>Federal Tax ID #: <%= transaction[:payee][:tax_id] %></li>
         </ul>
-        </p>
         <hr style="border: none;border-bottom:4px solid rgba(204, 204, 204, 1); margin-bottom: 38px;">
         <p>For your donation today, you have opted to receive the following thank-you gift(s). The estimated
           fair market value of each gift, if applicable, is shown below. (We exclude goods or services that
@@ -59,19 +58,16 @@
             offers.each do |offer|
         %>
           <p><strong><%= offer[:name] %></strong></p>
+          <% if offer[:financial_value].present? %>
           <span style="display: block;margin-left: 38px;">Fair Market Value :
-            <% if offer[:financial_value].present? %>
               $<%= ApplicationHelper.format_amount(offer[:financial_value]) %><br/>
-                <% else %>
-                    n/a
-                <% end %>
-              </span><br>
-                Redemption: <%= offer[:redemption_details] %>
-                </p>
-            <%
-              end
-              else
-            %>
+          </span>
+          <% end %>
+          Redemption: <%= offer[:redemption_details] %>
+          <%
+            end
+            else
+          %>
             <p><b>No Gift</b></p>
         <%
           end
