@@ -87,6 +87,11 @@ class Offer < ActiveRecord::Base
     result
   end
 
+  # note, didn't end up getting this field properly imported, so hacking to also look at the 'ships_to' field
+  def shipping_address_needed
+    get_data_field(:shipping_address_needed) || ships_to.present?
+  end
+
   # update persisted stats indicating an offer was taken
   def allocate
     puts "offer.allocate - already allocated: #{self.allocated}"
