@@ -171,6 +171,9 @@ var FairPayApiSinglton = (function() {
             if (field) {
                 if (field.type == 'checkbox') {
                     return field.checked;
+                } else if (typeof field.options != 'undefined') {
+                    // <select> (with single value)
+                    return field.options[field.selectedIndex].value;
                 } else {
                     return field.value;
                 }
