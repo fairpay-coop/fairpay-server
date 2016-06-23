@@ -69,7 +69,11 @@
                     </div>
                     <div class="clearB"></div>
                     <p>
+                      <% if profile.bio.present? %>
                       <%=profile.bio%>
+                      <% else %>
+                      <p class="centerDonorText">Awesome Member<br><em>of the</em><br><span>Abuntoo Tribe</span></p>
+                      <% end %>
                     </p>
                   </div>
                 </div>
