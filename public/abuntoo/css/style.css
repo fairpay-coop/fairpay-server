@@ -686,6 +686,7 @@ hr {
     box-shadow: -0.26px 0.97px 4px 0px rgba(0,0,0,0.6);
     padding: 8px;
     height: 230px;
+    margin-bottom: 20px;
 }
 .avatarDonor {
     width: 70px;
@@ -1446,9 +1447,6 @@ img.profilePStar {
   #donateSection h3 {
     margin-left: 0;
     margin-bottom: 10px;
-  }
-  .donorBox {
-    margin-bottom: 15px;
   }
   .noMargTopMobile {
     margin-top: 0;
