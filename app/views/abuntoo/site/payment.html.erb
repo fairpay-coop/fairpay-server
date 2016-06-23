@@ -37,7 +37,7 @@
                   <div class="labelEnc">Donation Amount</div>
                 </div>
                 <div class="col-md-7" id="payInputSection">
-                  <input type="text" value="$<%=transaction[:base_amount]%>" id="input1" disabled/>
+                  <input type="text" value="<%=number_to_currency(transaction[:base_amount])%>" id="input1" disabled/>
                 </div>
 
               	<div class="col-md-5">
