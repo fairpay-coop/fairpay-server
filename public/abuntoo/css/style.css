@@ -316,9 +316,7 @@ footer a {
 .bottomMenu {
   color: black;
   padding: 0;
-  text-align: left;
-  max-width: 410px;
-  margin-left: 34.6%;
+  text-align: center;
 }
 .bottomMenu li {
   display: inline-block;
