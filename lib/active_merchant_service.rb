@@ -42,8 +42,8 @@ class ActiveMerchantService < BaseCardService
     month = mmyy[0..1]
     year = "20#{mmyy[2..3]}"
     card_data = {
-        first_name: transaction.payor.first_name,
-        last_name: transaction.payor.last_name,
+        first_name: transaction.payor.resolve_first_name,
+        last_name: transaction.payor.resolve_last_name,
         number: number,
         month: month,
         year: year,

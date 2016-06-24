@@ -37,14 +37,37 @@ class Profile < ActiveRecord::Base
     end
   end
 
+  def resolve_first_name
+    return first_name  if first_name.present?
+    if name.present?
+      parts = name.split(' ')
+      return parts.first
+    else
+      email_name = email.split('@').first
+      return email_name.split('.').first
+    end
+  end
+
+  def resolve_last_name
+    return last_name  if last_name.present?
+    if name.present?
+      parts = name.split(' ')
+      return parts.last
+    else
+      email_name = email.split('@').first
+      return email_name.split('.').last
+    end
+  end
+
   def user
     User.find_by(email: email)
   end
 
-  def self.find_or_create(realm, email, name: email, first_name: nil, last_name: nil)
+  def self.find_or_create(realm, email, name: nil, first_name: nil, last_name: nil)
+    raise "email required"  if email.blank?
     result = Profile.find_by(realm: realm, email: email)
     unless result
-      name = email  unless name.present?  # don't require 'name' as the api level, default to email
+      name = email.split('@').first  unless name.present?  # don't require 'name' as the api level, default to email
       result = Profile.create!(realm: realm, email: email, name: name, first_name: first_name, last_name: last_name)
     end
     result
