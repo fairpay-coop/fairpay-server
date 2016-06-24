@@ -2,6 +2,10 @@ function handleAddress() {
   console.log('handleAddresss');
   var data = {};
   var form = document.getElementById("address_form");
+  if (form == null) {
+    console.log('no address_form found, skipping');
+    return false;
+  }
   FairPayApi.copyFormValues(data, form, ['embed_uuid', 'transaction_uuid', 'first_name', 'last_name', 'organization_name',
     'street_address', 'extended_address', 'locality', 'region', 'postal_code', 'country_code']);
 

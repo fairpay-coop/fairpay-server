@@ -77,6 +77,9 @@ function handleCard() {
   if ( ! validateAgreedToTerms() ) {
     return false;
   }
+  // post the address form on this page if it exists
+  handleAddress();
+  console.log("after handleAddress()");
 
   // Copy fields from top form into submit data
   var name = $('#input_name').val();
