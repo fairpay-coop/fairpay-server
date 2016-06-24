@@ -111,7 +111,7 @@
           <!--<input class="floatL" type="text" name="postal_code" value="88732">-->
           <%= f.text_field :postal_code %>
 
-          <span id="closeSectionOne"><img src="/abuntoo/images/nextFrwd.svg" alt="Finalise"></span>
+          <span id="closeSectionOne"><%= image_submit_tag("/abuntoo/images/nextFrwd.svg") %></span>
           <div class="clearB"></div>
         </div>
 
@@ -137,11 +137,10 @@
             <!--<textarea class="floatL" name="bio" maxlenght="250">e.g. Here are up to 250 characters about myself.  I love ice-cream and I create abundance for my community! </textarea>-->
             <%= f.text_area :bio %>
 
-            <span class="floatL" id="closeSectionThree"><img src="/abuntoo/images/nextFrwd.svg" alt="Finalise"></span>
+            <span class="floatL" id="closeSectionThree"><%= image_submit_tag("/abuntoo/images/nextFrwd.svg") %></span>
+
             <div class="clearB"></div>
           </div>
-
-          <%= f.submit %>
 
           <div class="donorBox visible-lg" style="position: relative;">
               <p style="position: absolute;font-size: 32px;top: 100px;left: 30px;color: red;transform: rotate(-30deg);opacity: 0.3;font-family: helvetica,sans-serif; font-weight: bold;">EXAMPLE!</p>
