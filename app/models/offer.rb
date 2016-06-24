@@ -108,6 +108,11 @@ class Offer < ActiveRecord::Base
     KIND_LABELS[kind.to_sym] if kind
   end
 
+  def is_exclusive
+    return kind == 'exclusive' if kind
+    false
+  end
+
   def entity
     Entity.new(self)
   end
@@ -118,6 +123,7 @@ class Offer < ActiveRecord::Base
     expose :remaining, :limit, :availability, :allocated
     expose :provided_by, :provider_website, :redeemable_in, :ships_to, :shipping_address_needed
     expose :redemption_details
+    expose :is_exclusive
   end
 
 end

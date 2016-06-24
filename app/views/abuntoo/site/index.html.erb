@@ -20,9 +20,10 @@
 
     <%
       campaign[:offers].each do |offer|
+      green = offer[:is_exclusive] ? '' : ' greenDonorReward'
     %>
         <a href="/donate#<%= offer[:uuid] %>" class="plain-href">
-          <div class="donorRewardBox">
+          <div class="donorRewardBox <%= green %>">
             <h4 class="rewardPrice">$<%= format_amount(offer[:minimum_contribution], 0) %></h4>
             <div class="clearB"></div>
             <h3 class="rewardTagline"><%= offer[:name] %></h3>
