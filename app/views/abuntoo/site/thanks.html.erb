@@ -67,19 +67,7 @@
 <div class="col-md-4">
   <aside>
     <h3 class="thankYouConfirmation">!!!!! Thank You !!!!!</h3>
-    <div class="donateCounter">
-      <div class="donateNumberCounter">
-        <h6><span>$<%= format_amount(campaign[:financial_total],0) %></span> of</h6>
-        <h5>$<%= format_amount(campaign[:financial_goal],0) %></h5>
-      </div>
-      <div class="progress">
-        <div class="progress-bar" role="progressbar" aria-valuenow="<%= pcnt %>" aria-valuemin="0" aria-valuemax="100" style="width: 27%;">
-        </div>
-      </div>
-      <p class="donorCount"><%= campaign[:supporter_total] %> DONORS <span class="floatR"><%= pcnt %>%</span><i class="clearB"></i></p>
-      <hr>
-      <p class="locationDonation"><i class="fa fa-map-marker"></i> San Francisco, CA</p>
-    </div>
+    <%= render view_path('campaign_progress', embed), campaign: campaign %>
     <img id="sideBarPwrdImg" src="/abuntoo/images/pwrdAbuntoo.png" alt="Powered by Abuntoo" class="img-responsive">
     <div id="accordion" class="hidden-xs">
       <h3>What is Abuntoo?</h3>
