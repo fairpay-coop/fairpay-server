@@ -17,6 +17,7 @@ class Profile < ActiveRecord::Base
   has_many :campaigns
   has_many :payment_sources, dependent: :destroy
   has_many :addresses, dependent: :destroy
+  has_one :primary_address, class_name: 'Address', foreign_key: :profile_id
   belongs_to :realm
 
   attr_data_field :bio
@@ -73,7 +74,6 @@ class Profile < ActiveRecord::Base
     result
   end
 
-
   #todo: rip out all usages.  migrate to mechant config or type/key
   def payment_source_for_type(type, autocreate: true)  # todo: make this default false
     if autocreate
@@ -103,12 +103,15 @@ class Profile < ActiveRecord::Base
     end
   end
 
+  # def primary_address
+  #   addresses.first
+  # end
 
   def submit_address(address_data)
     puts "profile.submit_address: #{address_data.inspect}"
     #future: support labels, for now assumes one address per type
     # existing = addresses.where(kind: address_data[:kind])
-    existing = addresses.first #where(kind: address_data[:kind])
+    existing = primary_address #where(kind: address_data[:kind])
     if existing.present?
       existing.update!(address_data)
     else
