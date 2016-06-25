@@ -1243,8 +1243,14 @@ img.profilePStar {
 }
 .sectionThreeProfile p{
   line-height: 1;
+  color: rgb(116, 116, 115);
+}
+
+.sampleText {
+  font-style: italic;
   color: rgb(160, 160, 159);
 }
+
 #profilePage .donorBox {
   width: 250px;
   font-size: 14px;
