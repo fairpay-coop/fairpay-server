@@ -34,6 +34,7 @@ ActiveAdmin.register Profile do
       row :last_name
       row :email
       row :phone
+      row :receipt_name
       row :tax_id
       row :postal_code
       row :website
