@@ -495,6 +495,9 @@ class Transaction < ActiveRecord::Base
     embed.theme_class.new(nil, self)
   end
 
+  def created_at_formatted
+    created_at.strftime("%b %-d, %Y")
+  end
 
   def entity
     Entity.new(self)
@@ -517,6 +520,7 @@ class Transaction < ActiveRecord::Base
     expose :resolve_return_url, as: :return_url
     expose :recurring_payment, using: RecurringPayment::Entity
     expose :reference_number
+    expose :created_at, :created_at_formatted
 
     #todo: figure out better way to automatically represent decimal values as json numbers
     def base_amount

@@ -41,6 +41,7 @@
         <hr style="border: none;border-bottom:4px solid rgba(204, 204, 204, 1); margin-bottom: 30px;">
         <p>
         <ul style="list-style:none;padding: 0; line-height: 1.5;">
+          <li>Today's Date: <%= transaction[:created_at_formatted] %></li>
           <li>Donor Name: <%= transaction[:payor][:name] %></li>
           <li>Donation Amount: $<%= ApplicationHelper.format_amount(transaction[:base_amount]) %></li>
           <li>Recipient: <%= transaction[:payee][:name] %></li>
