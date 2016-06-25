@@ -20,6 +20,7 @@ class Profile < ActiveRecord::Base
   has_one :primary_address, class_name: 'Address', foreign_key: :profile_id
   belongs_to :realm
 
+  attr_data_field :tax_id  # for payee profile, used for payment receipt
   attr_data_field :bio
   attr_data_field :website
   attr_data_field :postal_code  #todo, link profile zip to associated address
@@ -174,7 +175,7 @@ class Profile < ActiveRecord::Base
   end
 
   class Entity < Grape::Entity
-    expose :name, :email, :phone, :has_user, :first_name, :last_name
+    expose :name, :email, :phone, :has_user, :first_name, :last_name, :tax_id
     # expose :address, using: Address::Entity
   end
 
