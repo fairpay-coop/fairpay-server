@@ -13,7 +13,12 @@
     <div class="progress-bar" role="progressbar" aria-valuenow="<%= pcnt %>" aria-valuemin="0" aria-valuemax="100" style="width: 27%;">
     </div>
   </div>
-  <p class="donorCount"><%= campaign[:supporter_total] %> DONORS <span class="floatR"><%= pcnt %>%</span><i class="clearB"></i></p>
+  <%
+     count  = campaign[:supporter_total]
+     suffix = count == 1 ? '' : 'S'
+  %>
+
+  <p class="donorCount"><%= count %> DONOR<%=suffix%> <span class="floatR"><%= pcnt %>%</span><i class="clearB"></i></p>
   <hr>
   <p class="locationDonation"><i class="fa fa-map-marker"></i>    San Francisco, CA</p>
 </div>

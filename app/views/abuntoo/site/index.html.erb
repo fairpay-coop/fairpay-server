@@ -30,7 +30,11 @@
             <h5 class="rewardSubline"><i>from</i> <%= offer[:provided_by] %></h5>
             <hr>
             <p><%= offer[:kind_label] %></p>
-            <p class="donorCount"><%= offer[:allocated] %> donors</p>
+            <%
+               allocated = offer[:allocated]
+               suffix = allocated == 1 ? '' : 's'
+            %>
+            <p class="donorCount"><%= allocated %> donor<%=suffix%></p>
             <p class="donorStatus"><%= offer[:availability] %></p>
             <div class="clearB"></div>
           </div>
