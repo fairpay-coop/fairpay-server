@@ -9,10 +9,21 @@
 
 div class="col-md-12"
 
-div class="col-md-5"
+div class="col-md-5 hidden-xs hidden-sm hidden-md"
     div class="labelEnc" style="height: 420px"
-      b Debit/Credit Card
-      / (#{payment_config[:kind_name]})
+      b Debit / Credit
+      br
+      - unless embed[:suppress_fee_display]
+        - card_fee_str = payment_config[:card_fee_str]
+        | Transaction Fee:
+        div id="fee_info" style="display: inline;"
+          |#{card_fee_str}
+          br
+          |(depends on card type)
+
+div class="col-md-5 hidden-lg"
+    div class="labelEnc"
+      b Debit / Credit
       br
       - unless embed[:suppress_fee_display]
         - card_fee_str = payment_config[:card_fee_str]
