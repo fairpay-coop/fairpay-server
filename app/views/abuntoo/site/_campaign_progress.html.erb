@@ -10,7 +10,7 @@
     <h5><%= number_to_currency(campaign[:financial_goal], precision: 0) %></h5>
   </div>
   <div class="progress">
-    <div class="progress-bar" role="progressbar" aria-valuenow="<%= pcnt %>" aria-valuemin="0" aria-valuemax="100" style="width: 27%;">
+    <div class="progress-bar" role="progressbar" aria-valuenow="<%= pcnt %>" aria-valuemin="0" aria-valuemax="100" style="width: <%= pcnt %>%;">
     </div>
   </div>
   <%
