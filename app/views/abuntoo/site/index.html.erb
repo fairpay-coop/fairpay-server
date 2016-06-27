@@ -5,6 +5,7 @@
 
 <div class="col-md-8">
   <section>
+    <a href="/donate" style="margin-top: 12px;" class="btn btn-default btnC1 donateBTN hidden-sm hidden-md hidden-lg">Donate</a>
     <div class="hidden-sm hidden-md hidden-lg"><%= render view_path('campaign_progress', embed), campaign: campaign %></div>
     <!-- MAIN SECTION -->
     <%= render_content(campaign[:summary], embed) %>
@@ -15,6 +16,7 @@
 
 <div class="col-md-4">
   <aside>
+    <a href="/donate" style="margin-top: 12px;" class="btn btn-default btnC1 donateBTN">Donate</a>
     <%= render view_path('campaign_progress', embed), campaign: campaign %>
 
     <%

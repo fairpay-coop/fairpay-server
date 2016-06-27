@@ -5,7 +5,6 @@
    pcnt = campaign[:financial_pcnt]
 %>
 <div class="donateCounter">
-  <a href="/donate" style="margin-top: 12px;" class="btn btn-default btnC1 donateBTN">Donate</a>
   <div class="donateNumberCounter">
     <h6><span><%= number_to_currency(campaign[:financial_total], precision: 0) %></span> of</h6>
     <h5><%= number_to_currency(campaign[:financial_goal], precision: 0) %></h5>
