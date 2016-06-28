@@ -62,47 +62,45 @@ None
 </textarea>
               	</div>
 
-                <% if transaction[:capture_address] %>
+                <% if transaction[:needs_address] && transaction[:capture_address] %>
                   <%= render view_path('address_form', embed), data: @data %>
                 <% end %>
 
               </div>
-
-              <div class="row" id="paymentBlock">
-              	<div class="col-md-12">
-                  <% if @data[:payment_configs].size > 1 %>
-              		  <h5>Payment Choice - Select ONE Method</h5>
-                  <% else %>
-              		  <h5>Payment</h5>
+              <% unless transaction[:needs_address] %>
+                <div class="row" id="paymentBlock">
+                	<div class="col-md-12">
+                    <% if @data[:payment_configs].size > 1 %>
+                		  <h5>Payment Choice - Select ONE Method</h5>
+                    <% else %>
+                		  <h5>Payment</h5>
+                    <% end %>
+                	</div>
+                  <% if transaction[:fee_allocation_options].size > 1 %>
+                    <%= render view_path("fee_allocation", embed), embed: embed, transaction: transaction %>
                   <% end %>
-              	</div>
+                  <%# card_config = @data[:payment_configs].find{|pc|pc[:form_name] == 'card'} %>
+                  <%#= render 'card', payment_config: card_config, data: @data %>
+                  <% @data[:payment_configs].each do |payment_config| %>
+                      <%= render view_path(payment_config[:form_name], embed), payment_config: payment_config, data: @data %>
+                  <% end %>
+                	<div class="col-md-12">
+                    <br>
+                    <div id="agreeTermsNotice" style="display: none">
+                      <h4 style="color: #E82C58;">
+                        Please agree to terms before proceeding
+                      </h4>
+                    </div>
+                    <p id="paymentAgree">
+                      <%= check_box_tag :agree_to_terms, :true %>
+                      By submitting a payment via this form, you acknowledge that you agree to our
+                      <%= link_to 'Terms of Service', terms_path, target: '_blank' %>
+                      and
+                      <%= link_to 'Privacy Policy', privacy_path, target: '_blank' %>.
+                	</div>
+                </div>
+              <% end %>
 
-                <% if transaction[:fee_allocation_options].size > 1 %>
-                  <%= render view_path("fee_allocation", embed), embed: embed, transaction: transaction %>
-                <% end %>
-
-                <%# card_config = @data[:payment_configs].find{|pc|pc[:form_name] == 'card'} %>
-                <%#= render 'card', payment_config: card_config, data: @data %>
-                <% @data[:payment_configs].each do |payment_config| %>
-                    <%= render view_path(payment_config[:form_name], embed), payment_config: payment_config, data: @data %>
-                <% end %>
-
-              	<div class="col-md-12">
-                  <br>
-
-                  <div id="agreeTermsNotice" style="display: none">
-                    <h4 style="color: #E82C58;">
-                      Please agree to terms before proceeding
-                    </h4>
-                  </div>
-                  <p id="paymentAgree">
-                    <%= check_box_tag :agree_to_terms, :true %>
-                    By submitting a payment via this form, you acknowledge that you agree to our
-                    <%= link_to 'Terms of Service', terms_path, target: '_blank' %>
-                    and
-                    <%= link_to 'Privacy Policy', privacy_path, target: '_blank' %>.
-              	</div>
-              </div>
 
           </section>
       </div>

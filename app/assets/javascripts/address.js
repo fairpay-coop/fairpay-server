@@ -22,12 +22,13 @@ function handleAddressResponse(data) {
   if (data.result) {
     //var status = data.result.status;
     //$('#errorMessage').html('');      //var linkUrl = data.result.statusLink;
-    if (data.result.capture_address_on_payment_page) {
-      console.log('assume already on payment page - what should be the visual trigger?');
-      scrollToTag('#paymentBlock', -30);
-    } else if (data.result.next_step_url) {
-      window.location = data.result.next_step_url;
-    }
+    // if (data.result.capture_address_on_payment_page) {
+    //   console.log('assume already on payment page - what should be the visual trigger?');
+    //   scrollToTag('#paymentBlock', -30);
+    // } else if (data.result.next_step_url) {
+    //   window.location = data.result.next_step_url;
+    // }
+  window.location = data.result.next_step_url;
   } else if (data.error) {
     showError(data.error.message);
   }
