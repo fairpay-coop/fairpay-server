@@ -220,9 +220,7 @@ class Transaction < ActiveRecord::Base
   def update_campaign
     if embed.campaign
       embed.campaign.apply_contribution(self)
-      offer = resolve_offer
-      if offer
-        # puts "chosen offer: #{offer.uuid}"
+      resolve_offers.each do |offer|
         offer.allocate
       end
     end
