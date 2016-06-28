@@ -4,7 +4,7 @@ class AbuntooTheme < DefaultTheme
 
   def email_from
     # "donations@abuntoo.com"
-    "abuntoo@fairpay.coop"  #tmp for testing - should move more config stuff out to yaml files
+    "donate@abuntoo.com"  #tmp for testing - should move more config stuff out to yaml files
   end
 
   def payee_receipt_subject
