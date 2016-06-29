@@ -91,9 +91,8 @@ None
                         Please agree to terms before proceeding
                       </h4>
                     </div>
-                    <p id="paymentAgree">
-                      <%= check_box_tag :agree_to_terms, :true %>
-                      By submitting a payment via this form, you acknowledge that you agree to our
+                    <p id="termsAgree">
+                      <%= check_box_tag :agree_to_terms, :true %> By submitting a payment via this form, you acknowledge that you agree to our
                       <%= link_to 'Terms of Service', terms_path, target: '_blank' %>
                       and
                       <%= link_to 'Privacy Policy', privacy_path, target: '_blank' %>.

@@ -106,9 +106,8 @@ function validateAgreedToTerms() {
   if ( agreedToTerms() ) {
     return true;
   } else {
-    el = $('input[type=checkbox][name=agree_to_terms]');
-    //$("#agreeTermsNotice").show();
-    scrollToBottom();
+    el = $('p[id=termsAgree]');
+    scrollToElement(el);
     showError('Please agree to terms before proceeding', el);
     console.log("validateAgreedToTerms - returning false");
     return false;
@@ -126,6 +125,10 @@ function validateAgreedToTerms() {
 
 function scrollToBottom() {
   $(window).scrollTop($(document).height());
+}
+
+function scrollToElement(el) {
+    $(window).scrollTop($(el).offset().top);
 }
 
 

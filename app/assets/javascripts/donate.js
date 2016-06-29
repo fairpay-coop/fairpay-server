@@ -72,7 +72,7 @@ function handleStep1Response(data) {
 
 function showError(message, elt) {
   if (elt) {
-    $(elt).notify(message, {className: "error", autoHideDelay: 2000, showDuration:100, position: "right"});
+    $(elt).notify(message, {className: "error", autoHideDelay: 2000, showDuration:100/*, position: "right"*/});
   } else {
     $.notify(message, {className: "error", autoHideDelay: 2000, showDuration:100 });
   }
