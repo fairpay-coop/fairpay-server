@@ -59,9 +59,12 @@
                         <h5><% if offer[:remaining] > 0 %>$<%= format_amount(offer[:minimum_contribution],0) %><% else %>all claimed<% end %></h5>
                         <div class="clearB"></div>
                         <p class="donateFrom"><span>from</span> <%= offer[:provided_by] %>
-                          <% website = offer[:provider_website] %>
-                          <% if website.present? %>
-                              <a href="<%=website%>" target="_blank"><%=website%></a>
+                          <% website = offer[:provider_website]
+                            if website.present?
+                            uri = URI(website)
+                            host = uri.host
+                          %>
+                              <a href="<%=website%>" target="_blank"><%=host%></a>
                           <% end %>
                         </p>
                         <p>
