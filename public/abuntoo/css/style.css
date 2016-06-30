@@ -93,7 +93,7 @@ a:focus, a:hover {
 }
 .mainTagline {
   color: #EE6383;
-  text-align: center;
+  text-align: left;
   font-family: Helvetica;
   font-weight: bold;
   line-height: 1;
@@ -104,7 +104,7 @@ a:focus, a:hover {
 }
 .mainSubline {
   color: #707070;
-  text-align: center;
+  text-align: left;
   font-family: 'DIN Light Regular';
   font-weight: normal;
   max-width: 800px;

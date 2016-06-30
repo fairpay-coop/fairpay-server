@@ -5,9 +5,9 @@
 
 <% if embed[:headline] %>
   <div class="col-md-12" id="headingSection">
-    <h1 class="mainTagline"><%=embed[:headline]%></h1>
+    <h1 class="mainTagline"><a href="/"><%=embed[:headline]%></a></h1>
     <% if embed[:subheadline] %>
-      <h3 class="mainSubline"><%=embed[:subheadline]%></h3>
+    <h3 class="mainSubline"><%=embed[:subheadline]%></h3>
     <% end %>
   </div>
 <% end %>
