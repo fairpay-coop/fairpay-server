@@ -288,7 +288,9 @@ class Transaction < ActiveRecord::Base
   def send_receipts
     puts "send receipt - tran id: #{id}"
     PaymentNotifier.receipt(self).deliver_now
-    PaymentNotifier.receipt_merchant(self).deliver_now
+    unless embed.disable_payee_receipt && embed.disable_payee_receipt.to_s == 'true'
+      PaymentNotifier.receipt_merchant(self).deliver_now
+    end
   end
 
   def mailing_list_subscribe

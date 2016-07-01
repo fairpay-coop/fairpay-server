@@ -38,6 +38,7 @@ class Embed < ActiveRecord::Base
   attr_data_field :subheadline
   attr_data_field :page_title   # html head title tag
   attr_data_field :minimum_amount   # minimum payment amount accepted
+  attr_data_field :disable_payee_receipt  # if true, then skip sending email to merchant/non-profit after each transaction
 
 
   # if assigned present option on 'finished' view to provide preauthorization to automatically charge saved payment information once per specified interval.
