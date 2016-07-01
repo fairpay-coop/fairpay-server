@@ -5,7 +5,11 @@
    payor = @data[:transaction][:payor]
    offer = transaction[:offer]
 %>
-
+<script>
+  $(document).ready(function(){
+    window.scroll(0,$("#scrollTarget").offset().top);
+  });
+</script>
 
       <div class="col-md-8">
           <section id="paymentSection">
@@ -62,6 +66,7 @@ None
 </textarea>
               	</div>
 
+                <div id="scrollTarget"></div>
                 <% if transaction[:needs_address] && transaction[:capture_address] %>
                   <%= render view_path('address_form', embed), data: @data %>
                 <% end %>
@@ -106,7 +111,6 @@ None
 
       <div class="col-md-4">
           <aside>
-            <%= render view_path('campaign_progress', embed), campaign: campaign%>
             <%= render view_path('abuntoo_sidebar', embed) %>
           </aside>
       </div>
