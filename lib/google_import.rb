@@ -4,6 +4,7 @@ class GoogleImport
 
   attr_accessor :campaign
   attr_accessor :document_key
+  attr_accessor :worksheet
 
   def initialize(config: "config/google-config.json", document_key: nil, campaign: nil, profile: nil)
     @session = GoogleDrive.saved_session(config)
