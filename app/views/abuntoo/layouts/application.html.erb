@@ -55,15 +55,13 @@
             <a href="/"><img src="/abuntoo/images/abuntoo.png" alt="Avatar" width=""></a>
             <a id="rapidsols-menu" class="floatR" href="#sidr"><img src="/abuntoo/images/hamburger-menu.png" alt="Abuntoo Menu" style="width: 45px;margin-top: 5px;"></a>
             <% if auth0_signed_in %>
-                <!--<li><span>[Logged in as <%= auth0_profile.name %>]</span></li>-->
-                <a href="/profile" id="avatarTop"><img class="floatR visible-lg" src="/abuntoo/images/smiley.png" alt="Abuntoo Avatar"></a>
-                <!--<span><a class="floatR" onclick="location.href='/auth/logout';">Logout</a></span>-->
+            <a href="/profile" id="avatarTop"><img class="floatR visible-lg" src="/abuntoo/images/smiley.png" alt="Abuntoo Avatar"></a>
             <% end %>
 
             <div id="sidr">
                   <ul>
                     <li><a href="/">Home</a></li>
-                    <li><a href="donate">Donate</a></li>
+                    <li><a href="/donate">Donate</a></li>
                     <li><a href="/#rewardNav">Rewards</a></li>
                     <li><a href="/#storyNav">Story</a></li>
                     <li class="hidden-xs"><a href="/#galleryNav">Gallery</a></li>
@@ -87,14 +85,10 @@
                 });
                 $(document).mouseup(function (e){
                     var container = $("#rapidsols-menu");
-
                     if (!container.is(e.target) // if the target of the click isn't the container...
                         && container.has(e.target).length === 0) // ... nor a descendant of the container
                     {
-
-
                         $.sidr('close', 'sidr');
-
                     }
                 });
                 </script>
