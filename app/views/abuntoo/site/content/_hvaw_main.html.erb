@@ -23,13 +23,7 @@
     <div class="col-md-8 noPaddR noPaddLMobile">
       <div class="shareBox hidden-xs">
         <h3>PLEASE SHARE!</h3>
-        <ul>
-          <!--<li><div id="fbButton"><img src="/abuntoo/images/fb.png" alt="Share on Facebook"></div></li>-->
-          <!--<li><div class="fb-share-button" data-href="https://johnmuirart.abuntoo.org" data-layout="icon" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fjohnmuirart.abuntoo.org%2F&amp;src=sdkpreparse">Share</a></div></li>-->
-          <li><a target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/sharer/sharer.php?s=100&amp;p[url]=https://johnmuirart.abuntoo.org&p[quote]=<%=u 'Friends, please support art education at John Muir Elementary by making a donation today. I just did!' %>"><img src="/abuntoo/images/fb.png"></a></li>
-          <li><a target="_blank" rel="noopener noreferrer" href="https://twitter.com/share?url=<%=u 'https://www.johnmuirart.us/' %>&text=<%=u 'Friends, please support art education at John Muir Elementary by making a donation today. I just did!' %>&via=abuntoo&size=large&dnt=true"><img src="/abuntoo/images/twitter.png" alt="Share on Twitter"></a></li>
-          <li><a href="mailto:?to=&subject=<%=u 'Support art eductaion at John Muir Elementary' %>&body=<%=u "Friends, please support art education at John Muir Elementary by making a donation today. I just did!\n\nhttps://johnmuirart.abuntoo.org" %>"><img src="/abuntoo/images/mail.png" alt="Share via Mail"></a></li>
-        </ul>
+        <%= render view_path('social_links', embed) %>
       </div>
       <div class="clearB"></div>
       <iframe class="mainPageFrame" width="100%" height="270" src="https://www.youtube.com/embed/kowmtT1Wtw0" frameborder="0" allowfullscreen></iframe>
