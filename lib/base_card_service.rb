@@ -31,12 +31,16 @@ class BaseCardService < BasePaymentService
     unless use_payment_source
       puts "payment params: #{params.inspect}"
 
+      billing_zip = params[:billing_zip]
+      puts "billing zip: #{billing_zip}, format match: #{billing_zip =~ /\A\d{5}-\d{4}|\A\d{5}\z/}"
+      # should usually be caught by client-side validation, but fail here just in case not.
+      raise "Billing Zip required"  if billing_zip.blank?
+      raise "Billing Zip invalid format"  unless billing_zip =~ /\A\d{5}-\d{4}|\A\d{5}\z/
+
       # card_data = payment_data(transaction, params)
 
       if save_payment_info
         puts "will save payment info"
-        # for now rely on client-side validation
-        # raise "Billing Zip required"  if params[:billing_zip].blank?
         number = params[:card_number]
         mmyy = params[:card_mmyy]
         bin = number[0..5]

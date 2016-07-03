@@ -48,18 +48,20 @@ class ActiveMerchantService < BaseCardService
         month: month,
         year: year,
         verification_value: params[:card_cvv],
-        # billing_zip: params[:billing_zip]  #todo: bill address support
+        #billing_zip: params[:billing_zip]
     }
   end
 
   def charge(transaction, params)
     card_data = payment_data(transaction, params)
+    options = {billing_address: {zip: params[:billing_zip]}}
+
     credit_card = ActiveMerchant::Billing::CreditCard.new(card_data)
     amount_cents = (transaction.amount * 100).to_i
 
     # Validating the card automatically detects the card type
     if credit_card.validate.empty?
-      response = @gateway.purchase(amount_cents, credit_card)
+      response = @gateway.purchase(amount_cents, credit_card, options)
 
       if response.success?
         puts "Successfully charged $#{sprintf("%.2f", amount_cents / 100)} to the card #{credit_card.display_number}"
