@@ -172,6 +172,8 @@ class Transaction < ActiveRecord::Base
 
     if params[:name].present?
       payor.update(name: params[:name], email: params[:email])
+    else
+      raise "First & Last Name is required for donations receipt"
     end
 
     #todo: cleanup. we don't need the fee as part of this result now

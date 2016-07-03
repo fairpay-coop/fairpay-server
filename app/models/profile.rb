@@ -46,8 +46,9 @@ class Profile < ActiveRecord::Base
       parts = name.split(' ')
       return parts.first
     else
-      email_name = email.split('@').first
-      return email_name.split('.').first
+      # email_name = email.split('@').first
+      # return email_name.split('.').first
+      nil
     end
   end
 
@@ -57,8 +58,9 @@ class Profile < ActiveRecord::Base
       parts = name.split(' ')
       return parts.last
     else
-      email_name = email.split('@').first
-      return email_name.split('.').last
+      # email_name = email.split('@').first
+      # return email_name.split('.').last
+      nil
     end
   end
 
@@ -70,7 +72,7 @@ class Profile < ActiveRecord::Base
     raise "email required"  if email.blank?
     result = Profile.find_by(realm: realm, email: email)
     unless result
-      name = email.split('@').first  unless name.present?  # don't require 'name' as the api level, default to email
+      #name = email.split('@').first  unless name.present?  # don't require 'name' as the api level, default to email
       result = Profile.create!(realm: realm, email: email, name: name, first_name: first_name, last_name: last_name)
     end
     result

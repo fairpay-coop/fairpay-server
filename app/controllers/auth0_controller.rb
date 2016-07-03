@@ -18,7 +18,8 @@ class Auth0Controller < ApplicationController
     puts "info: #{info}"
     email = info[:email]
     name = info[:name]
-    name = name.split('@').first  if name.present? && name.include?('@')
+    name = ''  if name == email  # blank out unknown name when native auth0 account used
+    #name = name.split('@').first  if name.present? && name.include?('@')
     first_name = info[:first_name]
     last_name = info[:last_name]
     realm = TenantState.realm
