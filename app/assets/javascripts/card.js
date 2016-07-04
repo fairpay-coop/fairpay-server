@@ -185,7 +185,31 @@ function handleCardResponse(data) {
   } else if (data.error) {
     //alert('error resp: ' + JSON.stringify(data.error));
     //$('#paymentStatus').html('error');
-    $('#errorMessage').html(data.error.message);
+    // $('#errorMessage').html(data.error.message);
+      var payor = $('#payor');
+      scrollToElement(payor);
+      var message = massageErrorMessage(data.error.message);
+      showError(message, payor);
     //$('#errorStack').html('<pre>' + data.error.stack + '</pre>');
   }
+}
+
+// NOTE: This is only valid for Strip error messages
+function massageErrorMessage(message) {
+    var labels = message.match(/(?::)(\w+)/g);
+    var messages = message.match(/"[^"]+"/g);
+    if (labels && messages) {
+        labels = labels.map(function (l) {
+            return l.replace(":", "");
+        });
+        messages = messages.map(function (m) {
+            return m.replace(/\"/g, "");
+        });
+        var fullMessage = "";
+        for (var i = 0; i < labels.length; i++) {
+            fullMessage += labels[i] + ": " + messages[i] + "\n";
+        }
+        return fullMessage;
+    }
+    return message;
 }
