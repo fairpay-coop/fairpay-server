@@ -1,8 +1,24 @@
 <!--suppress HtmlUnknownTarget -->
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '266842180346072',
+      xfbml      : true,
+      version    : 'v2.6'
+    });
+  };
+
+  (function(d, s, id){
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {return;}
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
 <ul>
-  <!--<li><div id="fbButton"><img src="/abuntoo/images/fb.png" alt="Share on Facebook"></div></li>-->
-  <!--<li><div class="fb-share-button" data-href="https://johnmuirart.abuntoo.org" data-layout="icon" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fjohnmuirart.abuntoo.org%2F&amp;src=sdkpreparse">Share</a></div></li>-->
-  <li><a target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/sharer/sharer.php?s=100&amp;p[url]=https://johnmuirart.abuntoo.org&p[quote]=<%=u 'Friends, please support art education at John Muir Elementary by making a donation today. I just did!' %>"><img src="/abuntoo/images/fb.png"></a></li>
+  <li><div id="fbButton" style="cursor: pointer;"><img src="/abuntoo/images/fb.png" alt="Share on Facebook"></div></li>
   <li><a target="_blank" rel="noopener noreferrer" href="https://twitter.com/share?url=<%=u 'https://www.johnmuirart.us/' %>&text=<%=u 'Friends, please support art education at John Muir Elementary by making a donation today. I just did!' %>&via=abuntoo&size=large&dnt=true"><img src="/abuntoo/images/twitter.png" alt="Share on Twitter"></a></li>
   <li><a href="mailto:?to=&subject=<%=u 'New Donations Site​ for John Muir Elementary!' %>&body=<%=u 'Friends,
 
@@ -14,3 +30,12 @@ Best,
 
 ' %>"><img src="/abuntoo/images/mail.png" alt="Share via Mail"></a></li>
 </ul>
+<script>
+  document.getElementById('fbButton').onclick = function() {
+    FB.ui({
+      method: 'share',
+      display: 'popup',
+      href: 'https://johnmuirart.abuntoo.org/',
+    }, function(response){});
+  }
+</script>
