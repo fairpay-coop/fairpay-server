@@ -1,12 +1,6 @@
     <div class="row" id="profilePage">
       <div class="col-lg-4">
         <h3 class="abuntooTagLine">Your Abundance Dashboard</h3>
-        <!--<div class="profilePageNavMbl hidden-lg">-->
-          <!--<a href="profile#accountNav" class="btnC2 profileNav">account</a>-->
-          <!--<a href="profile#socialNav" class="btnC2 profileNav">social</a>-->
-          <!--<a href="profile#paymentNav" class="btnC2 profileNav">payment</a>-->
-          <!--<div class="clearB"></div>-->
-        <!--</div>-->
         <div class="sectionOneProfile visible-lg">
           <img class="floatR profilePStar" width="24" src="/abuntoo/images/star.svg" alt="Abuntoo">
           <img class="floatR profilePStar" width="24" src="/abuntoo/images/star.svg" alt="Abuntoo">
@@ -57,19 +51,10 @@
             <img class="profilePStar" width="24" src="/abuntoo/images/star.svg" alt="Abuntoo">
         </div>
         <div class="sectionOneProfile" id="sectionOneProfileNon-Edit">
-          <%#
-          <p class="labelEncProfile orangeTxt floatL">first name*</p>
-          <p id="p1ProfilePage" class="floatL"><%=@profile.first_name% > <span id="editSectionOne"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></span></p>
-          <div class="clearB"></div>
-          <p class="labelEncProfile orangeTxt floatL">last name*</p>
-          <p id="p2ProfilePage" class="floatL"><%=@profile.last_name% ></p>
-          <div class="clearB"></div>
-          %>
 
           <p class="labelEncProfile orangeTxt floatL">name*</p>
           <p id="p1ProfilePage" class="floatL"><%=@profile.name%> <span id="editSectionOne"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></span></p>
           <div class="clearB"></div>
-
           <p class="labelEncProfile orangeTxt floatL">email*</p>
           <p id="p3ProfilePage" class="floatL"><%=@profile.email%></p>
           <div class="clearB"></div>
@@ -119,10 +104,8 @@
 
           <div class="sectionThreeProfile" id="sectionThreeProfileEdit">
             <h3>Help fellow donors find you and discover what you have to offer to the world!</h3>
-            <!--<input value="e.g. http://www.abuntoo.io" type="url" name="website">-->
             <%= f.text_field :website %>
 
-            <!--<textarea class="floatL" name="bio" maxlenght="250">e.g. Here are up to 250 characters about myself.  I love ice-cream and I create abundance for my community! </textarea>-->
             <%= f.text_area :bio %>
 
             <span class="floatL" id="closeSectionThree"><%= image_submit_tag("/abuntoo/images/nextFrwd.svg") %></span>
@@ -172,11 +155,9 @@
           <% if @profile.saved_payment_source.present? %>
             <p id="sectionFiveProfileNon-Edit">
               <span id="cardStatus">
-                <!--card # ending in 1357, exp. MM/YY-->
                 card # <%=@profile.saved_payment_source.description%>
               </span>
               <span>
-                <!--<i class="fa fa-trash" style="margin-left: 10px;" onclick="$( '#cardStatus' ).html('<i style=\'font-style: normal;color: rgb(160, 160, 159);\'>Add your card to expedite future checkouts.</i>');" aria-hidden="true"></i>-->
                 <a href="/remove_payment_source">
                   <i class="fa fa-trash" style="margin-left: 10px;"></i>
                 </a>
@@ -189,16 +170,6 @@
             </p>
           <% end %>
 
-          <%#
-          <div id="sectionFiveProfileEdit">
-            <input type="password" name="cardnum" placeholder="Card #">
-            <input type="text" name="cardexp" placeholder="Exp. MM / YY">
-            <input type="password" name="cardccv" placeholder="CVV (Security Code)">
-            <input class="floatL" type="text" name="cardzip" placeholder="Billing Zip">
-            <span class="floatL" id="closeSectionFive"><img src="/abuntoo/images/nextFrwd.svg" alt="Finalise"></span>
-            <div class="clearB"></div>
-          </div>
-          %>
             <p class="notificationProfile">We do not store your payment card information. We store a special authorization
                 token we receive from Stripe that can only be used by us. We do keep the last 4 digits and expiration date
                 of your card to make it easier for you to identify which card you used. For more information
