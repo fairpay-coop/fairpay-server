@@ -80,37 +80,24 @@
           <p id="p5ProfilePage" class="floatL"><%=@profile.postal_code%></p>
           <div class="clearB"></div>
         </div>
+
         <div class="sectionOneProfile" id="sectionOneProfileEdit">
-          <%#
-          <p class="labelEncProfile orangeTxt floatL">first name*</p>
-          <!--<input class="floatL" type="text" name="first_name" value="Cecilia">-->
-          < % = f.text_field :first_name % >
-          <div class="clearB"></div>
-          <p class="labelEncProfile orangeTxt floatL">last name*</p>
-          <!--<input class="floatL" type="text" name="last_name" value="Top">-->
-          < % = f.text_field :last_name % >
-          %>
 
           <p class="labelEncProfile orangeTxt floatL">name*</p>
           <%= f.text_field :name %>
           <div class="clearB"></div>
 
-
-          <div class="clearB"></div>
           <p class="labelEncProfile orangeTxt floatL">email*</p>
-          <%#= f.text_field :email %>
-          <!--<input class="floatL" type="text" name="email" value="<%=@profile.email%>" readonly>-->
           <p id="p3ProfilePage" class="floatL"><%=@profile.email%></p>
-
           <div class="clearB"></div>
+
           <p class="labelEncProfile orangeTxt floatL">mobile #</p>
-          <!--<input class="floatL" type="tel" name="phone" value="9876544321">-->
           <%= f.text_field :phone %>
-
           <div class="clearB"></div>
+
           <p class="labelEncProfile orangeTxt floatL">zip*</p>
-          <!--<input class="floatL" type="text" name="postal_code" value="88732">-->
           <%= f.text_field :postal_code %>
+          <div class="clearB"></div>
 
           <span id="closeSectionOne"><%= image_submit_tag("/abuntoo/images/nextFrwd.svg") %></span>
           <div class="clearB"></div>
