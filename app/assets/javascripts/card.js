@@ -95,6 +95,7 @@ function handleCard() {
   var data = {};
   FairPayApi.copyFormValues(data, form, ['embed_uuid', 'transaction_uuid', 'payment_type', 'amount', 'card_number', 'card_mmyy', 'card_cvv', 'billing_zip', 'save_payment_info', 'use_payment_source', 'name', 'email', 'anonymous']);
   //alert('data: ' + JSON.stringify(data));
+  data.card_mmyy = data.card_mmyy.replace(/ /g, '');
   if (validateCardFields(data)) {
     FairPayApi.submitPayment(data, handleCardResponse);
   }
