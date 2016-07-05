@@ -49,6 +49,36 @@
   <link href="/abuntoo/css/style2.css" rel="stylesheet">
   <link href="/abuntoo/css/style-delta.css" rel="stylesheet">
 
+  <% auth0_config = embed[:auth0_config] %>
+  <% if auth0_config.present? %>
+      <script src="https://cdn.auth0.com/js/lock-9.0.min.js"></script>
+      <script type="text/javascript">
+        var lock = new Auth0Lock('<%=auth0_config[:client_id]%>', '<%=auth0_config[:domain]%>');
+        function signin() {
+          lock.show({
+            callbackURL: '<%=base_url%>/auth/auth0/callback'
+            , responseType: 'code'
+            , authParams: {
+              scope: 'openid profile'
+            }
+            , dict: {
+              title: "Join the Abuntoo tribe!"
+            }
+            , icon: '/abuntoo/images/abuntoo.png'
+            , socialBigButtons: true
+            , gravatar: false
+          });
+        }
+      </script>
+  <% else %>
+      <p>
+        <script type="text/javascript">
+          function signin() {
+            alert('Error, auth0 config data missing!');
+          }
+        </script>
+      </p>
+  <% end %>
 
 </head>
                       
@@ -158,37 +188,6 @@
     $( "#accordion" ).accordion();
   });
 </script>
-
-<% auth0_config = embed[:auth0_config] %>
-<% if auth0_config.present? %>
-  <script src="https://cdn.auth0.com/js/lock-9.0.min.js"></script>
-  <script type="text/javascript">
-    var lock = new Auth0Lock('<%=auth0_config[:client_id]%>', '<%=auth0_config[:domain]%>');
-    function signin() {
-      lock.show({
-        callbackURL: '<%=base_url%>/auth/auth0/callback'
-        , responseType: 'code'
-        , authParams: {
-          scope: 'openid profile'
-        }
-        , dict: {
-          title: "Join the Abuntoo tribe!"
-        }
-        , icon: '/abuntoo/images/abuntoo.png'
-        , socialBigButtons: true
-        , gravatar: false
-      });
-    }
-  </script>
-<% else %>
-<p>
-  <script type="text/javascript">
-    function signin() {
-      alert('Error, auth0 config data missing!');
-    }
-  </script>
-</p>
-<% end %>
 
 </body>
 </html>
