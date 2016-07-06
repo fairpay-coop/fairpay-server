@@ -74,7 +74,9 @@ function handleEstimateFeeResponse(data) {
 
 function handleCard() {
   console.log('handleCard');
+    document.getElementById('payButton').style.pointerEvents = 'none';
   if ( ! validateAgreedToTerms() ) {
+      document.getElementById('payButton').style.pointerEvents = 'auto';
     return false;
   }
   // post the address form on this page if it exists
@@ -99,7 +101,8 @@ function handleCard() {
   if (validateCardFields(data)) {
     FairPayApi.submitPayment(data, handleCardResponse);
   }
-  return false;
+    document.getElementById('payButton').style.pointerEvents = 'auto';
+    return false;
 }
 
 function validateAgreedToTerms() {
