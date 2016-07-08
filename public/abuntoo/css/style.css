@@ -699,7 +699,6 @@ hr {
     float: left;
 }
 .titleDonor {
-    float: left;
     margin-left: 2px;
 }
 .titleDonor i {
@@ -707,9 +706,9 @@ hr {
 }
 .titleDonor h5{
     font-size: 18px;
-    text-align: left;
+    text-align: center;
     font-weight: bold;
-    font-family: georgia;
+    font-family: georgia, serif;
     color: #C1153D;
     margin: 0;
     margin-top: 10px;
@@ -720,8 +719,9 @@ hr {
   margin: 0;
   font-size: 25px;
 }
-.titleDonor ul a {
+.titleDonor a {
     color: #999999;
+  font-size: 25px;
 }
 .titleDonor ul li {
     display: inline-block;
@@ -1263,7 +1263,7 @@ img.profilePStar {
   margin-right: 12px;
 }
 #profilePage .donorBox .titleDonor {
-    float: left;
+    /*float: left;*/
     margin-left: 10px;
 }
 .sectionFourProfile input {

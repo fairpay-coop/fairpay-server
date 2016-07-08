@@ -115,12 +115,10 @@
 
           <div class="donorBox visible-lg" style="position: relative;">
             <% if !@profile.bio.present? %><p style="position: absolute;font-size: 32px;top: 100px;left: 30px;color: red;transform: rotate(-30deg);opacity: 0.3;font-family: helvetica,sans-serif; font-weight: bold;">EXAMPLE!</p><% end %>
-              <img class="avatarDonor" src="/abuntoo/images/smiley-tilt.png">
               <div class="titleDonor">
-                  <h5><% if @profile.bio.present? %><%= @profile.name %><% else %>Cecilia Tom<% end %></h5>
-                  <ul>
-                      <li><% if @profile.website.present? %><a href="<%= @profile.website %>"><% end %><i class="fa fa-globe" aria-hidden="true"></i></a></li>
-                  </ul>
+                  <h5><% if @profile.bio.present? %><%= @profile.name %><% else %>Cecilia Tom<% end %>
+                    <a<% if @profile.website.present? %> href="<%= @profile.website %>"<% end %>><i class="fa fa-globe" aria-hidden="true"></i></a>
+                  </h5>
               </div>
               <div class="clearB"></div>
               <p><% if @profile.bio.present? %><%= @profile.bio %><% else %>CEO of Abuntoo. Ice-cream evangelist. Choral singer. Proponent of big iron balls.  "Speak softly and swing a big kettlebell." Thank you for joining this open-hearted tribe of generous beings!<% end %></p>
@@ -129,12 +127,10 @@
 
           <div class="donorBox donorBoxPaymentsMbl hidden-lg" style="position: relative;">
             <% if !@profile.bio.present? %><p style="position: absolute;font-size: 32px;top: 100px;left: 30px;color: red;transform: rotate(-30deg);opacity: 0.3;font-family: helvetica,sans-serif; font-weight: bold;">EXAMPLE!</p><% end %>
-              <img class="avatarDonor" src="/abuntoo/images/smiley-tilt.png">
               <div class="titleDonor">
-                  <h5><% if @profile.bio.present? %><%= @profile.name %><% else %>Cecilia Tom<% end %></h5>
-                  <ul>
-                      <li><a href="#"><i class="fa fa-globe" aria-hidden="true"></i></a></li>
-                  </ul>
+                <h5><% if @profile.bio.present? %><%= @profile.name %><% else %>Cecilia Tom<% end %>
+                  <a<% if @profile.website.present? %> href="<%= @profile.website %>"<% end %>><i class="fa fa-globe" aria-hidden="true"></i></a>
+                </h5>
               </div>
               <div class="clearB"></div>
               <p><% if @profile.bio.present? %><%= @profile.bio %><% else %>CEO of Abuntoo. Ice-cream evangelist. Choral singer. Proponent of big iron balls.  "Speak softly and swing a big kettlebell." Thank you for joining this open-hearted tribe of generous beings!<% end %></p>

@@ -54,18 +54,12 @@
 
                 <div class="col-md-4">
                   <div class="donorBox">
-                    <img class="avatarDonor" src="/abuntoo/images/smiley-tilt.png">
                     <div class="titleDonor">
-                      <h5><%=profile.display_name%></h5>
-                      <ul>
-                        <%#
-                        <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
-                        <li><a href="#"><i class="fa fa-linkedin-square" aria-hidden="true"></i></a></li>
-                        %>
+                      <h5><%=profile.display_name%>
                         <% if profile.website.present? %>
-                          <li><a href="<%=profile.website%>" target="_blank" rel="noopener noreferrer"><i class="fa fa-globe" aria-hidden="true"></i></a></li>
+                          <a href="<%=profile.website%>" target="_blank" rel="noopener noreferrer"><i class="fa fa-globe" aria-hidden="true"></i></a>
                         <% end %>
-                      </ul>
+                      </h5>
                     </div>
                     <div class="clearB"></div>
                     <p>
