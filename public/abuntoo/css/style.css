@@ -1335,7 +1335,7 @@ img.profilePStar {
   margin-left: 40px;
   cursor: pointer;
 }
-#closeSectionOne img, #closeSectionThree img, #closeSectionFive img {
+#closeSectionOne [type=image], #closeSectionThree [type=image], #closeSectionFive [type=image] {
     width: 38px;
     height: 38px;
 }
