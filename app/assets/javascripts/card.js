@@ -198,6 +198,9 @@ function handleCardResponse(data) {
       var message = massageErrorMessage(data.error.message);
       showError(message, payor);
     //$('#errorStack').html('<pre>' + data.error.stack + '</pre>');
+    //hardwire for now.  todo: make this more flexible
+    $('#payButton').html('Pay with Card');
+    $('#payButton').prop('disabled',false);
   }
 }
 
