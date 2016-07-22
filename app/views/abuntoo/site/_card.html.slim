@@ -36,7 +36,7 @@ div class="col-md-5 hidden-lg"
 div class="col-md-7"
     div id="errorMessage"
 
-    form id="card_form" onsubmit="return handleCard()"
+    form id="card_form" onsubmit="return handleCard('#payButton')"
       = hidden_field_tag :authenticity_token, form_authenticity_token
       = hidden_field_tag :embed_uuid, embed[:uuid]
       = hidden_field_tag :transaction_uuid, transaction[:uuid]
@@ -80,7 +80,7 @@ div class="col-md-7"
             input type="checkbox" name="save_payment_info" value="true"
             /input type="checkbox" name="confirm" value="Confirm"
             |Securely save payment info for fast future checkouts.  You can manage your payment settings in your donor profile.
-      a id="payButton" class="btnC2 submitBTN" style="width: 180px;" onclick="$(this).closest('form').submit(); return false;"
+      button type="button" id="payButton" class="btnC2 submitBTN" style="width: 180px;" onclick="$(this).closest('form').submit(); return false;"
         |Pay with Card
 
 

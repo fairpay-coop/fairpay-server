@@ -8,7 +8,7 @@
       <div class="col-md-8">
           <section id="donateSection">
               <!-- MAIN SECTION -->
-            <form id="step1_form" onsubmit="return handleStep1()">
+            <form id="step1_form" onsubmit="return handleStep1('#nextButton')">
 
               <div class="row">
                 <div id="errorMessage" style="display: none;"></div>
@@ -24,7 +24,7 @@
                 <div class="col-md-6">
                   <span id="donateCurrency">$</span><%= text_field_tag :donateSelectBox %>
                  <p id="donateNote">Minimum donation <span id="minimumDonation" style="font-weight: bold;">$5</span>.  Please give more if you're able to! </p>
-                  <a href="#" class="btnC2 floatL" onclick="$(this).closest('form').submit(); return false;">Next</a>
+                  <button type="button" id="nextButton" class="btnC2 floatL" onclick="$(this).closest('form').submit(); return false;">Next</button>
                   <div class="clearB"></div>
                 </div>
               </div>

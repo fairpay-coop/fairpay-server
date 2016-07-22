@@ -72,7 +72,7 @@ function handleEstimateFeeResponse(data) {
 
 //$("#card_form").submit(handleCard);
 
-function handleCard() {
+function handleCard(buttonId) {
   console.log('handleCard');
   var oc = document.getElementById('payButton').onclick;
   document.getElementById('payButton').onclick = null;
@@ -100,6 +100,8 @@ function handleCard() {
   //alert('data: ' + JSON.stringify(data));
   data.card_mmyy = data.card_mmyy.replace(/ /g, '');
   if (validateCardFields(data)) {
+    $(buttonId).prop('disabled',true);
+    $(buttonId).html('Submitting...');
     FairPayApi.submitPayment(data, handleCardResponse);
   }
     document.getElementById('payButton').onclick = oc;

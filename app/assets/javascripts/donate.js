@@ -36,7 +36,7 @@ function handleProfileResponse(data) {
   }
 }
 
-function handleStep1() {
+function handleStep1(buttonId) {
   console.log("handleStep1");
   var data = {};
   var form = document.getElementById("step1_form");
@@ -47,6 +47,8 @@ function handleStep1() {
 
   if (validateStep1Data(data)) {
     console.log('beforfe submitStep1');
+    $(buttonId).prop('disabled',true);
+    //$(buttonId).html('...');
     FairPayApi.submitStep1(data, handleStep1Response);
   }
   return false;
