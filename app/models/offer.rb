@@ -72,15 +72,19 @@ class Offer < ActiveRecord::Base
     # else
     #   'unlimited'
     # end
-    if remaining <= 10
-      "only #{remaining} left"
-    elsif remaining == 0
-      "sorry, all claimed"
+    if remaining
+      if remaining <= 10
+        return "only #{remaining} left"
+      elsif remaining == 0
+        return "sorry, all claimed"
+      end
     end
+    ""
   end
 
   def label
-    result = "#{name} (#{availability})"
+    result = name || ""
+    result += availability if availability.present?
     result += ", min donation: $#{format_amount(minimum_contribution,0)}"  if minimum_contribution > 0
     result
   end
